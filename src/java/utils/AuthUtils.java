@@ -14,44 +14,37 @@ import model.UserDTO;
  *
  * @author ASUS
  */
-//ktr user có login hay chưa, có quyền hạng nào đó hay lko?
 public class AuthUtils {
-//    lấy ra user hiện tại đang login
     public static UserDTO getCurrentUser(HttpServletRequest request) {
-//        ktr xem có user nào đang login hay ko?
         HttpSession session = request.getSession();
         if (session != null) {
             return (UserDTO) session.getAttribute("user");
         }
         return null;
     }
-// ktr xem nó có login hay chưa
     public static boolean isLoggedIn(HttpServletRequest request) {
-        return AuthUtils.getCurrentUser(request) != null;// biến null thì user chưa login
+        return AuthUtils.getCurrentUser(request) != null;
     }
-//
     public static boolean hasRole(HttpServletRequest request, String role) {
-//        lấy user đang đăng nhập
         UserDTO user = getCurrentUser(request);
         if (user != null) {
-            String userRole = user.getRoleID();// đảm bảo rằng hàm này luôn tồn tại
+            String userRole = user.getRoleID();
             return userRole.equals(role);
         }
         return false;
     }
-// ktr phân quyền
     public static boolean isAdmin(HttpServletRequest request) {
-        return hasRole(request, "AD");
+        return hasRole(request, "admin");
     }
 
-    public static boolean isManager(HttpServletRequest request) {
-        return hasRole(request, "MA");
+    public static boolean isBuyer(HttpServletRequest request) {
+        return hasRole(request, "buyer");
     }
-
-    public static boolean isUser(HttpServletRequest request) {
-        return hasRole(request, "MB");
+    
+    public static boolean isSeller(HttpServletRequest request) {
+        return hasRole(request, "seller");
     }
-//    thêm thôpng báo và url
+    
     public static String getLoginURL(){
         return "MainController?action=login";
     }
