@@ -5,6 +5,7 @@
 package controller;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -13,48 +14,10 @@ import jakarta.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author Admin
+ * @author ASUS
  */
-@WebServlet(name = "MainController", urlPatterns = {"/MainController"})
-public class MainController extends HttpServlet {
-
-    private static final String LOGIN_PAGE = "login.jsp";
-//     private static final String HOME_PAGE = "home.jsp";
-
-    private boolean isUserAction(String action) {
-        return "login".equals(action)
-                || "logout".equals(action)
-                || "signUp".equals(action);
-    }
-// ----------quản lý sản phẩm & phân loại-------------------
-     private boolean isProductAction(String action) {
-        return "listBook".equals(action)
-                || "bookDetail".equals(action)
-                || "addBook".equals(action)
-                || "editBook".equals(action)
-                || "updateBook".equals(action)
-                || "deleteBook".equals(action)
-                || "searchBook".equals(action);
-    }
-
-    private boolean isCategoryAction(String action) {
-        return "listCategory".equals(action)
-                || "addCategory".equals(action)
-                || "editCategory".equals(action)
-                || "updateCategory".equals(action)
-                || "deleteCategory".equals(action);
-    }
-
-    private boolean isInventoryAction(String action) {
-        return "showInventory".equals(action)
-                || "updateInventory".equals(action);
-    }
-
-    private boolean isReviewAction(String action) {
-        return "listReview".equals(action)
-                || "addReview".equals(action)
-                || "deleteReview".equals(action);
-    }
+@WebServlet(name = "ReviewController", urlPatterns = {"/ReviewController"})
+public class ReviewController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -68,26 +31,7 @@ public class MainController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String url = LOGIN_PAGE;
-//        String url = HOME_PAGE;
-        try {
-            String action = request.getParameter("action");
-            if (isUserAction(action)) {
-                url = "/UserController";
-            } else if(isProductAction(action)){
-                url = "/ProductController";
-            } else if(isCategoryAction(action)){
-                url = "/CategoryController";
-            } else if(isInventoryAction(action)){
-                url = "/InventoryController";
-            } else if(isReviewAction(action)){
-                url = "/ReviewController";
-            }
-        } catch (Exception e) {
-
-        } finally {
-            request.getRequestDispatcher(url).forward(request, response);
-        }
+        
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
