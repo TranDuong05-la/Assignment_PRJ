@@ -13,7 +13,7 @@
 
     // Lấy dữ liệu nếu đang edit
     AddressDTO addr = (AddressDTO) request.getAttribute("address");
-    boolean isEdit = request.getAttribute("isEdit") != null;
+    boolean isEdit = Boolean.TRUE.equals(request.getAttribute("isEdit"));
 
     String addressID     = (addr != null) ? String.valueOf(addr.getAddressID()) : "";
     String recipientName = (addr != null) ? addr.getRecipientName() : "";
@@ -81,7 +81,7 @@
                     <button type="submit" class="btn btn-success">
                         <%= isEdit ? "Update Address" : "Add Address" %>
                     </button>
-                    <a href="MainController?action=list" class="btn btn-link">Back to List</a>
+                    <a href="addressList.jsp" class="btn btn-link">Back to List</a>
                 </div>
             </form>
         </div>

@@ -103,7 +103,8 @@ public class AddressController extends HttpServlet {
         request.setAttribute("isEdit", false);
         return FORM_PAGE;
     }
-
+    
+    
     String userID = user.getUserID();
     AddressDTO address = new AddressDTO();
     address.setUserID(userID);
@@ -121,6 +122,8 @@ public class AddressController extends HttpServlet {
     
     boolean success = dao.insertAddress(address);
     request.setAttribute("message", success ? "Address added successfully." : "Failed to add address.");
+    request.setAttribute("address", address);
+    request.setAttribute("isEdit", false);
     return FORM_PAGE;
     
 }
@@ -141,9 +144,10 @@ public class AddressController extends HttpServlet {
             int addressID = Integer.parseInt(request.getParameter("addressID"));
             AddressDTO addr = new AddressDAO().getAddressByID(addressID);
             request.setAttribute("address", addr);
+            request.setAttribute("isEdit", true);
             return FORM_PAGE;
         }
-
+    
         AddressDTO addr = new AddressDTO();
         addr.setAddressID(Integer.parseInt(request.getParameter("addressID")));
         addr.setUserID(userID);
@@ -158,7 +162,6 @@ public class AddressController extends HttpServlet {
         if (addr.isDefault()) {
             dao.unsetDefaultAddress(userID);
         }
-
         boolean success = dao.updateAddress(addr);
         request.setAttribute("message", success ? "Address updated." : "Failed to update.");
         request.setAttribute("isEdit", true);

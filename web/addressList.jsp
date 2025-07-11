@@ -27,7 +27,7 @@
 
 <div class="container mt-5">
     <h2>Your Shipping Addresses</h2>
-    <a href="AddressController?action=add" class="btn btn-success mb-3">+ Add New Address</a>
+    <a href="MainController?action=add" class="btn btn-success mb-3">+ Add New Address</a>
 
     <table class="table table-hover">
         <thead>
@@ -54,10 +54,10 @@
                 <td><%= addr.getCity() %></td>
                 <td><%= addr.isDefault() ? "This is default address" : "" %></td>
                 <td>
-                    <a href="AddressController?action=edit&addressID=<%= addr.getAddressID() %>" class="btn btn-sm btn-primary">Edit</a>
-                    <a href="AddressController?action=delete&addressID=<%= addr.getAddressID() %>" class="btn btn-sm btn-danger" onclick="return confirm('Delete this address?')">Delete</a>
+                    <a href="MainController?action=edit&addressID=<%= addr.getAddressID() %>" class="btn btn-sm btn-primary">Edit</a>
+                    <a href="MainController?action=delete&addressID=<%= addr.getAddressID() %>" class="btn btn-sm btn-danger" onclick="return confirm('Delete this address?')">Delete</a>
                     <% if (!addr.isDefault()) { %>
-                        <a href="AddressController?action=setDefault&addressID=<%= addr.getAddressID() %>" class="btn btn-sm btn-secondary">Set Default</a>
+                        <a href="MainController?action=setDefault&addressID=<%= addr.getAddressID() %>" class="btn btn-sm btn-secondary">Set Default</a>
                     <% } %>
                 </td>
             </tr>
