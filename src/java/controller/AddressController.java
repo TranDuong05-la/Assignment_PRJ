@@ -119,7 +119,13 @@ public class AddressController extends HttpServlet {
     if (address.isDefault()) {
         dao.unsetDefaultAddress(userID);
     }
-    
+    String phone = request.getParameter("phone");
+    if (!phone.matches("^09\\d{8}$")) {
+        request.setAttribute("message", "Phone number must start with 09 and contain exactly 10 digits.");
+        request.setAttribute("isEdit", false);
+        request.setAttribute("address", address);
+        return FORM_PAGE;
+    }
     boolean success = dao.insertAddress(address);
     request.setAttribute("message", success ? "Address added successfully." : "Failed to add address.");
     request.setAttribute("address", address);
@@ -157,11 +163,21 @@ public class AddressController extends HttpServlet {
         addr.setDistrict(request.getParameter("district"));
         addr.setCity(request.getParameter("city"));
         addr.setDefault("on".equals(request.getParameter("isDefault")));
-
+        
+        
         AddressDAO dao = new AddressDAO();
+        
         if (addr.isDefault()) {
             dao.unsetDefaultAddress(userID);
         }
+         String phone = request.getParameter("phone");
+
+    if (!phone.matches("^09\\d{8}$")) {
+        request.setAttribute("message", "Phone number must start with 09 and contain exactly 10 digits.");
+        request.setAttribute("isEdit", true);
+        request.setAttribute("address", addr);
+        return FORM_PAGE;
+    }
         boolean success = dao.updateAddress(addr);
         request.setAttribute("message", success ? "Address updated." : "Failed to update.");
         request.setAttribute("isEdit", true);
