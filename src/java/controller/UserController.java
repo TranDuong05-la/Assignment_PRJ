@@ -33,6 +33,8 @@ public class UserController extends HttpServlet {
                 url = handleLogin(request,response);
             }else if(action.equals("logout")){
                 url = handleLogout(request,response);
+            }else if(action.equals("signUp")){
+                url = handleSignUp(request,response);
             }else{
                 request.setAttribute("message", "Invalid action:"+action+"!");
                 url=LOGIN_PAGE;
@@ -115,6 +117,41 @@ public class UserController extends HttpServlet {
         }catch(Exception e){
         }
         return url;
+    }
+
+    private String handleSignUp(HttpServletRequest request, HttpServletResponse response) {
+         String url = "signUp.jsp";
+    try {
+        String userID = request.getParameter("userID");
+        String password = request.getParameter("password");
+        String repassword = request.getParameter("repassword");
+        String fullName = request.getParameter("fullName");
+        String roleID = request.getParameter("roleID");
+
+        if (!password.equals(repassword)) {
+            request.setAttribute("message", "Passwords do not match!");
+            return url;
+        }
+
+        UserDAO userDAO = new UserDAO();
+        if (userDAO.isUserIDExists(userID)) {
+            request.setAttribute("message", "Username already exists!");
+        } else {
+            UserDTO newUser = new UserDTO(userID, fullName, password, roleID, true);
+            boolean success = userDAO.signup(newUser);
+
+            if (success) {
+                request.setAttribute("message", "Signup successful! Please login.");
+                url = LOGIN_PAGE;
+            } else {
+                request.setAttribute("message", "Signup failed. Please try again.");
+            }
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        request.setAttribute("message", "System error during signup.");
+    }
+    return url;
     }
 
 }

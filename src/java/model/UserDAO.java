@@ -111,6 +111,22 @@ public class UserDAO {
         return false;
     }
      
+     public boolean signup(UserDTO user) {
+    String sql = "INSERT INTO tblUsers(userID, fullName, password, roleID, status) VALUES (?, ?, ?, ?, 1)";
+    try (Connection conn = DbUtils.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, user.getUserID());
+        ps.setString(2, user.getFullName());
+        ps.setString(3, PasswordUtils.encryptSHA256(user.getPassword()));
+        ps.setString(4, user.getRoleID());
+        return ps.executeUpdate() > 0;
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return false;
+}
+
+     
      
 }
 

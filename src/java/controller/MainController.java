@@ -26,6 +26,14 @@ public class MainController extends HttpServlet {
                 || "logout".equals(action)
                 || "signUp".equals(action);
     }
+    private boolean isAddressAction(String action) {
+        return "list".equals(action)
+                || "add".equals(action)
+                || "edit".equals(action)
+                || "update".equals(action)
+                || "delete".equals(action)
+                || "setDefault".equals(action);
+    }
 // ----------quản lý sản phẩm & phân loại-------------------
      private boolean isProductAction(String action) {
         return "listBook".equals(action)
@@ -69,12 +77,13 @@ public class MainController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         String url = LOGIN_PAGE;
-//        String url = HOME_PAGE;
         try {
             String action = request.getParameter("action");
             if (isUserAction(action)) {
                 url = "/UserController";
-            } else if(isProductAction(action)){
+            } else if(isAddressAction(action)){
+                url = "/AddressController";
+            }else if(isProductAction(action)){
                 url = "/ProductController";
             } else if(isCategoryAction(action)){
                 url = "/CategoryController";
