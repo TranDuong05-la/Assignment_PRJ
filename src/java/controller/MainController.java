@@ -26,6 +26,7 @@ public class MainController extends HttpServlet {
                 || "logout".equals(action)
                 || "signUp".equals(action);
     }
+
     private boolean isAddressAction(String action) {
         return "list".equals(action)
                 || "add".equals(action)
@@ -34,8 +35,14 @@ public class MainController extends HttpServlet {
                 || "delete".equals(action)
                 || "setDefault".equals(action);
     }
+
+    private boolean isPaymentAction(String action) {
+        return "showQR".equals(action)
+                || "confirm".equals(action);
+    }
 // ----------quản lý sản phẩm & phân loại-------------------
-     private boolean isProductAction(String action) {
+
+    private boolean isProductAction(String action) {
         return "listBook".equals(action)
                 || "bookDetail".equals(action)
                 || "addBook".equals(action)
@@ -81,15 +88,17 @@ public class MainController extends HttpServlet {
             String action = request.getParameter("action");
             if (isUserAction(action)) {
                 url = "/UserController";
-            } else if(isAddressAction(action)){
+            } else if (isAddressAction(action)) {
                 url = "/AddressController";
-            }else if(isProductAction(action)){
+            } else if (isPaymentAction(action)) {
+                url = "/PaymentController";
+            } else if (isProductAction(action)) {
                 url = "/ProductController";
-            } else if(isCategoryAction(action)){
+            } else if (isCategoryAction(action)) {
                 url = "/CategoryController";
-            } else if(isInventoryAction(action)){
+            } else if (isInventoryAction(action)) {
                 url = "/InventoryController";
-            } else if(isReviewAction(action)){
+            } else if (isReviewAction(action)) {
                 url = "/ReviewController";
             }
         } catch (Exception e) {
