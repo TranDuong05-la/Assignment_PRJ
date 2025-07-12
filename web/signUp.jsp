@@ -12,7 +12,7 @@
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #c8f2e0, #e0fefc);
+            background: linear-gradient(135deg, #e3f2fd, #fff3e0);
             background-size: 200% 200%;
             animation: gradientMove 10s ease infinite;
             height: 100vh;
@@ -32,7 +32,7 @@
             background: #ffffff;
             padding: 35px;
             border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
             width: 100%;
             max-width: 480px;
             animation: fadeIn 1s ease;
@@ -44,54 +44,81 @@
         }
 
         h2 {
-            color: #2fb38b;
+            color: #0d47a1;
             font-weight: 600;
             text-align: center;
             margin-bottom: 30px;
         }
 
         .input-group-text {
-            background-color: #d8f7ee;
+            background-color: #bbdefb;
             border-right: none;
+            border-radius: 8px 0 0 8px;
         }
 
-        .form-control:focus {
-            border-color: #2fb38b;
-            box-shadow: 0 0 0 0.2rem rgba(47, 179, 139, 0.25);
+        .form-control {
+            border-radius: 0 8px 8px 0;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #0d47a1;
+            box-shadow: 0 0 0 0.2rem rgba(13, 71, 161, 0.25);
         }
 
         .btn-register {
-            background: linear-gradient(to right, #2fb38b, #57d9a3);
+            background: linear-gradient(to right, #0d47a1, #1976d2);
             border: none;
             color: white;
             font-weight: 600;
             transition: transform 0.2s ease;
+            border-radius: 8px;
         }
 
         .btn-register:hover {
             transform: scale(1.05);
-            background: linear-gradient(to right, #28a67f, #49c892);
+            background: linear-gradient(to right, #1565c0, #1e88e5);
         }
 
         .btn-back {
-            background-color: #a0aec0;
+            background-color: #ffa726;
             color: white;
             font-weight: 600;
+            border-radius: 8px;
         }
 
         .btn-back:hover {
-            background-color: #8b9ab3;
+            background-color: #fb8c00;
         }
 
         .form-select {
             background-color: #fff;
+            border-radius: 8px;
         }
 
         .message {
-            color: red;
             text-align: center;
             margin-top: 15px;
             font-style: italic;
+            font-size: 0.95rem;
+        }
+
+        .message.error {
+            color: red;
+        }
+
+        .message.success {
+            color: green;
+        }
+
+        .toggle-icon {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        @media (max-width: 576px) {
+            .signup-container {
+                padding: 25px;
+            }
         }
     </style>
 </head>
@@ -109,12 +136,18 @@
 
             <div class="mb-3 input-group">
                 <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
-                <input type="password" class="form-control" name="password" placeholder="Password" required />
+                <input type="password" class="form-control" id="passwordInput" name="password" placeholder="Password" required />
+                <span class="input-group-text toggle-icon" onclick="togglePassword('passwordInput', 'icon1')">
+                    <i id="icon1" class="bi bi-eye"></i>
+                </span>
             </div>
 
             <div class="mb-3 input-group">
                 <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
-                <input type="password" class="form-control" name="repassword" placeholder="Re-enter Password" required />
+                <input type="password" class="form-control" id="repasswordInput" name="repassword" placeholder="Re-enter Password" required />
+                <span class="input-group-text toggle-icon" onclick="togglePassword('repasswordInput', 'icon2')">
+                    <i id="icon2" class="bi bi-eye"></i>
+                </span>
             </div>
 
             <div class="mb-3 input-group">
@@ -122,17 +155,8 @@
                 <input type="text" class="form-control" name="fullName" placeholder="Full Name" required />
             </div>
 
-            <div class="mb-3 input-group">
-                <span class="input-group-text"><i class="bi bi-award-fill"></i></span>
-                <select class="form-select" name="roleID" required>
-                    <option value="">-- Select Role --</option>
-                    <option value="buyer">Buyer</option>
-                    <option value="seller"> Seller</option>
-                </select>
-            </div>
-
             <div class="d-grid mb-3">
-                <button type="submit" class="btn btn-register"> Register</button>
+                <button type="submit" class="btn btn-register">Register</button>
             </div>
         </form>
 
@@ -142,10 +166,32 @@
             </div>
         </form>
 
-        <div class="message">${message}</div>
+        <%
+            String message = (String) request.getAttribute("message");
+            if (message != null && !message.trim().isEmpty()) {
+                boolean isSuccess = message.toLowerCase().contains("success") || message.toLowerCase().contains("đăng ký thành công");
+        %>
+            <div class="message <%= isSuccess ? "success" : "error" %>"><%= message %></div>
+        <% } %>
     </div>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        function togglePassword(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove("bi-eye");
+                icon.classList.add("bi-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.remove("bi-eye-slash");
+                icon.classList.add("bi-eye");
+            }
+        }
+    </script>
 </body>
 </html>

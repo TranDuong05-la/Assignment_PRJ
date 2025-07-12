@@ -192,16 +192,16 @@ public class AddressController extends HttpServlet {
         return handleList(request, response);
     }
 
-    private String handleSetDefault(HttpServletRequest request, HttpServletResponse response) {
-        HttpSession session = request.getSession();
-        String userID = (String) session.getAttribute("userID");
-        int addressID = Integer.parseInt(request.getParameter("addressID"));
+private String handleSetDefault(HttpServletRequest request, HttpServletResponse response) {
+    HttpSession session = request.getSession();
+    String userID = (String) session.getAttribute("userID");
+    int addressID = Integer.parseInt(request.getParameter("addressID"));
 
-        AddressDAO dao = new AddressDAO();
-        dao.unsetDefaultAddress(userID);
-        dao.setDefaultAddress(addressID);
+    AddressDAO dao = new AddressDAO();
+    dao.unsetDefaultAddress(userID);   
+    dao.setDefaultAddress(addressID);  
 
-        return handleList(request, response);
-    }
+    return handleList(request, response);
+}
 
 }

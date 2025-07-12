@@ -7,15 +7,16 @@
     <meta charset="UTF-8">
     <title>Login Page</title>
 
+    <!-- Bootstrap & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
     <style>
         body {
-            background: linear-gradient(135deg, #c8f2e0, #e0fefc);
+            background: linear-gradient(135deg, #e3f2fd, #fff3e0);
             background-size: 200% 200%;
-            animation: gradientFlow 10s ease infinite;
+            animation: gradientFlow 8s ease infinite;
             height: 100vh;
             margin: 0;
             display: flex;
@@ -31,7 +32,7 @@
         }
 
         .login-card {
-            background: white;
+            background: #fff;
             border-radius: 16px;
             padding: 35px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -46,43 +47,45 @@
         }
 
         h3 {
-            color: #2fb38b;
+            color: #0d47a1;
             font-weight: 600;
             text-align: center;
             margin-bottom: 25px;
         }
 
         .input-group-text {
-            background-color: #d8f7ee;
+            background-color: #bbdefb;
             border-right: none;
         }
 
         .form-control:focus {
-            border-color: #2fb38b;
-            box-shadow: 0 0 0 0.2rem rgba(47, 179, 139, 0.25);
+            border-color: #0d47a1;
+            box-shadow: 0 0 0 0.2rem rgba(13, 71, 161, 0.25);
         }
 
         .btn-login {
-            background: linear-gradient(to right, #2fb38b, #57d9a3);
+            background: linear-gradient(to right, #0d47a1, #1976d2);
             border: none;
             color: white;
             font-weight: 600;
             transition: transform 0.2s ease;
+            border-radius: 8px;
         }
 
         .btn-login:hover {
             transform: scale(1.05);
-            background: linear-gradient(to right, #28a67f, #49c892);
+            background: linear-gradient(to right, #1565c0, #1e88e5);
         }
 
         .btn-signup {
-            background-color: #a0aec0;
+            background-color: #ffa726;
             color: white;
             font-weight: 600;
+            border-radius: 8px;
         }
 
         .btn-signup:hover {
-            background-color: #8b9ab3;
+            background-color: #fb8c00;
         }
 
         .message {
@@ -90,6 +93,11 @@
             text-align: center;
             font-style: italic;
             margin-top: 15px;
+        }
+
+        .toggle-icon {
+            cursor: pointer;
+            user-select: none;
         }
     </style>
 </head>
@@ -112,7 +120,10 @@
 
         <div class="mb-3 input-group">
             <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
-            <input type="password" class="form-control" name="strPassword" placeholder="Password" required />
+            <input type="password" class="form-control" id="passwordInput" name="strPassword" placeholder="Password" required />
+            <span class="input-group-text toggle-icon" onclick="togglePassword()">
+                <i id="toggleIcon" class="bi bi-eye"></i>
+            </span>
         </div>
 
         <div class="d-grid mb-2">
@@ -127,9 +138,8 @@
     </form>
 
     <%
-        Object objMessage = request.getAttribute("message");
-        String message = (objMessage == null) ? "" : objMessage.toString();
-        if (!message.isEmpty()) {
+        String message = (String) request.getAttribute("message");
+        if (message != null && !message.trim().isEmpty()) {
     %>
     <div class="message"><%= message %></div>
     <%
@@ -139,6 +149,23 @@
 <%
     }
 %>
+
+<script>
+    function togglePassword() {
+        const passwordInput = document.getElementById("passwordInput");
+        const icon = document.getElementById("toggleIcon");
+
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            icon.classList.remove("bi-eye");
+            icon.classList.add("bi-eye-slash");
+        } else {
+            passwordInput.type = "password";
+            icon.classList.remove("bi-eye-slash");
+            icon.classList.add("bi-eye");
+        }
+    }
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

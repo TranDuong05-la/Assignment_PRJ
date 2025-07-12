@@ -37,12 +37,8 @@ public class AuthUtils {
         return hasRole(request, "admin");
     }
 
-    public static boolean isBuyer(HttpServletRequest request) {
-        return hasRole(request, "buyer");
-    }
-    
-    public static boolean isSeller(HttpServletRequest request) {
-        return hasRole(request, "seller");
+    public static boolean isUser(HttpServletRequest request) {
+        return hasRole(request, "user");
     }
     
     public static String getLoginURL(){

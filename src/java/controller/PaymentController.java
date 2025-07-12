@@ -105,6 +105,7 @@ public class PaymentController extends HttpServlet {
 
         request.setAttribute("orderID", orderID);
         request.setAttribute("amount", amount);
+        handleShowQR(request, response);
     }
 
     private void handleApplyDiscount(HttpServletRequest request, HttpServletResponse response) {

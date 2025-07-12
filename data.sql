@@ -19,12 +19,10 @@ GO
 
 INSERT INTO tblUsers VALUES
 ('admin01', N'Quản trị viên', 'admin123', 'admin', 1),
-('buyer01', N'Nguyễn Văn A', 'buyer123', 'buyer', 1),
-('buyer02', N'Lê Thị B', 'abc123', 'buyer', 1),
-('buyer03', N'Hoàng Văn C', '123456', 'buyer', 0),
-('seller01', N'Shop ABC', 'seller123', 'seller', 1),
-('seller02', N'Shop XYZ', 'xyz789', 'seller', 1),
-('seller03', N'Cửa hàng khóa', 'lockedshop', 'seller', 0)
+('user01', N'Nguyễn Văn A', 'buyer123', 'user', 1),
+('user02', N'Lê Thị B', 'abc123', 'user', 1),
+('user03', N'Hoàng Văn C', '123456', 'user', 0),
+
 GO
 
 -- ADDRESSES TABLE
@@ -155,4 +153,22 @@ CREATE TABLE tblPayments (
     status NVARCHAR(20) DEFAULT NULL,
     paymentDate DATETIME DEFAULT GETDATE()
 )
+GO
+
+CREATE TRIGGER trg_EnsureSingleDefaultAddress
+ON tblAddresses
+AFTER INSERT, UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE tblAddresses
+    SET isDefault = 0
+    WHERE userID IN (
+        SELECT userID FROM inserted WHERE isDefault = 1
+    )
+    AND addressID NOT IN (
+        SELECT addressID FROM inserted WHERE isDefault = 1
+    );
+END;
 GO

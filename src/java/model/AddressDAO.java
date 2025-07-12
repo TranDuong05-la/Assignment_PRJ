@@ -125,16 +125,17 @@ public class AddressDAO {
 
 public boolean unsetDefaultAddress(String userID) {
     String sql = "UPDATE tblAddresses SET isDefault = 0 WHERE userID = ?";
-    try{
-        Connection conn = DbUtils.getConnection();
-        PreparedStatement ps = conn.prepareStatement(sql);
+    try (Connection conn = DbUtils.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
         ps.setString(1, userID);
-        return ps.executeUpdate() >= 0;
+        int affected = ps.executeUpdate();
+        return affected > 0;
     } catch (Exception e) {
         e.printStackTrace();
     }
     return false;
 }
+
 
 public boolean setDefaultAddress(int addressID) {
     String sql = "UPDATE tblAddresses SET isDefault = 1 WHERE addressID = ?";
@@ -147,5 +148,6 @@ public boolean setDefaultAddress(int addressID) {
     }
     return false;
 }
+
 
 }

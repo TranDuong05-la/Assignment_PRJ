@@ -126,7 +126,6 @@ public class UserController extends HttpServlet {
         String password = request.getParameter("password");
         String repassword = request.getParameter("repassword");
         String fullName = request.getParameter("fullName");
-        String roleID = request.getParameter("roleID");
 
         if (!password.equals(repassword)) {
             request.setAttribute("message", "Passwords do not match!");
@@ -137,7 +136,7 @@ public class UserController extends HttpServlet {
         if (userDAO.isUserIDExists(userID)) {
             request.setAttribute("message", "Username already exists!");
         } else {
-            UserDTO newUser = new UserDTO(userID, fullName, password, roleID, true);
+            UserDTO newUser = new UserDTO(userID, fullName, password,"user", true);
             boolean success = userDAO.signup(newUser);
 
             if (success) {
