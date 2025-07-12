@@ -10,14 +10,15 @@ import utils.DbUtils;
 public class PaymentDAO {
 
     public boolean addPayment(PaymentDTO payment) {
-        String sql = "INSERT INTO tblPayments (orderID, method, amount, status, paymentDate) VALUES (?, ?, ?, 1, ?)";
+        String sql = "INSERT INTO tblPayments (orderID, method, amount, status, paymentDate) VALUES (?, ?, ?, ?, ?)";
         try (Connection con = DbUtils.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, payment.getOrderID());
             ps.setString(2, payment.getMethod());
             ps.setDouble(3, payment.getAmount());
-            ps.setTimestamp(4, payment.getPaymentDate());
+            ps.setString(4, payment.getStatus());
+            ps.setTimestamp(5, payment.getPaymentDate());
 
             return ps.executeUpdate() > 0;
         } catch (Exception e) {

@@ -3,16 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/D:/PRJ301/Assignment_PRJ/web/payment.jsp</file>
             <file>file:/D:/PRJ301/Assignment_PRJ/src/java/controller/MainController.java</file>
             <file>file:/D:/PRJ301/Assignment_PRJ/data.sql</file>
-            <file>file:/D:/PRJ301/Assignment_PRJ/src/java/utils/AuthUtils.java</file>
-            <file>file:/D:/PRJ301/Assignment_PRJ/src/java/utils/DbUtils.java</file>
-            <file>file:/D:/PRJ301/Assignment_PRJ/src/java/controller/AddressController.java</file>
-            <file>file:/D:/PRJ301/Assignment_PRJ/web/addressList.jsp</file>
-            <file>file:/D:/PRJ301/Assignment_PRJ/web/addressForm.jsp</file>
-            <file>file:/D:/PRJ301/Assignment_PRJ/src/java/model/AddressDAO.java</file>
-            <file>file:/D:/PRJ301/Assignment_PRJ/src/java/controller/CategoryController.java</file>
-            <file>file:/D:/PRJ301/Assignment_PRJ/web/welcome.jsp</file>
+            <file>file:/D:/PRJ301/Assignment_PRJ/src/java/model/DiscountDTO.java</file>
+            <file>file:/D:/PRJ301/Assignment_PRJ/web/createDiscount.jsp</file>
+            <file>file:/D:/PRJ301/Assignment_PRJ/web/viewDiscounts.jsp</file>
+            <file>file:/D:/PRJ301/Assignment_PRJ/src/java/controller/PaymentController.java</file>
+            <file>file:/D:/PRJ301/Assignment_PRJ/src/java/model/DiscountDAO.java</file>
+            <file>file:/D:/PRJ301/Assignment_PRJ/src/java/controller/DiscountController.java</file>
         </group>
     </open-files>
 </project-private>

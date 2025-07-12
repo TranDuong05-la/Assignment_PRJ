@@ -131,6 +131,13 @@ CREATE TABLE tblDiscounts (
 )
 GO
 
+INSERT INTO tblDiscounts (code, type, value, minOrderAmount, expiryDate) VALUES
+('SALE10', 'percent', 10.00, 100000, '2025-12-31'),      -- Giảm 10% cho đơn từ 100k
+('GIAM20K', 'fixed', 20000.00, 50000, '2025-10-01'),     -- Giảm 20,000 cho đơn từ 50k
+('VIP50', 'percent', 50.00, 500000, '2025-08-30'),       -- Giảm 50% đơn từ 500k
+('FREESHIP', 'fixed', 30000.00, 0, '2025-09-15');         -- Giảm 30k không yêu cầu min
+GO
+
 -- tblOrders (giả định thêm để tạo FOREIGN KEY cho tblPayments)
 CREATE TABLE tblOrders (
     orderID INT IDENTITY(1,1) PRIMARY KEY,

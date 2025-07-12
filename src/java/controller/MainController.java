@@ -38,7 +38,13 @@ public class MainController extends HttpServlet {
 
     private boolean isPaymentAction(String action) {
         return "showQR".equals(action)
+                || "applyDiscount".equals(action)
                 || "confirm".equals(action);
+    }
+    
+    private boolean isDiscountAction(String action) {
+        return "create".equals(action)
+              ||"viewAll".equals(action);
     }
 // ----------quản lý sản phẩm & phân loại-------------------
 
@@ -92,6 +98,8 @@ public class MainController extends HttpServlet {
                 url = "/AddressController";
             } else if (isPaymentAction(action)) {
                 url = "/PaymentController";
+            } else if (isDiscountAction(action)) {
+                url = "/DiscountController";
             } else if (isProductAction(action)) {
                 url = "/ProductController";
             } else if (isCategoryAction(action)) {
