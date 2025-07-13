@@ -26,8 +26,29 @@ public class MainController extends HttpServlet {
                 || "logout".equals(action)
                 || "signUp".equals(action);
     }
+
+    private boolean isAddressAction(String action) {
+        return "list".equals(action)
+                || "add".equals(action)
+                || "edit".equals(action)
+                || "update".equals(action)
+                || "delete".equals(action)
+                || "setDefault".equals(action);
+    }
+
+    private boolean isPaymentAction(String action) {
+        return "showQR".equals(action)
+                || "applyDiscount".equals(action)
+                || "confirm".equals(action);
+    }
+    
+    private boolean isDiscountAction(String action) {
+        return "create".equals(action)
+              ||"viewAll".equals(action);
+    }
 // ----------quản lý sản phẩm & phân loại-------------------
-     private boolean isProductAction(String action) {
+
+    private boolean isProductAction(String action) {
         return "listBook".equals(action)
                 || "bookDetail".equals(action)
                 || "addBook".equals(action)
@@ -69,18 +90,23 @@ public class MainController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         String url = LOGIN_PAGE;
-//        String url = HOME_PAGE;
         try {
             String action = request.getParameter("action");
             if (isUserAction(action)) {
                 url = "/UserController";
-            } else if(isProductAction(action)){
+            } else if (isAddressAction(action)) {
+                url = "/AddressController";
+            } else if (isPaymentAction(action)) {
+                url = "/PaymentController";
+            } else if (isDiscountAction(action)) {
+                url = "/DiscountController";
+            } else if (isProductAction(action)) {
                 url = "/ProductController";
-            } else if(isCategoryAction(action)){
+            } else if (isCategoryAction(action)) {
                 url = "/CategoryController";
-            } else if(isInventoryAction(action)){
+            } else if (isInventoryAction(action)) {
                 url = "/InventoryController";
-            } else if(isReviewAction(action)){
+            } else if (isReviewAction(action)) {
                 url = "/ReviewController";
             }
         } catch (Exception e) {
