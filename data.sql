@@ -81,15 +81,15 @@ GO
 -- BOOK TABLE
 CREATE TABLE Book (
     BookID INT IDENTITY(1,1) PRIMARY KEY,
-    CategoryID INT FOREIGN KEY REFERENCES Category(CategoryID),
-    BookTitle NVARCHAR(255),
-    Author NVARCHAR(100),
-    Publisher NVARCHAR(100),
->>>>>>> 29209673bff4ecfb2fa99ea925ed788f2c3f70fc
+    CategoryID INT,
+    BookTitle VARCHAR(255),
+    Author VARCHAR(100),
+    Publisher VARCHAR(100),
     Price DECIMAL(10,2),
-    Image NVARCHAR(255),
-    Description NVARCHAR(MAX),
-    PublishYear INT
+    Image VARCHAR(255),
+    Description TEXT,
+    PublishYear INT,
+    FOREIGN KEY (CategoryID) REFERENCES Category(CategoryID)
 )
 GO
 
@@ -102,21 +102,13 @@ GO
 
 -- INVENTORY TABLE
 CREATE TABLE Inventory (
-<<<<<<< HEAD
     InventoryID INT INDENTITY(1,1) PRIMARY KEY,
     BookID INT,
     Quantity INT,
     LastUpdate DATETIME DEFAULT GETDATE(),
     FOREIGN KEY (BookID) REFERENCES Book(BookID)
 );
-=======
-    InventoryID INT IDENTITY(1,1) PRIMARY KEY,
-    BookID INT FOREIGN KEY REFERENCES Book(BookID),
-    Quantity INT,
-    LastUpdate DATETIME DEFAULT GETDATE()
-)
 GO
->>>>>>> 29209673bff4ecfb2fa99ea925ed788f2c3f70fc
 
 INSERT INTO Inventory (BookID, Quantity) VALUES
 (1, 20),
@@ -137,16 +129,7 @@ CREATE TABLE Review (
     FOREIGN KEY (BookID) REFERENCES Book(BookID),
     FOREIGN KEY (UserID) REFERENCES tblUsers(UserID)
 );
-=======
-    ReviewID INT IDENTITY(1,1) PRIMARY KEY,
-    BookID INT FOREIGN KEY REFERENCES Book(BookID),
-    UserID NVARCHAR(50) FOREIGN KEY REFERENCES tblUsers(userID),
-    Rating INT,
-    Comment NVARCHAR(MAX),
-    ReviewDate DATETIME DEFAULT GETDATE()
-)
 GO
->>>>>>> 29209673bff4ecfb2fa99ea925ed788f2c3f70fc
 
 INSERT INTO Review (BookID, UserID, Rating, Comment) VALUES
 (1, 'buyer01', 5, N'Sách rất hay và ý nghĩa.'),

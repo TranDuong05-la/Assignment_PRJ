@@ -11,7 +11,11 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
 import model.BookDAO;
+import model.BookDTO;
+import model.CategoryDAO;
+import model.CategoryDTO;
 
 /**
  *
@@ -21,6 +25,7 @@ import model.BookDAO;
 public class ProductController extends HttpServlet {
 
     BookDAO bdao = new BookDAO();
+    CategoryDAO cdao = new CategoryDAO();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -102,7 +107,14 @@ public class ProductController extends HttpServlet {
     }// </editor-fold>
 
     private String handleBookListing(HttpServletRequest request, HttpServletResponse response) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String list = request.getParameter("bookID");
+        String cate = request.getParameter("categoryID");
+        
+        List <BookDTO> book =bdao.getAll();
+        List<CategoryDTO> category= cdao.getAll();
+        request.setAttribute("book", book);
+        request.setAttribute("category", category);
+        return "home.jsp";
     }
 
     private String handleBookDetail(HttpServletRequest request, HttpServletResponse response) {
