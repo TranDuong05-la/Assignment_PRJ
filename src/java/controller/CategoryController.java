@@ -31,7 +31,28 @@ public class CategoryController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        
+        String url = "";
+        //                System.out.println("1");
+        try {
+            String action = request.getParameter("action");
+//      Xữ lí action của user
+            if (action.equals("listCategory")) {
+                url = handleCategoryListing(request, response);
+            } else if (action.equals("addCategory")) {
+                url = handleCategoryAdding(request, response);
+            } else if (action.equals("editCategory")) {
+                url = handleCategoryEditing(request, response);
+            } else if (action.equals("updateCategory")) {
+                url = handleCategoryUpdating(request, response);
+            } else if (action.equals("deleteCategory")) {
+                url = handleCategoryDeleting(request, response);
+            }
+        } catch (Exception e) {
+        } finally {
+            System.out.println(url);
+//            chuyển trang sang url mới ( request dựa trên url ở bên trên)
+            request.getRequestDispatcher(url).forward(request, response);
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -72,5 +93,25 @@ public class CategoryController extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
+    private String handleCategoryListing(HttpServletRequest request, HttpServletResponse response) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    private String handleCategoryAdding(HttpServletRequest request, HttpServletResponse response) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    private String handleCategoryEditing(HttpServletRequest request, HttpServletResponse response) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    private String handleCategoryUpdating(HttpServletRequest request, HttpServletResponse response) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    private String handleCategoryDeleting(HttpServletRequest request, HttpServletResponse response) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 
 }

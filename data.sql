@@ -32,8 +32,13 @@ INSERT INTO [dbo].[tblUsers] (userID, fullName, password, roleID, status) VALUES
 GO
 
 -- Quản lý sản phẩm & phân loại
+CREATE TABLE Category (
+    CategoryID INT INDENTITY(1,1) PRIMARY KEY,
+    CategoryName VARCHAR(100)
+);
+
 CREATE TABLE Book (
-    BookID INT PRIMARY KEY AUTO_INCREMENT,
+    BookID INT INDENTITY(1,1) PRIMARY KEY,
     CategoryID INT,
     BookTitle VARCHAR(255),
     Author VARCHAR(100),
@@ -46,22 +51,22 @@ CREATE TABLE Book (
 );
 --  Quản lý tồn kho
 CREATE TABLE Inventory (
-    InventoryID INT PRIMARY KEY AUTO_INCREMENT,
+    InventoryID INT INDENTITY(1,1) PRIMARY KEY,
     BookID INT,
     Quantity INT,
-    LastUpdate DATETIME DEFAULT NOW(),
+    LastUpdate DATETIME DEFAULT GETDATE(),
     FOREIGN KEY (BookID) REFERENCES Book(BookID)
 );
 
 CREATE TABLE Review (
-    ReviewID INT PRIMARY KEY AUTO_INCREMENT,
+    ReviewID INT INDENTITY(1,1) PRIMARY KEY,
     BookID INT,
     UserID INT,
     Rating INT,            -- 1 đến 5 sao
     Comment TEXT,
-    ReviewDate DATETIME DEFAULT NOW(),
+    ReviewDate DATETIME DEFAULT GETDATE(),
     FOREIGN KEY (BookID) REFERENCES Book(BookID),
-    FOREIGN KEY (UserID) REFERENCES User(UserID)
+    FOREIGN KEY (UserID) REFERENCES tblUsers(UserID)
 );
 
 INSERT INTO Category (CategoryName) VALUES (N"Tiểu thuyết");
@@ -82,10 +87,10 @@ VALUES (3, N"Tôi Thấy Hoa Vàng Trên Cỏ Xanh", N"Nguyễn Nhật Ánh", N"
 INSERT INTO Book (CategoryID, BookTitle, Author, Publisher, Price, Image, Description, PublishYear)
 VALUES (4, N"One Piece - Tập 1", N"Eichiro Oda", N"NXB Kim Đồng", 20000, N"img4.jpg", N"Chuyến phiêu lưu của Luffy và băng hải tặc.", 2018);
 
-INSERT INTO Inventory (BookID, Quantity, LastUpdate) VALUES (1, 20, NOW());
-INSERT INTO Inventory (BookID, Quantity, LastUpdate) VALUES (2, 15, NOW());
-INSERT INTO Inventory (BookID, Quantity, LastUpdate) VALUES (3, 10, NOW());
-INSERT INTO Inventory (BookID, Quantity, LastUpdate) VALUES (4, 50, NOW());
+INSERT INTO Inventory (BookID, Quantity, LastUpdate) VALUES (1, 20, GETDATE());
+INSERT INTO Inventory (BookID, Quantity, LastUpdate) VALUES (2, 15, GETDATE());
+INSERT INTO Inventory (BookID, Quantity, LastUpdate) VALUES (3, 10, GETDATE());
+INSERT INTO Inventory (BookID, Quantity, LastUpdate) VALUES (4, 50, GETDATE());
 
 
 INSERT INTO Review (BookID, UserID, Rating, Comment, ReviewDate)
