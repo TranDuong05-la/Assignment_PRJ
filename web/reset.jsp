@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page import="utils.AuthUtils" %>
 <%
     String token = request.getParameter("token");
     String message = (String) request.getAttribute("message");
@@ -117,7 +118,11 @@
         <% } %>
     </form>
 
-    <a href="login.jsp" class="back-link">← Back to Login</a>
+    <% if(!AuthUtils.isLoggedIn(request)){%>
+    <a href="login.jsp" class="back-link">← Back</a>
+    <%}else{%>
+    <a href="home.jsp" class="back-link">← Back</a> 
+    <%}%>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

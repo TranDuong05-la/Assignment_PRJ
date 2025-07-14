@@ -26,7 +26,7 @@ import utils.MailUtils;
 @WebServlet(name = "UserController", urlPatterns = {"/UserController"})
 public class UserController extends HttpServlet {
 
-    private static final String WELCOME_PAGE = "welcome.jsp";
+    private static final String WELCOME_PAGE = "home.jsp";
     private static final String LOGIN_PAGE = "login.jsp";
     private static final String RESET_PAGE = "reset.jsp";
 
@@ -113,7 +113,7 @@ public class UserController extends HttpServlet {
     }
 
     private String handleLogout(HttpServletRequest request, HttpServletResponse response) {
-        String url = LOGIN_PAGE;
+        String url = WELCOME_PAGE;
         try {
             HttpSession session = request.getSession();
             if (session != null) {

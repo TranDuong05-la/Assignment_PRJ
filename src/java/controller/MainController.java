@@ -15,11 +15,11 @@ import jakarta.servlet.http.HttpServletResponse;
  *
  * @author Admin
  */
-@WebServlet(name = "MainController", urlPatterns = {"/MainController"})
+@WebServlet(name = "MainController", urlPatterns = {"","/","/MainController"})
 public class MainController extends HttpServlet {
 
     private static final String LOGIN_PAGE = "login.jsp";
-//     private static final String HOME_PAGE = "home.jsp";
+     private static final String HOME_PAGE = "home.jsp";
 
     private boolean isUserAction(String action) {
         return "login".equals(action)
@@ -91,7 +91,7 @@ public class MainController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String url = LOGIN_PAGE;
+        String url = HOME_PAGE;
         try {
             String action = request.getParameter("action");
             if (isUserAction(action)) {

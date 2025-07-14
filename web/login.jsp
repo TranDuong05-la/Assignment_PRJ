@@ -152,7 +152,9 @@
     %>
     <div class="message"><%=message!=null?message:"" %></div>
     <div class="successMessage"><%=successMessage!=null?successMessage:"" %></div>
-    
+    <div style="text-align: right; margin-top: 5px;">
+    <a href="home.jsp" class="back-link" style="color: red; text-decoration: none;">← Back</a>
+</div
    
 </div>
 <%

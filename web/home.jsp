@@ -6,13 +6,17 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="java.util.List" %>
-<%@ page import="model.Book" %>
+<%@ page import="model.UserDTO" %>
+<%@ page import="utils.AuthUtils" %>
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Home</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
         <style>
             body {
                 background: #fff6f6;
@@ -55,7 +59,10 @@
                 max-width: 420px;
                 margin: 0 32px;
                 position: relative;
+                display: flex;
+                align-items: center;
             }
+
             .search-bar input {
                 width: 100%;
                 padding: 11px 44px 11px 20px;
@@ -71,14 +78,14 @@
             }
             .search-bar button {
                 position: absolute;
-                top: 8px;
                 right: 12px;
-                border: none;
                 background: transparent;
+                border: none;
                 color: #ea2222;
                 font-size: 1.15rem;
                 cursor: pointer;
             }
+
             .header-menu {
                 display: flex;
                 gap: 28px;
@@ -137,6 +144,85 @@
             }
             .sign-btn:hover {
                 background: #d31717;
+            }
+
+            .dropdown {
+                display: none;
+            }
+            @media screen and (max-width: 768px) {
+                .search-bar  {
+    position: absolute;
+    top: 71px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70% !important;
+    max-width: 600px;
+    margin: 0;
+    z-index: 999;
+    background: white;
+    padding: 6px 12px;
+    border-radius: 28px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+                .header-wrap {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 10px;
+                }
+
+                .header-menu,
+                .header-right,
+                .cart-btn ,
+                .cart-count,
+                .sign-btn{
+                    display: none;
+                }
+
+                .dropdown {
+                    display: block;
+                    position: absolute;
+                    top: 72px;
+                    right: 10px;
+                    z-index: 1000;
+                    
+                }
+                
+                .dropdown .dropdown-menu {
+                    min-width: 180px;
+                    background-color: #fff;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                }
+
+                .dropdown .dropdown-item {
+                    padding: 10px 15px;
+                    font-size: 0.95rem;
+                }
+                
+.dropdown .btn.dropdown-toggle {
+    padding: 6px 10px;
+    font-size: 1rem;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    color: #333;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    transition: background 0.2s;
+}
+
+.dropdown .btn.dropdown-toggle:hover {
+    background-color: #e6e6e6;
+}
+
+
+                .dropdown-divider {
+                    margin: 5px 0;
+                    border-top: 1px solid #ddd;
+                }
             }
             /* Slider */
             .slider-section {
@@ -392,52 +478,9 @@
                 font-size:1.2rem;
                 color:#ea2222;
             }
-            @media (max-width: 900px){
-                .header-wrap {
-                    padding: 0 10px;
-                }
-                .slider-section {
-                    max-width: 99vw;
-                }
-                .slider-content {
-                    left: 10vw;
-                    width: 55vw;
-                }
-            }
-            @media (max-width: 600px){
-                .slider-section {
-                    min-height: 160px;
-                    height: 180px;
-                }
-                .slider-img {
-                    height: 180px;
-                }
-                .slider-content {
-                    left: 12px;
-                    top: 10px;
-                    width: 80vw;
-                }
-                .slider-content h1 {
-                    font-size: 1.15rem;
-                }
-                .books-list {
-                    flex-wrap: wrap;
-                }
-                .book-card {
-                    min-width: 43vw;
-                    max-width: 100vw;
-                    width: 100%;
-                }
-                .header-wrap {
-                    flex-wrap: wrap;
-                }
-                .search-bar {
-                    margin: 0 8px;
-                }
-                #addForm {
-                    min-width: 85vw;
-                }
-            }
+
+            
+
             /* FOOTER STYLE */
             footer {
                 background: #231f20;
@@ -542,150 +585,207 @@
                     padding: 30px 14px 0 14px;
                 }
             }
-            @media (max-width:600px){
-                .footer-col {
-                    min-width: 0;
-                    margin-bottom: 26px;
-                }
-            }
+
+
+
         </style>
     </head>
     <body>
         <!-- Header -->
         <div class="header">
             <div class="header-wrap">
-                <a class="logo" href="#"><i class="fa-solid fa-book-open"></i> ABC <span style="color:#111;font-weight:400">Book</span></a>
+                <a class="logo" href="home.jsp"><i class="fa-solid fa-book-open"></i> ABC <span style="color:#111;font-weight:400">Book</span></a>
                 <div class="search-bar">
-                    <input type="text" placeholder="Search book by author or publisher">
-                    <button><i class="fa-solid fa-search"></i></button>
+                    <input type="text" class="form-control rounded-pill" placeholder="Search book by author or publisher">
+                    <button class="btn btn-link text-danger ml-n4"><i class="fa fa-search"></i></button>
                 </div>
+
                 <div class="header-menu">
                     <a href="#" class="active">Home</a>
                     <a href="#">Categories</a>
                 </div>
                 <div class="header-right">
                     <a href="#" style="color:#3d3d3d;font-size:1.02rem;text-decoration:none;">FAQ</a>
-                    <a href="#" style="color:#3d3d3d;font-size:1.02rem;text-decoration:none;">Track Order</a>
+                    <% if(AuthUtils.isLoggedIn(request)){%>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            See More
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="viewDiscounts.jsp">View Discounts Code</a>
+                            <a class="dropdown-item" href="addressList.jsp">Your Address</a>
+                            <a class="dropdown-item" href="#">Something else here</a>
+                            <a class="dropdown-item" href="#">Something else here</a>
+                            <a class="dropdown-item" href="#">Something else here</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="reset.jsp">Reset Password</a>
+                        </div>
+                        <%}%>
+                    </div>
+
                     <a href="#" class="cart-btn"><i class="fa-solid fa-cart-shopping"></i>
                         <span class="cart-count">1</span>
                     </a>
-                    <a href="#" class="sign-btn">Sign in</a>
+                    <%
+                    UserDTO user = (UserDTO) session.getAttribute("user");
+                     if (user != null) {
+                    %>
+                    <span style="font-size: 1rem;"><%= user.getFullName() %></span>
+                    <a href="MainController?action=logout" class="sign-btn" style="background:#ccc;color:#222;">Logout</a>
+                    <%
+                        } else {
+                    %>
+                    <a href="login.jsp" class="sign-btn">Sign in</a>
+                    <%
+                        }
+                    %>
+
                 </div>
             </div>
-        </div>
-
-        <!-- Slider -->
-        <div class="slider-section">
-            <img class="slider-img" src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80" alt="">
-            <div class="slider-content">
-                <span class="genre">Science Fiction</span>
-                <h1>The History<br> of Phipino</h1>
-                <a class="btn" href="#">Browse Store</a>
-            </div>
-            <div class="slider-dots">
-                <div class="slider-dot active"></div>
-                <div class="slider-dot"></div>
-                <div class="slider-dot"></div>
-            </div>
-        </div>
-
-        <!-- Add Product Button -->
-        <div class="add-book-bar">
-            <button class="sign-btn" onclick="openAddModal()">+ Thêm sản phẩm</button>
-        </div>
-
-        <!-- Add Product Modal -->
-        <div id="addModal">
-            <form id="addForm" autocomplete="off">
-                <h3>Thêm sản phẩm mới</h3>
-                <label>Tên sách:<input type="text" name="title" required></label>
-                <label>Tác giả:<input type="text" name="author" required></label>
-                <label>Giá ($):<input type="number" name="price" min="1" required></label>
-                <label>Ảnh (URL):<input type="url" name="image" required placeholder="http://..."></label>
-                <div class="btns">
-                    <button type="button" onclick="closeAddModal()">Hủy</button>
-                    <button type="submit" class="sign-btn">Lưu</button>
+            <!-- Mobile Dropdown Menu -->
+            <div class="dropdown d-md-none">
+                <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown">
+                    <i class="fa fa-bars"></i>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="home.jsp">Home</a>
+                    <a class="dropdown-item" href="#">Categories</a>
+                    <a class="dropdown-item" href="#">FAQ</a>
+                    <a class="dropdown-item" href="#">Track Order</a>
+                    <a class="dropdown-item" href="#"><i class="fa fa-shopping-cart"></i> Cart (1)</a>
+                    <%
+                        if (user != null) {
+                    %>
+                    <div class="dropdown-divider"></div>
+                    <span class="dropdown-item-text"><%= user.getFullName() %></span>
+                    <a class="dropdown-item" href="MainController?action=logout">Logout</a>
+                    <%
+                        } else {
+                    %>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="login.jsp">Sign in</a>
+                    <%
+                        }
+                    %>
                 </div>
-                <span onclick="closeAddModal()" class="close-x" title="Đóng">&times;</span>
-            </form>
-        </div>
 
-        <!-- Best Seller -->
-        <div class="best-seller-section">
-            <div class="best-title">Best Selling Books Ever</div>
-            <div class="books-list" id="books-list">
-                <!-- Các book-card giữ nguyên như code bạn gửi -->
-                <!-- ... -->
-                <div class="book-card">
-                    <img src="https://m.media-amazon.com/images/I/41zoxjP4xlL.jpg" alt="">
-                    <div class="book-title">Sin Eater</div>
-                    <div class="author">Megan Campisi</div>
-                    <div class="stars">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star-half-alt"></i>
+            </div>
+
+            <!-- Slider -->
+            <div class="slider-section">
+                <img class="slider-img" src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80" alt="">
+                <div class="slider-content">
+                    <span class="genre">Science Fiction</span>
+                    <h1>The History<br> of Phipino</h1>
+                    <a class="btn" href="#">Browse Store</a>
+                </div>
+                <div class="slider-dots">
+                    <div class="slider-dot active"></div>
+                    <div class="slider-dot"></div>
+                    <div class="slider-dot"></div>
+                </div>
+            </div>
+
+            <!-- Add Product Button -->
+            <div class="add-book-bar">
+                <button class="sign-btn" onclick="openAddModal()">+ Thêm sản phẩm</button>
+            </div>
+
+            <!-- Add Product Modal -->
+            <div id="addModal">
+                <form id="addForm" autocomplete="off">
+                    <h3>Thêm sản phẩm mới</h3>
+                    <label>Tên sách:<input type="text" name="title" required></label>
+                    <label>Tác giả:<input type="text" name="author" required></label>
+                    <label>Giá ($):<input type="number" name="price" min="1" required></label>
+                    <label>Ảnh (URL):<input type="url" name="image" required placeholder="http://..."></label>
+                    <div class="btns">
+                        <button type="button" onclick="closeAddModal()">Hủy</button>
+                        <button type="submit" class="sign-btn">Lưu</button>
                     </div>
-                    <div class="review-count">(120 Review)</div>
-                    <div class="price">$50</div>
-                    <button class="del-btn" title="Xóa sản phẩm" onclick="removeBook(this)">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-                <!-- ... Các book-card còn lại ... -->
+                    <span onclick="closeAddModal()" class="close-x" title="Đóng">&times;</span>
+                </form>
             </div>
-        </div>
-        <!-- Latest/New Books Section -->
-        <div class="best-seller-section" style="margin-top:48px;">
-            <div class="best-title">Latest Books</div>
-            <div class="books-list">
-                <!-- Các book-card sách mới giữ nguyên -->
-            </div>
-        </div>
 
-        <footer>
-            <div class="footer-wrap">
-                <div class="footer-col">
-                    <a href="#" class="footer-logo"><i class="fa-solid fa-book-open"></i> ABC <span style="color:#fff;font-weight:400">Book</span></a>
-                    <div class="footer-desc">
-                        ABC Book - Nền tảng đặt sách trực tuyến, đa dạng đầu sách, giao hàng toàn quốc.
+            <!-- Best Seller -->
+            <div class="best-seller-section">
+                <div class="best-title">Best Selling Books Ever</div>
+                <div class="books-list" id="books-list">
+                    <!-- Các book-card giữ nguyên như code bạn gửi -->
+                    <!-- ... -->
+                    <div class="book-card">
+                        <img src="https://m.media-amazon.com/images/I/41zoxjP4xlL.jpg" alt="">
+                        <div class="book-title">Sin Eater</div>
+                        <div class="author">Megan Campisi</div>
+                        <div class="stars">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star-half-alt"></i>
+                        </div>
+                        <div class="review-count">(120 Review)</div>
+                        <div class="price">$50</div>
+                        <button class="del-btn" title="Xóa sản phẩm" onclick="removeBook(this)">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
                     </div>
-                    <div class="footer-social">
-                        <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
-                        <a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
-                        <a href="#" title="Tiktok"><i class="fab fa-tiktok"></i></a>
-                    </div>
-                </div>
-                <div class="footer-col">
-                    <div class="footer-title">Danh mục</div>
-                    <ul class="footer-list">
-                        <li><a href="#">Trang chủ</a></li>
-                        <li><a href="#">Thể loại sách</a></li>
-                        <li><a href="#">Sách mới</a></li>
-                        <li><a href="#">Bán chạy</a></li>
-                        <li><a href="#">Blog</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <div class="footer-title">Hỗ trợ</div>
-                    <ul class="footer-list">
-                        <li><a href="#">Chính sách đổi trả</a></li>
-                        <li><a href="#">Câu hỏi thường gặp</a></li>
-                        <li><a href="#">Liên hệ hỗ trợ</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <div class="footer-title">Liên hệ</div>
-                    <div class="footer-contact">
-                        <div><i class="fa fa-map-marker-alt"></i> 123 ABC Street, Hà Nội</div>
-                        <div><i class="fa fa-envelope"></i> support@abcbook.vn</div>
-                        <div><i class="fa fa-phone"></i> 0123 456 789</div>
-                    </div>
+                    <!-- ... Các book-card còn lại ... -->
                 </div>
             </div>
-            <div class="footer-bottom">
-                2025 ABC Book. All rights reserved.
+            <!-- Latest/New Books Section -->
+            <div class="best-seller-section" style="margin-top:48px;">
+                <div class="best-title">Latest Books</div>
+                <div class="books-list">
+                    <!-- Các book-card sách mới giữ nguyên -->
+                </div>
             </div>
-        </footer>
+
+            <footer>
+                <div class="footer-wrap">
+                    <div class="footer-col">
+                        <a href="#" class="footer-logo"><i class="fa-solid fa-book-open"></i> ABC <span style="color:#fff;font-weight:400">Book</span></a>
+                        <div class="footer-desc">
+                            ABC Book - Nền tảng đặt sách trực tuyến, đa dạng đầu sách, giao hàng toàn quốc.
+                        </div>
+                        <div class="footer-social">
+                            <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+                            <a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
+                            <a href="#" title="Tiktok"><i class="fab fa-tiktok"></i></a>
+                        </div>
+                    </div>
+                    <div class="footer-col">
+                        <div class="footer-title">Danh mục</div>
+                        <ul class="footer-list">
+                            <li><a href="#">Trang chủ</a></li>
+                            <li><a href="#">Thể loại sách</a></li>
+                            <li><a href="#">Sách mới</a></li>
+                            <li><a href="#">Bán chạy</a></li>
+                            <li><a href="#">Blog</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-col">
+                        <div class="footer-title">Hỗ trợ</div>
+                        <ul class="footer-list">
+                            <li><a href="#">Chính sách đổi trả</a></li>
+                            <li><a href="#">Câu hỏi thường gặp</a></li>
+                            <li><a href="#">Liên hệ hỗ trợ</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-col">
+                        <div class="footer-title">Liên hệ</div>
+                        <div class="footer-contact">
+                            <div><i class="fa fa-map-marker-alt"></i> FPT University, HCM</div>
+                            <div><i class="fa fa-envelope"></i> kiemtienonl2108@gmail.com</div>
+                            <div><i class="fa fa-phone"></i> 0917972397</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    2025 ABC Book. All rights reserved.
+                </div>
+            </footer>
+            <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+
     </body>
 </html>
