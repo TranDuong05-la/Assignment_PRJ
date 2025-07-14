@@ -172,11 +172,11 @@ private String handleSignUp(HttpServletRequest request, HttpServletResponse resp
 private String handleReset(HttpServletRequest request, HttpServletResponse response) {
     String token = request.getParameter("token");
     UserDAO dao = new UserDAO();
-
+    
     if (token == null) {
         String email = request.getParameter("email");
         String generatedToken = dao.generateResetToken(email);
-
+        
         if (generatedToken != null) {
             String resetLink = "http://localhost:8080/Assignment_PRJ/reset.jsp?token=" + generatedToken;
             MailUtils.sendResetEmail(email, resetLink);

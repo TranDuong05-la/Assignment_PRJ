@@ -66,8 +66,8 @@ public class UserDAO {
         String sql = "SELECT * FROM tblUsers ORDER BY userID";
 
         try {
-            Connection conn = DbUtils.getConnection();  
-            PreparedStatement ps = conn.prepareStatement(sql);  
+            Connection conn = DbUtils.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -122,7 +122,7 @@ public class UserDAO {
         }
         return false;
     }
-    
+
     public boolean isEmailExists(String Email) {
         String sql = "SELECT COUNT(*) FROM tblUsers WHERE email = ?";
         try {
@@ -142,27 +142,27 @@ public class UserDAO {
     }
 
     public boolean signup(UserDTO user) {
-    String sql = "INSERT INTO tblUsers(userID, fullName, password, email, roleID, status, resetToken, tokenExpiry) "
-               + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    try {
-         Connection conn = DbUtils.getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql);
+        String sql = "INSERT INTO tblUsers(userID, fullName, password, email, roleID, status, resetToken, tokenExpiry) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        try {
+            Connection conn = DbUtils.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
 
-        ps.setString(1, user.getUserID());
-        ps.setString(2, user.getFullName());
-        ps.setString(3, PasswordUtils.encryptSHA256(user.getPassword()));
-        ps.setString(4, user.getEmail());
-        ps.setString(5, user.getRoleID());
-        ps.setBoolean(6, user.isStatus());
-        ps.setString(7, null);
-        ps.setTimestamp(8, null);
+            ps.setString(1, user.getUserID());
+            ps.setString(2, user.getFullName());
+            ps.setString(3, PasswordUtils.encryptSHA256(user.getPassword()));
+            ps.setString(4, user.getEmail());
+            ps.setString(5, user.getRoleID());
+            ps.setBoolean(6, user.isStatus());
+            ps.setString(7, null);
+            ps.setTimestamp(8, null);
 
-        return ps.executeUpdate() > 0;
-    } catch (Exception e) {
-        e.printStackTrace();
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
-    return false;
-}
 
 
     public String generateResetToken(String email) {
@@ -171,7 +171,7 @@ public class UserDAO {
         Timestamp expiry = new Timestamp(System.currentTimeMillis() + 5 * 60 * 1000);
 
         try {
-            Connection conn = DbUtils.getConnection();  
+            Connection conn = DbUtils.getConnection();
             PreparedStatement ps = conn.prepareStatement(sql);
 
             ps.setString(1, token);
@@ -192,7 +192,7 @@ public class UserDAO {
         String updateSql = "UPDATE tblUsers SET password = ?, resetToken = NULL, tokenExpiry = NULL WHERE userID = ?";
 
         try {
-            Connection conn = DbUtils.getConnection();  
+            Connection conn = DbUtils.getConnection();
             PreparedStatement ps = conn.prepareStatement(getUserSql);
 
             ps.setString(1, token);
@@ -201,11 +201,11 @@ public class UserDAO {
             if (rs.next()) {
                 String userID = rs.getString("userID");
                 newPassword = PasswordUtils.encryptSHA256(newPassword);
-                try ( PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
-                    updateStmt.setString(1, newPassword);
-                    updateStmt.setString(2, userID);
-                    return updateStmt.executeUpdate() > 0;
-                }
+                PreparedStatement update = conn.prepareStatement(updateSql);
+                update.setString(1, newPassword);
+                update.setString(2, userID);
+                return update.executeUpdate() > 0;
+
             }
 
         } catch (Exception e) {
