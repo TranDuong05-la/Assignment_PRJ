@@ -136,6 +136,8 @@
             <button type="submit" class="btn btn-signup">Signup</button>
         </div>
     </form>
+    <p><a href="reset.jsp">Forgot Password?</a></p>
+
 
     <%
         String message = (String) request.getAttribute("message");

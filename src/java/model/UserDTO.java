@@ -1,30 +1,31 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model;
 
-/**
- *
- * @author Admin
- */
+import java.sql.Timestamp;
+
 public class UserDTO {
     private String userID;
     private String fullName;
     private String password;
+    private String email;
     private String roleID;
     private boolean status;
+    private String resetToken;
+    private Timestamp tokenExpiry;
 
     public UserDTO() {
     }
 
-    public UserDTO(String userID, String fullName, String password, String roleID, boolean status) {
+    public UserDTO(String userID, String fullName, String password, String email, String roleID, boolean status, String resetToken, Timestamp tokenExpiry) {
         this.userID = userID;
         this.fullName = fullName;
         this.password = password;
+        this.email = email;
         this.roleID = roleID;
         this.status = status;
+        this.resetToken = resetToken;
+        this.tokenExpiry = tokenExpiry;
     }
+
 
     public String getUserID() {
         return userID;
@@ -50,6 +51,14 @@ public class UserDTO {
         this.password = password;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getRoleID() {
         return roleID;
     }
@@ -65,6 +74,20 @@ public class UserDTO {
     public void setStatus(boolean status) {
         this.status = status;
     }
-    
-    
+
+    public String getResetToken() {
+        return resetToken;
+    }
+
+    public void setResetToken(String resetToken) {
+        this.resetToken = resetToken;
+    }
+
+    public Timestamp getTokenExpiry() {
+        return tokenExpiry;
+    }
+
+    public void setTokenExpiry(Timestamp tokenExpiry) {
+        this.tokenExpiry = tokenExpiry;
+    }
 }

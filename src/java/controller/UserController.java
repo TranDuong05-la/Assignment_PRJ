@@ -4,6 +4,8 @@
  */
 package controller;
 
+
+
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -11,8 +13,11 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.sql.Timestamp;
 import model.UserDAO;
 import model.UserDTO;
+import utils.MailUtils;
+
 
 /**
  *
@@ -20,29 +25,33 @@ import model.UserDTO;
  */
 @WebServlet(name = "UserController", urlPatterns = {"/UserController"})
 public class UserController extends HttpServlet {
-    private static final String WELCOME_PAGE="welcome.jsp";
-    private static final String LOGIN_PAGE="login.jsp";
-    
+
+    private static final String WELCOME_PAGE = "welcome.jsp";
+    private static final String LOGIN_PAGE = "login.jsp";
+    private static final String RESET_PAGE = "reset.jsp";
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-                String url = LOGIN_PAGE;
-        try{
+        String url = LOGIN_PAGE;
+        try {
             String action = request.getParameter("action");
-            if(action.equals("login")){
-                url = handleLogin(request,response);
-            }else if(action.equals("logout")){
-                url = handleLogout(request,response);
-            }else if(action.equals("signUp")){
-                url = handleSignUp(request,response);
-            }else{
-                request.setAttribute("message", "Invalid action:"+action+"!");
-                url=LOGIN_PAGE;
+            if (action.equals("login")) {
+                url = handleLogin(request, response);
+            } else if (action.equals("logout")) {
+                url = handleLogout(request, response);
+            } else if (action.equals("signUp")) {
+                url = handleSignUp(request, response);
+            } else if (action.equals("reset")) {
+                url = handleReset(request, response);
+            } else {
+                request.setAttribute("message", "Invalid action:" + action + "!");
+                url = LOGIN_PAGE;
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("message", "System error occurred!");
-        }finally{
+        } finally {
             request.getRequestDispatcher(url).forward(request, response);
         }
     }
@@ -88,44 +97,45 @@ public class UserController extends HttpServlet {
 
     private String handleLogin(HttpServletRequest request, HttpServletResponse response) {
         String url = "";
-                HttpSession session = request.getSession();
-                String strUsername = request.getParameter("strUsername");
-                String strPassword = request.getParameter("strPassword");
-                UserDAO userDAO = new UserDAO();
-                if(userDAO.login(strUsername, strPassword)){
-                    UserDTO user = userDAO.getUserById(strUsername);
-                    url = WELCOME_PAGE;
-                    session.setAttribute("user", user);
-                }else{
-                    url = LOGIN_PAGE;
-                    request.setAttribute("message", "Username or Password incorrect!");
-                }
-            return url;
-    }
-
-    private String handleLogout(HttpServletRequest request, HttpServletResponse response) {
-        String url = LOGIN_PAGE;
-        try{
-            HttpSession session = request.getSession();
-            if(session!=null){
-                Object objUser = session.getAttribute("user");
-                UserDTO user = (objUser!=null)?(UserDTO)objUser:null;
-                if(user!=null){
-                    session.invalidate();
-                }
-            }
-        }catch(Exception e){
+        HttpSession session = request.getSession();
+        String strUsername = request.getParameter("strUsername");
+        String strPassword = request.getParameter("strPassword");
+        UserDAO userDAO = new UserDAO();
+        if (userDAO.login(strUsername, strPassword)) {
+            UserDTO user = userDAO.getUserById(strUsername);
+            url = WELCOME_PAGE;
+            session.setAttribute("user", user);
+        } else {
+            url = LOGIN_PAGE;
+            request.setAttribute("message", "Username or Password incorrect!");
         }
         return url;
     }
 
-    private String handleSignUp(HttpServletRequest request, HttpServletResponse response) {
-         String url = "signUp.jsp";
+    private String handleLogout(HttpServletRequest request, HttpServletResponse response) {
+        String url = LOGIN_PAGE;
+        try {
+            HttpSession session = request.getSession();
+            if (session != null) {
+                Object objUser = session.getAttribute("user");
+                UserDTO user = (objUser != null) ? (UserDTO) objUser : null;
+                if (user != null) {
+                    session.invalidate();
+                }
+            }
+        } catch (Exception e) {
+        }
+        return url;
+    }
+
+private String handleSignUp(HttpServletRequest request, HttpServletResponse response) {
+    String url = "signUp.jsp";
     try {
         String userID = request.getParameter("userID");
         String password = request.getParameter("password");
         String repassword = request.getParameter("repassword");
         String fullName = request.getParameter("fullName");
+        String email = request.getParameter("email");
 
         if (!password.equals(repassword)) {
             request.setAttribute("message", "Passwords do not match!");
@@ -136,7 +146,7 @@ public class UserController extends HttpServlet {
         if (userDAO.isUserIDExists(userID)) {
             request.setAttribute("message", "Username already exists!");
         } else {
-            UserDTO newUser = new UserDTO(userID, fullName, password,"user", true);
+            UserDTO newUser = new UserDTO(userID,fullName,password,email,"user",true,null,null);
             boolean success = userDAO.signup(newUser);
 
             if (success) {
@@ -151,6 +161,39 @@ public class UserController extends HttpServlet {
         request.setAttribute("message", "System error during signup.");
     }
     return url;
+}
+
+
+
+private String handleReset(HttpServletRequest request, HttpServletResponse response) {
+    String token = request.getParameter("token");
+    UserDAO dao = new UserDAO();
+
+    if (token == null) {
+        // Reset Request - gửi link
+        String email = request.getParameter("email");
+        String generatedToken = dao.generateResetToken(email);
+
+        if (generatedToken != null) {
+            String resetLink = "http://localhost:8080/Assignment_PRJ/reset.jsp?token=" + generatedToken;
+            MailUtils.sendResetEmail(email, resetLink);
+            request.setAttribute("message", "A reset link has been sent to your email: " + email);
+        } else {
+            request.setAttribute("message", "Email not found.");
+        }
+    } else {
+        // Reset Password - đặt lại mật khẩu
+        String newPassword = request.getParameter("newPassword");
+        boolean success = dao.resetPassword(token, newPassword);
+
+        if (success) {
+            request.setAttribute("message", "Password reset successful. Please login.");
+        } else {
+            request.setAttribute("message", "Invalid or expired token.");
+        }
     }
+
+    return RESET_PAGE;
+}
 
 }

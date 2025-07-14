@@ -2,6 +2,8 @@ USE master
 GO
 DROP DATABASE IF EXISTS PRJ301_Assignment
 GO
+
+GO
 CREATE DATABASE PRJ301_Assignment
 GO
 USE PRJ301_Assignment
@@ -12,33 +14,37 @@ CREATE TABLE tblUsers (
     userID NVARCHAR(50) PRIMARY KEY,
     fullName NVARCHAR(100) NOT NULL,
     password NVARCHAR(255) NOT NULL,
+    email NVARCHAR(100) UNIQUE NOT NULL,          
     roleID NVARCHAR(20) NOT NULL,
-    status BIT NOT NULL DEFAULT 1
+    status BIT NOT NULL DEFAULT 1,
+    resetToken NVARCHAR(255),                     
+    tokenExpiry DATETIME                          
 )
 GO
 
-INSERT INTO tblUsers VALUES
-('admin01', N'Quản trị viên', 'admin123', 'admin', 1),
-('user01', N'Nguyễn Văn A', 'buyer123', 'user', 1),
-('user02', N'Lê Thị B', 'abc123', 'user', 1),
-('user03', N'Hoàng Văn C', '123456', 'user', 0),
+INSERT INTO tblUsers (userID, fullName, password, email, roleID, status)
+VALUES 
+('ant', 'Ánh Ngân', '123', 'kieuantran123@gmail.com', 'admin', 1),
+('rosie', 'Rosie', '1102', 'ntlinh11297@gmail.com', 'admin', 1),
+('admin', 'Duơng', '123', 'Duongkieu090302@gmail.com', 'admin', 1),
+('user01', 'Nguyễn Văn A', '123456', 'a@example.com', 'user', 1),
+('user02', 'Lê Văn C', '123abc', 'c@example.com', 'user', 1);
 
 GO
 
-<<<<<<< HEAD
 -- Quản lý sản phẩm & phân loại
 CREATE TABLE Category (
-    CategoryID INT INDENTITY(1,1) PRIMARY KEY,
+    CategoryID INT IDENTITY(1,1) PRIMARY KEY,
     CategoryName VARCHAR(100)
 );
 
 CREATE TABLE Book (
-    BookID INT INDENTITY(1,1) PRIMARY KEY,
+    BookID INT IDENTITY(1,1) PRIMARY KEY,
     CategoryID INT,
     BookTitle VARCHAR(255),
     Author VARCHAR(100),
     Publisher VARCHAR(100),
-=======
+	)
 -- ADDRESSES TABLE
 CREATE TABLE tblAddresses (
     addressID INT IDENTITY(1,1) PRIMARY KEY,
@@ -54,15 +60,15 @@ CREATE TABLE tblAddresses (
 GO
 
 INSERT INTO tblAddresses (userID, recipientName, phone, addressDetail, district, city, isDefault) VALUES
-('admin01',  N'Quản trị viên',      '0900000001', N'1 Tràng Tiền',        N'Hoàn Kiếm',    N'Hà Nội',     1),
-('buyer01',  N'Nguyễn Văn A',       '0912345678', N'123 Lê Lợi',          N'Ba Đình',      N'Hà Nội',     1),
-('buyer01',  N'Nguyễn Văn A',       '0912345678', N'456 Trần Hưng Đạo',   N'Hoàn Kiếm',    N'Hà Nội',     0),
-('buyer02',  N'Lê Thị B',           '0934567890', N'789 Nguyễn Huệ',      N'Quận 1',       N'TP.HCM',     1),
-('buyer03',  N'Hoàng Văn C',        '0978123456', N'12 Lý Thường Kiệt',   N'Hải Châu',     N'Đà Nẵng',    1),
-('seller01', N'Shop ABC',           '0988111222', N'88 Nguyễn Trãi',      N'Thanh Xuân',   N'Hà Nội',     1),
-('seller02', N'Shop XYZ',           '0909988776', N'99 Lê Văn Sỹ',        N'Phú Nhuận',    N'TP.HCM',     1),
-('seller03', N'Cửa hàng khóa',      '0966778899', N'77 Trần Phú',         N'Hồng Bàng',    N'Hải Phòng',  1)
-GO
+('admin',   N'Quản trị viên',      '0900000001', N'1 Tràng Tiền',        N'Hoàn Kiếm',    N'Hà Nội',     1),
+('user01',  N'Nguyễn Văn A',       '0912345678', N'123 Lê Lợi',          N'Ba Đình',      N'Hà Nội',     1),
+('user01',  N'Nguyễn Văn A',       '0912345678', N'456 Trần Hưng Đạo',   N'Hoàn Kiếm',    N'Hà Nội',     0),
+('user02',  N'Lê Thị B',           '0934567890', N'789 Nguyễn Huệ',      N'Quận 1',       N'TP.HCM',     1),
+('rosie',   N'Hoàng Văn C',        '0978123456', N'12 Lý Thường Kiệt',   N'Hải Châu',     N'Đà Nẵng',    1),
+('ant',     N'Anh Ngan',           '0988111222', N'88 Nguyễn Trãi',      N'Thanh Xuân',   N'Hà Nội',     1),
+('ant',     N'ANT',                '0909988776', N'99 Lê Văn Sỹ',        N'Phú Nhuận',    N'TP.HCM',     1),
+('rosie',   N'Cửa hàng khóa',      '0966778899', N'77 Trần Phú',         N'Hồng Bàng',    N'Hải Phòng',  1);
+
 
 -- CATEGORY TABLE
 CREATE TABLE Category (
@@ -102,7 +108,7 @@ GO
 
 -- INVENTORY TABLE
 CREATE TABLE Inventory (
-    InventoryID INT INDENTITY(1,1) PRIMARY KEY,
+    InventoryID INT IDENTITY(1,1) PRIMARY KEY,
     BookID INT,
     Quantity INT,
     LastUpdate DATETIME DEFAULT GETDATE(),
@@ -119,11 +125,10 @@ GO
 
 -- REVIEW TABLE
 CREATE TABLE Review (
-<<<<<<< HEAD
-    ReviewID INT INDENTITY(1,1) PRIMARY KEY,
+    ReviewID INT IDENTITY(1,1) PRIMARY KEY,
     BookID INT,
-    UserID INT,
-    Rating INT,            -- 1 đến 5 sao
+    UserID NVARCHAR(50),
+    Rating INT,            
     Comment TEXT,
     ReviewDate DATETIME DEFAULT GETDATE(),
     FOREIGN KEY (BookID) REFERENCES Book(BookID),
@@ -132,9 +137,9 @@ CREATE TABLE Review (
 GO
 
 INSERT INTO Review (BookID, UserID, Rating, Comment) VALUES
-(1, 'buyer01', 5, N'Sách rất hay và ý nghĩa.'),
-(2, 'buyer02', 4, N'Đọc dễ hiểu, nhiều bài học.'),
-(1, 'buyer02', 3, N'Tốt nhưng hơi dài.')
+(1, 'user01', 5, N'Sách rất hay và ý nghĩa.'),
+(2, 'user02', 4, N'Đọc dễ hiểu, nhiều bài học.'),
+(1, 'user02', 3, N'Tốt nhưng hơi dài.')
 GO
 
 -- tblDiscounts
@@ -149,13 +154,12 @@ CREATE TABLE tblDiscounts (
 GO
 
 INSERT INTO tblDiscounts (code, type, value, minOrderAmount, expiryDate) VALUES
-('SALE10', 'percent', 10.00, 100000, '2025-12-31'),      -- Giảm 10% cho đơn từ 100k
-('GIAM20K', 'fixed', 20000.00, 50000, '2025-10-01'),     -- Giảm 20,000 cho đơn từ 50k
-('VIP50', 'percent', 50.00, 500000, '2025-08-30'),       -- Giảm 50% đơn từ 500k
-('FREESHIP', 'fixed', 30000.00, 0, '2025-09-15');         -- Giảm 30k không yêu cầu min
+('SALE10', 'percent', 10.00, 100000, '2025-12-31'),      
+('GIAM20K', 'fixed', 20000.00, 50000, '2025-10-01'),     
+('VIP50', 'percent', 50.00, 500000, '2025-08-30'),       
+('FREESHIP', 'fixed', 30000.00, 0, '2025-09-15');         
 GO
 
--- tblOrders (giả định thêm để tạo FOREIGN KEY cho tblPayments)
 CREATE TABLE tblOrders (
     orderID INT IDENTITY(1,1) PRIMARY KEY,
     userID NVARCHAR(50) FOREIGN KEY REFERENCES tblUsers(userID),
@@ -163,7 +167,6 @@ CREATE TABLE tblOrders (
 )
 GO
 
--- tblPayments
 CREATE TABLE tblPayments (
     paymentID INT IDENTITY(1,1) PRIMARY KEY,
     orderID INT NOT NULL FOREIGN KEY REFERENCES tblOrders(orderID),
@@ -181,22 +184,7 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-<<<<<<< HEAD
-INSERT INTO Inventory (BookID, Quantity, LastUpdate) VALUES (1, 20, GETDATE());
-INSERT INTO Inventory (BookID, Quantity, LastUpdate) VALUES (2, 15, GETDATE());
-INSERT INTO Inventory (BookID, Quantity, LastUpdate) VALUES (3, 10, GETDATE());
-INSERT INTO Inventory (BookID, Quantity, LastUpdate) VALUES (4, 50, GETDATE());
 
-
-INSERT INTO Review (BookID, UserID, Rating, Comment, ReviewDate)
-VALUES (1, 1, 5, N"Sách rất hay và ý nghĩa.", GETDATE());
-
-INSERT INTO Review (BookID, UserID, Rating, Comment, ReviewDate)
-VALUES (2, 2, 4, N"Đọc dễ hiểu, nhiều bài học.",GETDATE());
-
-INSERT INTO Review (BookID, UserID, Rating, Comment, ReviewDate)
-VALUES (1, 2, 3, N"Tốt nhưng hơi dài.", GETDATE());
-=======
     UPDATE tblAddresses
     SET isDefault = 0
     WHERE userID IN (
@@ -207,4 +195,3 @@ VALUES (1, 2, 3, N"Tốt nhưng hơi dài.", GETDATE());
     );
 END;
 GO
->>>>>>> 29209673bff4ecfb2fa99ea925ed788f2c3f70fc

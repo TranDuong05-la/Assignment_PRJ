@@ -24,7 +24,8 @@ public class MainController extends HttpServlet {
     private boolean isUserAction(String action) {
         return "login".equals(action)
                 || "logout".equals(action)
-                || "signUp".equals(action);
+                || "signUp".equals(action)
+                || "reset".equals(action);
     }
 
     private boolean isAddressAction(String action) {
