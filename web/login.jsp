@@ -7,7 +7,6 @@
     <meta charset="UTF-8">
     <title>Login Page</title>
 
-    <!-- Bootstrap & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
@@ -94,11 +93,19 @@
             font-style: italic;
             margin-top: 15px;
         }
+        
+        .successMessage {
+            color: green;
+            text-align: center;
+            font-style: italic;
+            margin-top: 15px;
+        }
 
         .toggle-icon {
             cursor: pointer;
             user-select: none;
         }
+        
     </style>
 </head>
 <body>
@@ -141,12 +148,12 @@
 
     <%
         String message = (String) request.getAttribute("message");
-        if (message != null && !message.trim().isEmpty()) {
+        String successMessage = (String) request.getAttribute("successMessage");
     %>
-    <div class="message"><%= message %></div>
-    <%
-        }
-    %>
+    <div class="message"><%=message!=null?message:"" %></div>
+    <div class="successMessage"><%=successMessage!=null?successMessage:"" %></div>
+    
+   
 </div>
 <%
     }

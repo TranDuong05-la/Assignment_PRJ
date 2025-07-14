@@ -2,6 +2,7 @@
 <%
     String token = request.getParameter("token");
     String message = (String) request.getAttribute("message");
+    String successMessage = (String) request.getAttribute("successMessage");
 %>
 <!DOCTYPE html>
 <html>
@@ -62,6 +63,13 @@
             margin-bottom: 15px;
             font-style: italic;
         }
+        
+        .successMessage {
+            color: green;
+            text-align: center;
+            font-style: italic;
+            margin-top: 15px;
+        }
 
         .back-link {
             display: block;
@@ -84,9 +92,8 @@
         <%= (token == null) ? "Reset Password Request" : "Set New Password" %>
     </h3>
 
-    <% if (message != null) { %>
-        <div class="message"><%= message %></div>
-    <% } %>
+        <div class="message"><%= message!=null?message:"" %></div>
+        <div class="successMessage"><%= successMessage!=null?successMessage:"" %></div>
 
     <form action="UserController" method="post">
         <input type="hidden" name="action" value="reset" />

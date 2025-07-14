@@ -65,7 +65,10 @@ public class UserDAO {
         List<UserDTO> userList = new ArrayList<>();
         String sql = "SELECT * FROM tblUsers ORDER BY userID";
 
-        try ( Connection conn = DbUtils.getConnection();  PreparedStatement ps = conn.prepareStatement(sql);  ResultSet rs = ps.executeQuery()) {
+        try {
+            Connection conn = DbUtils.getConnection();  
+            PreparedStatement ps = conn.prepareStatement(sql);  
+            ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
                 UserDTO user = new UserDTO();
@@ -119,12 +122,31 @@ public class UserDAO {
         }
         return false;
     }
+    
+    public boolean isEmailExists(String Email) {
+        String sql = "SELECT COUNT(*) FROM tblUsers WHERE email = ?";
+        try {
+            Connection conn = DbUtils.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+
+            ps.setString(1, Email);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     public boolean signup(UserDTO user) {
     String sql = "INSERT INTO tblUsers(userID, fullName, password, email, roleID, status, resetToken, tokenExpiry) "
                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    try (Connection conn = DbUtils.getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
+    try {
+         Connection conn = DbUtils.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql);
 
         ps.setString(1, user.getUserID());
         ps.setString(2, user.getFullName());
@@ -148,7 +170,9 @@ public class UserDAO {
         String token = UUID.randomUUID().toString();
         Timestamp expiry = new Timestamp(System.currentTimeMillis() + 5 * 60 * 1000);
 
-        try ( Connection conn = DbUtils.getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
+        try {
+            Connection conn = DbUtils.getConnection();  
+            PreparedStatement ps = conn.prepareStatement(sql);
 
             ps.setString(1, token);
             ps.setTimestamp(2, expiry);
@@ -167,10 +191,12 @@ public class UserDAO {
         String getUserSql = "SELECT userID FROM tblUsers WHERE resetToken = ? AND tokenExpiry > GETDATE()";
         String updateSql = "UPDATE tblUsers SET password = ?, resetToken = NULL, tokenExpiry = NULL WHERE userID = ?";
 
-        try ( Connection conn = DbUtils.getConnection();  PreparedStatement getUserStmt = conn.prepareStatement(getUserSql)) {
+        try {
+            Connection conn = DbUtils.getConnection();  
+            PreparedStatement ps = conn.prepareStatement(getUserSql);
 
-            getUserStmt.setString(1, token);
-            ResultSet rs = getUserStmt.executeQuery();
+            ps.setString(1, token);
+            ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
                 String userID = rs.getString("userID");

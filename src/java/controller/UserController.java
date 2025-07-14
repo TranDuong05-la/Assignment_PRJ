@@ -143,14 +143,18 @@ private String handleSignUp(HttpServletRequest request, HttpServletResponse resp
         }
 
         UserDAO userDAO = new UserDAO();
+        if(userDAO.isEmailExists(email)){
+            request.setAttribute("message", "Email already exists! Please try again.");
+            return url;
+        }
         if (userDAO.isUserIDExists(userID)) {
-            request.setAttribute("message", "Username already exists!");
+            request.setAttribute("message", "Username already exists! Please try again.");
         } else {
             UserDTO newUser = new UserDTO(userID,fullName,password,email,"user",true,null,null);
             boolean success = userDAO.signup(newUser);
 
             if (success) {
-                request.setAttribute("message", "Signup successful! Please login.");
+                request.setAttribute("successMessage", "Signup successful! Please login.");
                 url = LOGIN_PAGE;
             } else {
                 request.setAttribute("message", "Signup failed. Please try again.");
@@ -170,24 +174,22 @@ private String handleReset(HttpServletRequest request, HttpServletResponse respo
     UserDAO dao = new UserDAO();
 
     if (token == null) {
-        // Reset Request - gửi link
         String email = request.getParameter("email");
         String generatedToken = dao.generateResetToken(email);
 
         if (generatedToken != null) {
             String resetLink = "http://localhost:8080/Assignment_PRJ/reset.jsp?token=" + generatedToken;
             MailUtils.sendResetEmail(email, resetLink);
-            request.setAttribute("message", "A reset link has been sent to your email: " + email);
+            request.setAttribute("successMessage", "A reset link has been sent to your email: " + email);
         } else {
             request.setAttribute("message", "Email not found.");
         }
     } else {
-        // Reset Password - đặt lại mật khẩu
         String newPassword = request.getParameter("newPassword");
         boolean success = dao.resetPassword(token, newPassword);
 
         if (success) {
-            request.setAttribute("message", "Password reset successful. Please login.");
+            request.setAttribute("successMessage", "Password reset successful. Please login.");
         } else {
             request.setAttribute("message", "Invalid or expired token.");
         }
