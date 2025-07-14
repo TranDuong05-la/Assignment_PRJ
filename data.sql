@@ -26,7 +26,7 @@ INSERT INTO tblUsers (userID, fullName, password, email, roleID, status)
 VALUES 
 ('ant', 'Ánh Ngân', '123', 'kieuantran123@gmail.com', 'admin', 1),
 ('rosie', 'Rosie', '1102', 'ntlinh11297@gmail.com', 'admin', 1),
-('admin', 'Duơng', '123', 'Duongkieu090302@gmail.com', 'admin', 1),
+('admin', 'Duơng', '123', 'duongkieu090302@gmail.com', 'admin', 1),
 ('user01', 'Nguyễn Văn A', '123456', 'a@example.com', 'user', 1),
 ('user02', 'Lê Văn C', '123abc', 'c@example.com', 'user', 1);
 
@@ -77,12 +77,12 @@ GO
 CREATE TABLE Book (
     BookID INT IDENTITY(1,1) PRIMARY KEY,
     CategoryID INT,
-    BookTitle VARCHAR(255),
-    Author VARCHAR(100),
-    Publisher VARCHAR(100),
+    BookTitle NVARCHAR(255),
+    Author NVARCHAR(100),
+    Publisher NVARCHAR(100),
     Price DECIMAL(10,2),
-    Image VARCHAR(255),
-    Description TEXT,
+    Image NVARCHAR(255),
+    Description NTEXT,
     PublishYear INT,
     FOREIGN KEY (CategoryID) REFERENCES Category(CategoryID)
 )
@@ -118,7 +118,7 @@ CREATE TABLE Review (
     BookID INT,
     UserID NVARCHAR(50),
     Rating INT,            
-    Comment TEXT,
+    Comment NTEXT,
     ReviewDate DATETIME DEFAULT GETDATE(),
     FOREIGN KEY (BookID) REFERENCES Book(BookID),
     FOREIGN KEY (UserID) REFERENCES tblUsers(UserID)
@@ -150,11 +150,16 @@ INSERT INTO tblDiscounts (code, type, value, minOrderAmount, expiryDate) VALUES
 GO
 
 CREATE TABLE tblOrders (
-    orderID INT IDENTITY(1,1) PRIMARY KEY,
-    userID NVARCHAR(50) FOREIGN KEY REFERENCES tblUsers(userID),
-    orderDate DATETIME DEFAULT GETDATE()
-)
-GO
+    orderID INT PRIMARY KEY IDENTITY(1,1),
+    userID NVARCHAR(50),
+    totalAmount INT,
+    status VARCHAR(50),
+    FOREIGN KEY (userID) REFERENCES tblUsers(userID)
+);
+
+INSERT INTO tblOrders (userID, totalAmount, status) VALUES
+('ant', 420000, 'Da giao'),
+('rosie', 150000, 'Dang xu ly');
 
 CREATE TABLE tblPayments (
     paymentID INT IDENTITY(1,1) PRIMARY KEY,
@@ -182,3 +187,39 @@ BEGIN
     );
 END;
 GO
+ 
+
+-- CART TABLE
+CREATE TABLE Cart (
+    cartID INT PRIMARY KEY IDENTITY(1,1),
+    userID NVARCHAR(50),
+    FOREIGN KEY (userID) REFERENCES tblUsers(userID)
+);
+
+INSERT INTO Cart (userID) VALUES ('ant'), ('rosie');
+
+CREATE TABLE CartItem (
+    cartItemID INT PRIMARY KEY IDENTITY(1,1),
+    cartID INT,
+    bookTitle VARCHAR(255),
+    quantity INT,
+    unitPrice INT,
+    FOREIGN KEY (cartID) REFERENCES Cart(cartID)
+);
+
+INSERT INTO CartItem (cartID, bookTitle, quantity, unitPrice) VALUES
+(1, 'Lap Trinh Java', 2, 120000),
+(2, 'Thuat Toan Va Giai Thuat', 1, 150000);
+
+CREATE TABLE tblOrderItem (
+    orderItemID INT PRIMARY KEY IDENTITY(1,1),
+    orderID INT,
+    bookTitle VARCHAR(255),
+    quantity INT,
+    unitPrice INT,
+    FOREIGN KEY (orderID) REFERENCES tblOrders(orderID)
+);
+
+INSERT INTO tblOrderItem (orderID, bookTitle, quantity, unitPrice) VALUES
+(1, 'Lap Trinh Java', 2, 120000),
+(2, 'Thuat Toan Va Giai Thuat', 1, 150000);
