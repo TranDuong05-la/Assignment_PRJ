@@ -33,20 +33,6 @@ VALUES
 GO
 
 
--- Quản lý sản phẩm & phân loại
-CREATE TABLE Category (
-    CategoryID INT IDENTITY(1,1) PRIMARY KEY,
-    CategoryName VARCHAR(100)
-);
-
-CREATE TABLE Book (
-    BookID INT IDENTITY(1,1) PRIMARY KEY,
-    CategoryID INT,
-    BookTitle VARCHAR(255),
-    Author VARCHAR(100),
-    Publisher VARCHAR(100),
-	)
-
 -- ADDRESSES TABLE
 CREATE TABLE tblAddresses (
     addressID INT IDENTITY(1,1) PRIMARY KEY,
@@ -71,6 +57,7 @@ INSERT INTO tblAddresses (userID, recipientName, phone, addressDetail, district,
 ('ant',     N'ANT',                '0909988776', N'99 Lê Văn Sỹ',        N'Phú Nhuận',    N'TP.HCM',     1),
 ('rosie',   N'Cửa hàng khóa',      '0966778899', N'77 Trần Phú',         N'Hồng Bàng',    N'Hải Phòng',  1);
 
+-- Quản lý sản phẩm & phân loại
 
 -- CATEGORY TABLE
 CREATE TABLE Category (
