@@ -69,6 +69,7 @@ public class MainController extends HttpServlet {
 
     private boolean isInventoryAction(String action) {
         return "showInventory".equals(action)
+                || "editInventory".equals(action)
                 || "updateInventory".equals(action);
     }
 

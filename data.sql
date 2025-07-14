@@ -32,6 +32,7 @@ VALUES
 
 GO
 
+
 -- Quản lý sản phẩm & phân loại
 CREATE TABLE Category (
     CategoryID INT IDENTITY(1,1) PRIMARY KEY,
@@ -45,6 +46,7 @@ CREATE TABLE Book (
     Author VARCHAR(100),
     Publisher VARCHAR(100),
 	)
+
 -- ADDRESSES TABLE
 CREATE TABLE tblAddresses (
     addressID INT IDENTITY(1,1) PRIMARY KEY,
@@ -183,8 +185,6 @@ AFTER INSERT, UPDATE
 AS
 BEGIN
     SET NOCOUNT ON;
-
-
     UPDATE tblAddresses
     SET isDefault = 0
     WHERE userID IN (

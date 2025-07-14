@@ -5,6 +5,12 @@
         <group>
             <file>file:/D:/PRJ301/Assignment_PRJ/data.sql</file>
             <file>file:/D:/PRJ301/Assignment_PRJ/web/reset.jsp</file>
+            <file>file:/D:/HK4/PRJ301/Assignment_PRJ/src/java/controller/MainController.java</file>
+            <file>file:/D:/HK4/PRJ301/Assignment_PRJ/src/java/model/InventoryDAO.java</file>
+            <file>file:/D:/HK4/PRJ301/Assignment_PRJ/src/java/controller/ProductController.java</file>
+            <file>file:/D:/HK4/PRJ301/Assignment_PRJ/src/java/model/ReviewDAO.java</file>
+            <file>file:/D:/HK4/PRJ301/Assignment_PRJ/src/java/controller/ReviewController.java</file>
+            
         </group>
     </open-files>
 </project-private>

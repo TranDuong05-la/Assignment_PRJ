@@ -11,6 +11,11 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
+import model.BookDAO;
+import model.BookDTO;
+import model.ReviewDAO;
+import model.ReviewDTO;
 
 /**
  *
@@ -18,6 +23,9 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "ReviewController", urlPatterns = {"/ReviewController"})
 public class ReviewController extends HttpServlet {
+
+    ReviewDAO rdao = new ReviewDAO();
+    BookDAO bdao = new BookDAO();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -31,7 +39,7 @@ public class ReviewController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String url = "";
+        String url = "review.jsp";
         //                System.out.println("1");
         try {
             String action = request.getParameter("action");
@@ -91,7 +99,17 @@ public class ReviewController extends HttpServlet {
     }// </editor-fold>
 
     private String handleReviewListing(HttpServletRequest request, HttpServletResponse response) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String bId = request.getParameter("bookID");
+        int bookID = 0;
+        try {
+            bookID = Integer.parseInt(bId);
+        } catch (Exception e) {
+        }
+        List<ReviewDTO> reviews = rdao.getReviewByBookId(bookID);
+        BookDTO book = bdao.getBookById(bookID);
+        request.setAttribute("reviews", reviews);
+        request.setAttribute("book", book);
+        return "review.jsp";
     }
 
     private String handleReviewAdding(HttpServletRequest request, HttpServletResponse response) {

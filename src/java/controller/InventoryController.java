@@ -11,6 +11,12 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
+import model.BookDAO;
+import model.BookDTO;
+import model.InventoryDAO;
+import model.InventoryDTO;
+import utils.AuthUtils;
 
 /**
  *
@@ -18,6 +24,9 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "InventoryController", urlPatterns = {"/InventoryController"})
 public class InventoryController extends HttpServlet {
+
+    InventoryDAO idao = new InventoryDAO();
+    BookDAO bdao = new BookDAO();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -31,13 +40,15 @@ public class InventoryController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String url = "";
+        String url = "inventory.jsp";
         //                System.out.println("1");
         try {
             String action = request.getParameter("action");
 //      Xữ lí action của user
             if (action.equals("showInventory")) {
                 url = handleInventoryShowing(request, response);
+            } else if (action.equals("editInventory")) {
+                url = handleInventoryEditing(request, response);
             } else if (action.equals("updateInventory")) {
                 url = handleInventoryUpdating(request, response);
             }
@@ -90,11 +101,84 @@ public class InventoryController extends HttpServlet {
     }// </editor-fold>
 
     private String handleInventoryShowing(HttpServletRequest request, HttpServletResponse response) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        List<InventoryDTO> inventories = idao.getAll();
+        List<BookDTO> books = bdao.getAll();
+        request.setAttribute("inventories", inventories);
+        request.setAttribute("books", books);
+        return "inventory.jsp";
     }
 
     private String handleInventoryUpdating(HttpServletRequest request, HttpServletResponse response) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String checkError = "";
+        String message = "";
+        String keyWord = request.getParameter("strKeyword");
+        if (AuthUtils.isAdmin(request)) {
+            String inId = request.getParameter("inventoryID");
+            String bId = request.getParameter("bookID");
+            String quantity = request.getParameter("quantity");
+            int inventoryID = 0;
+            try {
+                inventoryID = Integer.parseInt(inId);
+            } catch (Exception e) {
+            }
+
+            int bookID = 0;
+            try {
+                bookID = Integer.parseInt(bId);
+            } catch (Exception e) {
+            }
+            int quantity_value = 0;
+            try {
+                quantity_value = Integer.parseInt(quantity);
+            } catch (Exception e) {
+            }
+//          check loi
+            if (quantity_value < 0) {
+                checkError = "Quantity must be >= 0";
+            }
+
+            if (checkError.isEmpty()) {
+                InventoryDTO inventory = new InventoryDTO(inventoryID, bookID, quantity_value, null);
+                if (idao.update(inventory)) {
+                    message = "Update inventory successfully!";
+                    return handleInventoryShowing(request, response);
+                } else {
+                    checkError = "Cannot update inventory!";
+                }
+            }
+            InventoryDTO inventory = new InventoryDTO(inventoryID, bookID, quantity_value, null);
+            request.setAttribute("inventory", inventory);
+            request.setAttribute("isEdit", true);
+        }
+        request.setAttribute("checkError", checkError);
+        request.setAttribute("message", message);
+        request.setAttribute("keyword", keyWord);
+        return "inventoryForm.jsp";
+    }
+
+    private String handleInventoryEditing(HttpServletRequest request, HttpServletResponse response) {
+        if (AuthUtils.isAdmin(request)) {
+            String inId = request.getParameter("inventoryID");
+            String keyWord = request.getParameter("strKeyword");
+
+            int inventoryID = 0;
+            try {
+                inventoryID = Integer.parseInt(inId);
+            } catch (Exception e) {
+            }
+
+            InventoryDTO inventory = idao.getInventoryById(inventoryID);
+            List<BookDTO> books = bdao.getAll();
+            request.setAttribute("inventory", inventory);
+            request.setAttribute("books", books);
+            request.setAttribute("keyword", keyWord);
+            request.setAttribute("isEdit", true);
+            return "inventoryForm.jsp";
+
+        } else {
+            request.setAttribute("checkError", "Invalid inventory ID!");
+        }
+        return handleInventoryShowing(request, response);
     }
 
 }

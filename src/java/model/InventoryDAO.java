@@ -7,6 +7,8 @@ package model;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 import utils.DbUtils;
 
 /**
@@ -14,10 +16,41 @@ import utils.DbUtils;
  * @author ASUS
  */
 public class InventoryDAO {
+     private static final String GET_All_INVENTORY = "SELECT * FROM Inventory";
     private static final String GET_INVENTORY_BY_BOOk_ID = "SELECT * FROM Inventory WHERE BookID=?";
     private static final String UPDATE_INVENTORY = "UPDATE Inventory SET Quantity=?, LastUpdate=NOW() WHERE BookID=?";
     
-    public InventoryDTO getInventoryByBookId(int inventoryID){
+    
+     public List<InventoryDTO> getAll(){
+        List<InventoryDTO> inventories = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        
+        try {
+            conn = DbUtils.getConnection();
+            ps = conn.prepareStatement(GET_All_INVENTORY);
+            rs = ps.executeQuery();
+            
+            while(rs.next()){
+                InventoryDTO inventory= new InventoryDTO();
+                inventory.setInventoryID(rs.getInt("InventoryID"));
+                inventory.setBookID(rs.getInt("BookID"));
+                inventory.setQuantity(rs.getInt("Quantity"));
+                inventory.setLastUpdate(rs.getTimestamp("LastUpdate"));
+                
+                inventories.add(inventory);
+            }
+            
+        } catch (Exception e) {
+            System.err.println("Error in getAll" + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            closeResources(conn, ps, rs);
+        }
+        return inventories;
+    }
+    public InventoryDTO getInventoryById(int inventoryID){
         InventoryDTO inventory = null;
         Connection conn = null;
         PreparedStatement ps = null;
@@ -85,5 +118,12 @@ public class InventoryDAO {
          }
          return success;
      }
+     
+//     hàng tồn(còn hàng hay hết hàng)
+
+    public int getQuantityByBookId(int bookID) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+     
     
 }
