@@ -16,6 +16,8 @@ import model.BookDAO;
 import model.BookDTO;
 import model.CategoryDAO;
 import model.CategoryDTO;
+import model.InventoryDAO;
+import utils.AuthUtils;
 
 /**
  *
@@ -26,6 +28,7 @@ public class ProductController extends HttpServlet {
 
     BookDAO bdao = new BookDAO();
     CategoryDAO cdao = new CategoryDAO();
+    InventoryDAO idao = new InventoryDAO();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -109,36 +112,210 @@ public class ProductController extends HttpServlet {
     private String handleBookListing(HttpServletRequest request, HttpServletResponse response) {
         String list = request.getParameter("bookID");
         String cate = request.getParameter("categoryID");
-        
-        List <BookDTO> book =bdao.getAll();
-        List<CategoryDTO> category= cdao.getAll();
-        request.setAttribute("book", book);
-        request.setAttribute("category", category);
+
+        List<BookDTO> books = bdao.getAll();
+        List<CategoryDTO> categories = cdao.getAll();
+        request.setAttribute("books", books);
+        request.setAttribute("categories", categories);
         return "home.jsp";
     }
 
     private String handleBookDetail(HttpServletRequest request, HttpServletResponse response) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String bookID = request.getParameter("bookID");
+
+        int book_value = 0;
+        try {
+            book_value = Integer.parseInt(bookID);
+        } catch (Exception e) {
+        }
+        BookDTO book = bdao.getBookById(book_value);
+        request.setAttribute("book", book);
+//        lấy slg tồn kho
+        int quantity = idao.getQuantityByBookId(book_value);
+        String status = quantity > 0 ? "In stock" : "sold out";
+        request.setAttribute("status", status);
+        request.setAttribute("quantity", quantity);
+        return "bookDetail.jsp";
     }
 
     private String handleBookAdding(HttpServletRequest request, HttpServletResponse response) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String checkError = "";
+        String message = "";
+
+        if (AuthUtils.isAdmin(request)) {
+//            String bId = request.getParameter("bookID");
+            String cateId = request.getParameter("categoryID");
+            String bTitle = request.getParameter("bookTitle");
+            String auth = request.getParameter("author");
+            String publisherStr = request.getParameter("publisher");
+            String price = request.getParameter("price");
+            String image = request.getParameter("image");
+            String description = request.getParameter("description");
+            String publishYear = request.getParameter("publishYear");
+//          ép kiểu
+
+            int categoryId = 0;
+            try {
+                categoryId = Integer.parseInt(cateId);
+            } catch (Exception e) {
+            }
+
+            double price_value = 0;
+            try {
+                price_value = Double.parseDouble(price);
+            } catch (Exception e) {
+            }
+
+            int publishYear_value = 0;
+            try {
+                publishYear_value = Integer.parseInt(publishYear);
+            } catch (Exception e) {
+            }
+
+//           ktr lỗi
+            if (bTitle == null || bTitle.trim().isEmpty()) {
+                checkError = "Title cannot be empty!";
+            }
+//            ktr lỗi
+            if (price_value < 0) {
+                checkError += "<br/>Price must be greater than zero!";
+            }
+
+            BookDTO book = new BookDTO(0, categoryId, bTitle, auth, publisherStr, price_value, image, description, publishYear_value);
+
+            if (!bdao.create(book)) {
+                checkError += "<br/> Can not add product!";
+            }
+
+            request.setAttribute("book", book);
+        }
+        if (checkError.isEmpty()) {
+            message = "Add product successfully";
+        }
+
+        // gửi data
+        request.setAttribute("checkError", checkError);
+        request.setAttribute("message", message);
+        return "productForm.jsp";
+
     }
 
     private String handleBookEditing(HttpServletRequest request, HttpServletResponse response) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (AuthUtils.isAdmin(request)) {
+            String bookID = request.getParameter("bookID");
+            String keyWord = request.getParameter("strKeyword");
+            int book_value = 0;
+            try {
+                book_value = Integer.parseInt(bookID);
+            } catch (Exception e) {
+            }
+//            lấy sp
+            BookDTO book = bdao.getBookById(book_value);
+            List<CategoryDTO> categories = cdao.getAll();
+            if (book != null) {
+                request.setAttribute("book", book);
+                request.setAttribute("categories", categories);
+                request.setAttribute("isEdit", true);
+                return "bookForm.jsp";
+            } else {
+                request.setAttribute("checkError", "Book not found!");
+            }
+        }
+        return handleBookSearching(request, response);
     }
 
     private String handleBookUpdating(HttpServletRequest request, HttpServletResponse response) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String checkError = "";
+        String message = "";
+        String keyWord = request.getParameter("strKeyword");
+
+        if (AuthUtils.isAdmin(request)) {
+            String bId = request.getParameter("bookID");
+            String cateId = request.getParameter("categoryID");
+            String bTitle = request.getParameter("bookTitle");
+            String auth = request.getParameter("author");
+            String publisherStr = request.getParameter("publisher");
+            String price = request.getParameter("price");
+            String image = request.getParameter("image");
+            String description = request.getParameter("description");
+            String publishYear = request.getParameter("publishYear");
+//          ép kiểu
+            int bookID = 0;
+            try {
+                bookID = Integer.parseInt(bId);
+            } catch (Exception e) {
+            }
+            int categoryId = 0;
+            try {
+                categoryId = Integer.parseInt(cateId);
+            } catch (Exception e) {
+            }
+
+            double price_value = 0;
+            try {
+                price_value = Double.parseDouble(price);
+            } catch (Exception e) {
+            }
+
+            int publishYear_value = 0;
+            try {
+                publishYear_value = Integer.parseInt(publishYear);
+            } catch (Exception e) {
+            }
+
+//           ktr lỗi
+            if (bTitle == null || bTitle.trim().isEmpty()) {
+                checkError = "Title cannot be empty!";
+            }
+            if (price_value < 0) {
+                checkError += "<br/>Price must be greater than zero!";
+            }
+
+            if (checkError.isEmpty()) {
+                BookDTO book = new BookDTO(bookID, categoryId, bTitle, auth, publishYear, price_value, image, description, publishYear_value);
+                if (bdao.update(book)) {
+                    message = "Update book successfully!";
+//                        request.setAttribute("message", message);
+                    return handleBookSearching(request, response);
+                } else {
+                    checkError = "Cannot update book!";
+                }
+            }
+            BookDTO book = new BookDTO(bookID, categoryId, bTitle, auth, publishYear, price_value, image, description, publishYear_value);
+            request.setAttribute("book", book);
+            request.setAttribute("isEdit", true);
+        }
+
+        // gửi data
+        request.setAttribute("checkError", checkError);
+        request.setAttribute("message", message);
+        request.setAttribute("keyword", keyWord);
+        return "productForm.jsp";
     }
 
     private String handleBookDeleting(HttpServletRequest request, HttpServletResponse response) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (AuthUtils.isAdmin(request)) {
+            String bookID = request.getParameter("bookID");
+            int book_value = 0;
+            try {
+                book_value = Integer.parseInt(bookID);
+            } catch (Exception e) {
+            }
+//           xóa
+            bdao.delete(book_value);
+
+        }
+        return handleBookSearching(request, response);
     }
 
     private String handleBookSearching(HttpServletRequest request, HttpServletResponse response) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String keyWord = request.getParameter("strKeyword");
+        List<BookDTO> books = bdao.getBooksByName(keyWord);
+        List<CategoryDTO> categories = cdao.getAll();
+        request.setAttribute("books", books);
+        request.setAttribute("keyWord", keyWord);
+        request.setAttribute("categories", categories);
+        return "home.jsp";
     }
 
 }

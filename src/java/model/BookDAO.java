@@ -208,6 +208,30 @@ public class BookDAO {
         return success;
 
     }
+    
+     public boolean delete(int bookID) {
+        boolean success = false;
+        Connection conn = null;
+        PreparedStatement ps = null;
+
+        try {
+            conn = DbUtils.getConnection();
+            ps = conn.prepareStatement(DELETE_BOOK);
+            ps.setInt(1, bookID);
+            
+            int rowsAffected = ps.executeUpdate();// số lượng dòng thay đổi 
+            success = (rowsAffected > 0);// ít nhất có 1 dòng bị thay đổi: ko thêm đc có những lỗi như trùng Id hoặc thiếu data
+
+        } catch (Exception e) {
+            System.err.println("Error in delete(): " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            closeResources(conn, ps, null);
+        }
+
+        return success;
+
+    }
 
     public boolean isBookExists(int bookID) {
         return getBookById(bookID) != null;

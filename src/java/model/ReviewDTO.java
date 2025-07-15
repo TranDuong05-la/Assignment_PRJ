@@ -14,7 +14,7 @@ public class ReviewDTO {
 
     private int reviewID;
     private int bookID;
-    private int userID;
+    private String userID;
     private int rating;
     private String comment;
     private java.sql.Timestamp reviewDate;
@@ -23,7 +23,7 @@ public class ReviewDTO {
   
     }
 
-    public ReviewDTO(int reviewID, int bookID, int userID, int rating, String comment, Timestamp reviewDate) {
+    public ReviewDTO(int reviewID, int bookID, String userID, int rating, String comment, Timestamp reviewDate) {
         this.reviewID = reviewID;
         this.bookID = bookID;
         this.userID = userID;
@@ -48,11 +48,11 @@ public class ReviewDTO {
         this.bookID = bookID;
     }
 
-    public int getUserID() {
+    public String getUserID() {
         return userID;
     }
 
-    public void setUserID(int userID) {
+    public void setUserID(String userID) {
         this.userID = userID;
     }
 
@@ -78,8 +78,7 @@ public class ReviewDTO {
 
     public void setReviewDate(Timestamp reviewDate) {
         this.reviewDate = reviewDate;
-    }
-    
+    }    
     
     
 }

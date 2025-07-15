@@ -11,6 +11,10 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
+import model.CategoryDAO;
+import model.CategoryDTO;
+import utils.AuthUtils;
 
 /**
  *
@@ -18,6 +22,8 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "CategoryController", urlPatterns = {"/CategoryController"})
 public class CategoryController extends HttpServlet {
+
+    CategoryDAO cdao = new CategoryDAO();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -95,23 +101,105 @@ public class CategoryController extends HttpServlet {
     }// </editor-fold>
 
     private String handleCategoryListing(HttpServletRequest request, HttpServletResponse response) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        List<CategoryDTO> categories = cdao.getAll();
+        request.setAttribute("categories", categories);
+        return "category.jsp";
     }
 
     private String handleCategoryAdding(HttpServletRequest request, HttpServletResponse response) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String checkError = "";
+        String message = "";
+        if (AuthUtils.isAdmin(request)) {
+            String name = request.getParameter("categoryName");
+//             check loi
+            if (name == null || name.trim().isEmpty()) {
+                checkError = "Category name cannot be empty!";
+            }
+
+            CategoryDTO category = new CategoryDTO(0, name);
+            if (!cdao.create(category)) {
+                checkError = "Cannot add category!";
+            }
+            request.setAttribute("categories", category);
+        }
+        if (checkError.isEmpty()) {
+            message = "Add category successfully";
+        }
+        // gửi data
+        request.setAttribute("checkError", checkError);
+        request.setAttribute("message", message);
+        return "categoryForm.jsp";
     }
 
     private String handleCategoryEditing(HttpServletRequest request, HttpServletResponse response) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (AuthUtils.isAdmin(request)) {
+            int cateID = Integer.parseInt(request.getParameter("categoryID"));
+            String keyWord = request.getParameter("strKeyword");
+            CategoryDTO category = cdao.getCategoryById(cateID);
+            if (category != null) {
+                request.setAttribute("category", category);
+                request.setAttribute("keyword", keyWord);
+                request.setAttribute("isEdit", true);
+                return "categoryForm.jsp";
+            }
+            request.setAttribute("checkError", "Category not found!");
+        }
+        return handleCategoryListing(request, response);
     }
 
     private String handleCategoryUpdating(HttpServletRequest request, HttpServletResponse response) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String checkError = "";
+        String message = "";
+        String keyWord = request.getParameter("strKeyword");
+        if (AuthUtils.isAdmin(request)) {
+            String cId = request.getParameter("categoryID");
+            String name = request.getParameter("categoryName");
+//            ép kiễu/
+            int cateID = 0;
+            try {
+                cateID = Integer.parseInt(cId);
+            } catch (Exception e) {
+            }
+//             check loi
+            if (name == null || name.trim().isEmpty()) {
+                checkError = "Category name cannot be empty!";
+            }
+
+            if (checkError.isEmpty()) {
+                CategoryDTO category = new CategoryDTO(cateID, name);
+                if (cdao.update(category)) {
+                    message = "Add category successfully";
+                    return handleCategoryListing(request, response);
+                } else {
+                    checkError = "Cannot add category!";
+                }
+
+            }
+            CategoryDTO category = new CategoryDTO(cateID, name);
+            request.setAttribute("category", category);
+            request.setAttribute("isEdit", true);
+        }
+
+        // gửi data
+        request.setAttribute("checkError", checkError);
+        request.setAttribute("message", message);
+        request.setAttribute("keyword", keyWord);
+        return "categoryForm.jsp";
     }
 
     private String handleCategoryDeleting(HttpServletRequest request, HttpServletResponse response) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+         if (AuthUtils.isAdmin(request)) {
+            String cateID = request.getParameter("categoryID");
+            int cate_value = 0;
+            try {
+                cate_value = Integer.parseInt(cateID);
+            } catch (Exception e) {
+            }
+//           xóa
+            cdao.delete(cate_value);
+
+        }
+        return handleCategoryListing(request, response);
     }
 
 }
