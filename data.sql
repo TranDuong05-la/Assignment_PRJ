@@ -26,7 +26,7 @@ INSERT INTO tblUsers (userID, fullName, password, email, roleID, status)
 VALUES 
 ('ant', 'Ánh Ngân', '123', 'kieuantran123@gmail.com', 'admin', 1),
 ('rosie', 'Rosie', '1102', 'ntlinh11297@gmail.com', 'admin', 1),
-('admin', 'Dương', '123', 'duongkieu090302@gmail.com', 'admin', 1),
+('admin', 'Duơng', '123', 'duongkieu090302@gmail.com', 'admin', 1),
 ('user01', 'Nguyễn Văn A', '123456', 'a@example.com', 'user', 1),
 ('user02', 'Lê Văn C', '123abc', 'c@example.com', 'user', 1);
 
@@ -189,27 +189,41 @@ END;
 GO
  
 
--- CART TABLE
+-- CART & CARTITEM TABLES
+DROP TABLE IF EXISTS CartItem;
+DROP TABLE IF EXISTS Cart;
+GO
+
 CREATE TABLE Cart (
     cartID INT PRIMARY KEY IDENTITY(1,1),
-    userID NVARCHAR(50),
-    FOREIGN KEY (userID) REFERENCES tblUsers(userID)
+    userID NVARCHAR(50) NOT NULL UNIQUE,
+    FOREIGN KEY (userID) REFERENCES tblUsers(userID) ON DELETE CASCADE
 );
+GO
 
-INSERT INTO Cart (userID) VALUES ('ant'), ('rosie');
+INSERT INTO Cart (userID) VALUES ('ant'), ('rosie'), ('user01');
+GO
 
 CREATE TABLE CartItem (
     cartItemID INT PRIMARY KEY IDENTITY(1,1),
-    cartID INT,
-    bookTitle VARCHAR(255),
-    quantity INT,
-    unitPrice INT,
-    FOREIGN KEY (cartID) REFERENCES Cart(cartID)
+    cartID INT NOT NULL,
+    bookID INT NOT NULL,
+    quantity INT NOT NULL,
+    FOREIGN KEY (cartID) REFERENCES Cart(cartID) ON DELETE CASCADE,
+    FOREIGN KEY (bookID) REFERENCES Book(BookID) ON DELETE CASCADE
 );
+GO
 
-INSERT INTO CartItem (cartID, bookTitle, quantity, unitPrice) VALUES
-(1, 'Lap Trinh Java', 2, 120000),
-(2, 'Thuat Toan Va Giai Thuat', 1, 150000);
+-- bookIDs: 1=Dac Nhan Tam, 2=Cha Giau Cha Ngheo, 3=Toi Thay Hoa Vang..., 4=One Piece
+-- cartIDs: 1=ant, 2=rosie, 3=user01
+INSERT INTO CartItem (cartID, bookID, quantity) VALUES
+(1, 1, 1), -- ant's cart: 1 Dac Nhan Tam
+(1, 3, 2), -- ant's cart: 2 Toi Thay Hoa Vang...
+(2, 4, 5), -- rosie's cart: 5 One Piece
+(2,1,1),
+(2,3,1),
+(3, 2, 1); -- user01's cart: 1 Cha Giau Cha Ngheo
+GO
 
 CREATE TABLE tblOrderItem (
     orderItemID INT PRIMARY KEY IDENTITY(1,1),

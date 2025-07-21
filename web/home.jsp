@@ -609,9 +609,9 @@
 
                 </div>
 
-                <a href="#" class="cart-btn"><i class="fa-solid fa-cart-shopping"></i>
-                    <span class="cart-count">1</span>
-                </a>
+                <a href="CartController?action=dashboard" class="cart-btn"><i class="fa-solid fa-cart-shopping"></i>
+                        <span class="cart-count"><%= session.getAttribute("cartCount") != null ? session.getAttribute("cartCount") : 0 %></span>
+                    </a>
                 <%
                 UserDTO user = (UserDTO) session.getAttribute("user");
                  if (user != null) {
@@ -624,7 +624,7 @@
                     <div class="dropdown-menu dropdown-menu-right">
                         <a class="dropdown-item" href="viewDiscounts.jsp">View Discounts Code</a>
                         <a class="dropdown-item" href="addressList.jsp">Your Address</a>
-                        <a class="dropdown-item" href="#">Something else here</a>
+                        <a class="dropdown-item" href="orderDetail.jsp">History Payment</a>
                         <a class="dropdown-item" href="#">Something else here</a>
                         <a class="dropdown-item" href="#">Something else here</a>
                         <div class="dropdown-divider"></div>

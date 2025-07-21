@@ -6,220 +6,327 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="java.util.List" %>
-<%@ page import="model.CartDTO" %>
 <%@ page import="model.CartItemDTO" %>
+<%@ page import="model.BookDTO" %>
+<%@ page import="model.UserDTO" %>
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Cart Detail Page</title>
-        <style>
-            body {
-                font-family: 'Segoe UI', Arial, sans-serif;
-                background: linear-gradient(120deg, #e3f0ff 0%, #f9fcff 100%);
-                margin: 0;
-                padding: 0;
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Recently Deleted Items</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 0; background: #fff; }
+        .header { width: 100%; background: #fff; box-shadow: 0 1px 16px rgba(180,0,0,.07); padding: 0; position: sticky; top: 0; z-index: 50; }
+        .header-wrap { max-width: 1300px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 76px; padding: 0 32px; }
+        .logo { display: flex; align-items: center; gap: 10px; font-size: 1.5rem; font-weight: bold; color: #ea2222; text-decoration: none; }
+        .logo i { font-size: 2rem; }
+        .search-bar { flex: 1; max-width: 420px; margin: 0 32px; position: relative; display: flex; align-items: center; }
+        .search-bar input { width: 100%; padding: 11px 44px 11px 20px; border: 1px solid #ececec; border-radius: 22px; font-size: 1.02rem; background: #fafafa; transition: border .2s; }
+        .search-bar input:focus { border-color: #ea2222; outline: none; }
+        .search-bar button { position: absolute; right: 12px; background: transparent; border: none; color: #ea2222; font-size: 1.15rem; cursor: pointer; }
+        .header-menu { display: flex; gap: 28px; align-items: center; font-size: 1.07rem; }
+        .header-menu a { text-decoration: none; color: #333; padding: 4px 0; position: relative; }
+        .header-menu a.active, .header-menu a:hover { color: #ea2222; font-weight: bold; }
+        .header-right { display: flex; gap: 20px; align-items: center; }
+        .cart-btn { position: relative; color: #333; text-decoration: none; font-size: 1.35rem; padding: 3px 5px; }
+        .cart-btn .cart-count { position: absolute; top: -6px; right: -8px; background: #ea2222; color: #fff; font-size: .85rem; border-radius: 50%; width: 18px; height: 18px; text-align: center; line-height: 18px; font-weight: 500; border: 2px solid #fff; }
+        .sign-btn { background: #ea2222; color: #fff; border: none; border-radius: 22px; padding: 8px 26px; font-weight: 600; font-size: 1.08rem; text-decoration: none; transition: background .18s; margin-left: 8px; cursor: pointer; }
+        .sign-btn:hover { background: #d31717; }
+        .cart-banner-bg {
+  width: 1000px;
+  height: 340px;
+  margin: 36px auto 0 auto;
+  border-radius: 16px;
+  overflow: hidden;
+  background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1500&q=80') center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cart-banner-bg h1 {
+  color: #fff;
+  font-size: 3em;
+  text-shadow: 0 2px 16px #000a;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+.cart-container {
+    max-width: 1100px;
+    margin: 30px auto 40px auto;
+    position: relative;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 6px 32px rgba(37,116,169,0.13);
+    padding: 40px 32px 32px 32px;
+}
+.cart-container h1 {
+    text-align: center;
+    color: #444;
+    font-size: 2.5em;
+    margin-bottom: 24px;
+    font-weight: 600;
+}
+        table { width: 100%; border-collapse: collapse; margin-top: 24px; }
+        th, td { padding: 18px 12px; text-align: center; }
+        th { background: #f7fafd; color: #1d82d2; font-size: 1.1em; border-bottom: 2px solid #e3eaf3; }
+        tr { border-bottom: 1px solid #f0f0f0; }
+        .product-img { width: 48px; height: 64px; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 8px #0001; }
+        .product-title { font-weight: 600; font-size: 1.08em; color: #222; text-align: left; }
+        .product-desc { color: #888; font-size: 0.98em; text-align: left; }
+        .undo-btn { background: #3498db; color: #fff; border: none; border-radius: 6px; padding: 8px 20px; font-size: 1em; cursor: pointer; transition: background 0.18s; }
+        .undo-btn:hover { background: #217dbb; }
+        .restore-btn { background: #f39c12; color: #fff; border: none; border-radius: 8px; padding: 10px 32px; font-size: 1.08em; font-weight: 600; cursor: pointer; margin-top: 18px; transition: background 0.18s; float: right; }
+        .restore-btn:hover { background: #e67e22; }
+        .empty-msg { text-align:center; color:#888; font-size:1.2em; margin: 60px 0; }
+        .actions-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; }
+        .back-link { color: #1d82d2; text-decoration: none; font-weight: 600; }
+        .back-link:hover { text-decoration: underline; }
+        /* FOOTER STYLE */
+            footer {
+                background: #231f20;
+                color: #eee;
+                padding: 0 0 0 0;
+                margin-top: 60px;
+                font-size: 1rem;
             }
-            h2 {
-                text-align: center;
-                color: #1d82d2;
-                margin-top: 42px;
-                letter-spacing: 1px;
-                font-weight: 700;
-                font-size: 2em;
-                text-shadow: 0 2px 10px #abd8ff55;
+            .footer-wrap {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 40px 24px 0 24px;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 36px;
+                justify-content: space-between;
             }
-            .cart-info {
-                width: 70%;
-                margin: 20px auto;
-                background: #fff;
-                border-radius: 18px;
-                padding: 20px;
-                box-shadow: 0 6px 32px rgba(37,116,169,0.13);
+            .footer-col {
+                flex: 1 1 180px;
+                min-width: 170px;
+                margin-bottom: 32px;
             }
-            .cart-info h3 {
-                color: #1d82d2;
-                margin-bottom: 15px;
-                border-bottom: 2px solid #e3f3ff;
-                padding-bottom: 10px;
-            }
-            .cart-info p {
-                margin: 8px 0;
-                font-size: 1.1em;
-            }
-            .cart-info strong {
-                color: #1d82d2;
-            }
-            table {
-                border-collapse: collapse;
-                width: 70%;
-                margin: 32px auto 0 auto;
-                background: #fff;
-                border-radius: 18px;
-                overflow: hidden;
-                box-shadow: 0 6px 32px rgba(37,116,169,0.13);
-            }
-            th, td {
-                padding: 15px 22px;
-                text-align: center;
-                font-size: 1.08em;
-            }
-            th {
-                background: #e3f3ff;
-                color: #1d82d2;
-                font-size: 1.16em;
-                font-weight: 600;
-                border-bottom: 2.5px solid #acd1f8;
-            }
-            tr:nth-child(even) {
-                background: #f4f9ff;
-            }
-            tr:nth-child(odd) {
-                background: #fff;
-            }
-            td {
-                font-size: 1em;
-                border-bottom: 1px solid #e6eef8;
-            }
-            .message {
-                color: #1d82d2;
-                text-align: center;
-                margin: 10px auto;
-                padding: 10px;
-                background: #e5f2fb;
-                border: 1px solid #acd1f8;
-                border-radius: 6px;
-                width: 70%;
-            }
-            form[method="post"] button,
-            button[type="submit"] {
-                background: linear-gradient(90deg, #61b2fc 60%, #57dbdb 100%);
-                color: #fff;
-                border: none;
-                border-radius: 8px;
-                padding: 7px 25px;
-                font-size: 1em;
-                font-weight: 600;
-                cursor: pointer;
-                transition: background 0.18s, box-shadow 0.17s, transform 0.12s;
-                box-shadow: 0 1px 8px #71bfff15;
-                outline: none;
-                margin: 0 5px;
-            }
-            form[method="post"] button:hover,
-            button[type="submit"]:hover {
-                background: linear-gradient(90deg, #3571cb 50%, #0ab5d4 100%);
-                transform: translateY(-1px) scale(1.045);
-                box-shadow: 0 3px 16px #1d82d245;
-            }
-            .delete-btn {
-                background: linear-gradient(90deg, #ff6b6b 60%, #ff8e8e 100%) !important;
-            }
-            .delete-btn:hover {
-                background: linear-gradient(90deg, #e74c3c 50%, #ff6b6b 100%) !important;
-            }
-            .checkout-btn {
-                background: linear-gradient(90deg, #28a745 60%, #20c997 100%) !important;
-            }
-            .checkout-btn:hover {
-                background: linear-gradient(90deg, #218838 50%, #1ea085 100%) !important;
-            }
-            a {
-                display: block;
-                width: fit-content;
-                margin: 40px auto 0 auto;
-                color: #2472b8;
-                background: #e5f2fb;
-                border-radius: 8px;
-                padding: 10px 32px;
+            .footer-logo {
+                font-size: 1.7rem;
+                font-weight: bold;
+                color: #ea2222;
                 text-decoration: none;
-                font-weight: 500;
-                font-size: 1.06em;
-                box-shadow: 0 1px 7px #d5eaff80;
-                transition: background 0.13s, color 0.13s;
+                display:flex;
+                align-items:center;
+                gap:7px;
             }
-            a:hover {
-                background: #1d82d2;
+            .footer-logo i {
+                font-size: 2rem;
+            }
+            .footer-desc {
+                font-size: 1.04rem;
+                margin: 13px 0 17px 0;
+                color: #d8d8d8;
+            }
+            .footer-social a {
+                color: #fff;
+                margin-right: 13px;
+                font-size: 1.34rem;
+                background:#ea2222;
+                border-radius: 50%;
+                width:32px;
+                height:32px;
+                display:inline-flex;
+                align-items:center;
+                justify-content:center;
+                transition: background 0.18s;
+                text-decoration: none;
+            }
+            .footer-social a:hover {
+                background: #c81c1c;
+            }
+            .footer-title {
+                font-size: 1.13rem;
+                font-weight: bold;
+                color: #fff;
+                margin-bottom: 12px;
+            }
+            .footer-list {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+            .footer-list li {
+                margin-bottom: 8px;
+            }
+            .footer-list a {
+                color: #d8d8d8;
+                text-decoration: none;
+                transition: color 0.18s;
+            }
+            .footer-list a:hover {
                 color: #fff;
                 text-decoration: underline;
-                transform: scale(1.045);
             }
-            .quantity-input {
-                width: 60px;
-                padding: 5px;
-                border: 1px solid #acd1f8;
-                border-radius: 4px;
+            .footer-contact {
+                color: #d8d8d8;
+                font-size: 1.03rem;
+                line-height: 1.7;
+            }
+            .footer-contact i {
+                color: #ea2222;
+                margin-right: 8px;
+                width: 18px;
                 text-align: center;
             }
-        </style>
-    </head>
-    <body>
-        <%
-             CartDTO cart = (CartDTO) request.getAttribute("cart");
-             List<CartItemDTO> cartItems = (List<CartItemDTO>) request.getAttribute("cartItems");
-        %>
-        <h2>Cart Detail</h2>
-        
-        <%
-            String message = (String) request.getAttribute("message");
-            if (message != null && !message.isEmpty()) { %>
-        <div class="message"><%= message %></div>
-        <% } %>
+            .footer-bottom {
+                border-top: 1px solid #343434;
+                text-align: center;
+                padding: 14px 0 10px 0;
+                font-size: 1rem;
+                background: #1a1819;
+                color: #bbb;
+            }
+            @media (max-width:900px){
+                .footer-wrap {
+                    flex-direction: column;
+                    padding: 30px 14px 0 14px;
+                }
+            }
 
-        <% if (cart != null) { %>
-        <div class="cart-info">
-            <h3>Cart Information</h3>
-            <p><strong>Cart ID:</strong> <%= cart.getCartId() %></p>
-            <p><strong>User ID:</strong> <%= cart.getUserId() %></p>
-            <p><strong>Created Time:</strong> <%= cart.getCreatedTime() %></p>
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-wrap">
+            <a class="logo" href="home.jsp"><i class="fa-solid fa-book-open"></i> ABC <span style="color:#111;font-weight:400">Book</span></a>
+            <div class="search-bar">
+                <input type="text" class="form-control rounded-pill" placeholder="Search book by author or publisher">
+                <button class="btn btn-link text-danger ml-n4"><i class="fa fa-search"></i></button>
+            </div>
+            <div class="header-menu">
+                <a href="home.jsp">Home</a>
+                <a href="#">Categories</a>
+                <a href="#">FAQ</a>
+                <div class="dropdown" style="display:inline-block;">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">See More <span class="caret"></span></a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="#">About</a>
+                        <a class="dropdown-item" href="#">Pages</a>
+                        <a class="dropdown-item" href="#">Blog</a>
+                        <a class="dropdown-item" href="#">Contact</a>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <a href="CartController?action=viewCart" class="cart-btn"><i class="fa-solid fa-cart-shopping"></i>
+                    <span class="cart-count"><%= session.getAttribute("cartCount") != null ? session.getAttribute("cartCount") : 0 %></span>
+                </a>
+                <% UserDTO user = (UserDTO) session.getAttribute("user");
+                   if (user != null) { %>
+                <span style="font-size: 1rem;"><%= user.getFullName() %></span>
+                <a href="MainController?action=logout" class="sign-btn" style="background:#ccc;color:#222;">Logout</a>
+                <% } else { %>
+                <a href="login.jsp" class="sign-btn">Sign in</a>
+                <% } %>
+            </div>
         </div>
-        <% } %>
-
-        <table border="1" cellpadding="5" cellspacing="0">
+    </div>
+    <!-- Banner Background với chữ Cart căn giữa -->
+    <div class="cart-banner-bg">
+        <h1>Recently Deleted Items</h1>
+    </div>
+    <!-- Cart Container -->
+    <div class="cart-container">
+        <% List<CartItemDTO> deletedItems = (List<CartItemDTO>) session.getAttribute("deletedCartItems");
+           if (deletedItems == null || deletedItems.isEmpty()) { %>
+        <div class="empty-msg">Have not deleted any books.</div>
+        <div class="actions-bar">
+            <a href="CartController?action=viewCart" class="back-link">&larr; Back to Cart</a>
+        </div>
+        <% } else { %>
+        <form action="CartController" method="post">
+        <table>
             <tr>
-                <th>Product ID</th>
-                <th>Quantity</th>
-                <th>Action</th>
+                <th style="text-align:left;">Product</th>
+                <th style="width:120px;">Price</th>
+                <th style="width:100px;">Quantity</th>
+                <th style="width:120px;"> </th>
             </tr>
-            <% if (cartItems != null && !cartItems.isEmpty()) {
-            for (CartItemDTO item : cartItems) { %>
+            <% for (CartItemDTO item : deletedItems) {
+                   BookDTO book = item.getBook();
+            %>
             <tr>
-                <td><%= item.getProductId() %></td>
-                <td>
-                    <form action="CartController" method="post" style="display: inline;">
-                        <input type="hidden" name="action" value="updateQuantity"/>
-                        <input type="hidden" name="cartId" value="<%=item.getCartId()%>"/>
-                        <input type="hidden" name="productId" value="<%=item.getProductId()%>"/>
-                        <input type="number" name="quantity" value="<%=item.getQuantity()%>" min="1" class="quantity-input"/>
-                        <button type="submit">Update</button>
-                    </form>
+                <td style="display:flex;align-items:center;gap:18px;text-align:left;">
+                    <img src="<%=request.getContextPath()%>/images/<%=book.getImage()%>" class="product-img" />
+                    <div>
+                        <div class="product-title"><%=book.getBookTitle()%></div>
+                        <div class="product-desc"><%=book.getAuthor()%></div>
+                    </div>
                 </td>
-                <td>
-                    <form action="CartController" method="post" style="display: inline; margin:0;">
-                        <input type="hidden" name="action" value="removeItem"/>
-                        <input type="hidden" name="cartId" value="<%=item.getCartId()%>"/>
-                        <input type="hidden" name="productId" value="<%=item.getProductId()%>"/>
-                        <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to remove this item?')">Remove</button>
-                    </form>
+                <td style="text-align:right;">$<%=String.format("%.2f", book.getPrice())%></td>
+                <td style="text-align:center;"><%=item.getQuantity()%></td>
+                <td style="text-align:center;">
+                    <button type="submit" name="action" value="undoDelete" class="undo-btn"
+                            onclick="document.getElementById('undoID').value='<%=item.getCartItemID()%>'">
+                        Undo
+                    </button>
                 </td>
             </tr>
-            <%   }
-           } else { %>
-            <tr><td colspan="3">No items in cart.</td></tr>
             <% } %>
         </table>
-
-        <% if (cartItems != null && !cartItems.isEmpty()) { %>
-        <div style="text-align: center; margin-top: 20px;">
-            <form action="OrderController" method="post" style="display: inline;">
-                <input type="hidden" name="action" value="createOrderFromCart"/>
-                <input type="hidden" name="cartId" value="<%=cart.getCartId()%>"/>
-                <button type="submit" class="checkout-btn">Checkout</button>
-            </form>
+        <input type="hidden" id="undoID" name="undoCartItemID" value="" />
+        <div class="actions-bar">
+            <a href="CartController?action=viewCart" class="back-link">&larr; Back to Cart</a>
+            <button type="submit" name="action" value="restoreAll" class="restore-btn">Restore All Items</button>
         </div>
+        </form>
         <% } %>
-
-        <br>
-        <a href="CartController?action=listCart">Back to Cart List</a>
-    </body>
+    </div>
+<footer>
+    <div class="footer-wrap">
+        <div class="footer-col">
+            <a href="#" class="footer-logo"><i class="fa-solid fa-book-open"></i> ABC <span style="color:#fff;font-weight:400">Book</span></a>
+            <div class="footer-desc">
+                ABC Book - Nền tảng đặt sách trực tuyến, đa dạng đầu sách, giao hàng toàn quốc.
+            </div>
+            <div class="footer-social">
+                <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
+                <a href="#" title="Tiktok"><i class="fab fa-tiktok"></i></a>
+            </div>
+        </div>
+        <div class="footer-col">
+            <div class="footer-title">Danh mục</div>
+            <ul class="footer-list">
+                <li><a href="#">Trang chủ</a></li>
+                <li><a href="#">Thể loại sách</a></li>
+                <li><a href="#">Sách mới</a></li>
+                <li><a href="#">Bán chạy</a></li>
+                <li><a href="#">Blog</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <div class="footer-title">Hỗ trợ</div>
+            <ul class="footer-list">
+                <li><a href="#">Chính sách đổi trả</a></li>
+                <li><a href="#">Câu hỏi thường gặp</a></li>
+                <li><a href="#">Liên hệ hỗ trợ</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <div class="footer-title">Liên hệ</div>
+            <div class="footer-contact">
+                <div><i class="fa fa-map-marker-alt"></i> FPT University, HCM</div>
+                <div><i class="fa fa-envelope"></i> kiemtienonl2108@gmail.com</div>
+                <div><i class="fa fa-phone"></i> 0917972397</div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        2025 ABC Book. All rights reserved.
+    </div>
+</footer>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html> 
