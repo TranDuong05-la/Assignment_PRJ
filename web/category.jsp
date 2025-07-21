@@ -9,6 +9,7 @@
 <%@ page import="model.BookDTO" %>
 <%@ page import="utils.AuthUtils" %>
 <%@ page import="model.CategoryDTO" %>
+<%@ page import="model.UserDTO" %>
 
 <!DOCTYPE html>
 <html>
@@ -16,6 +17,8 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Categories Page</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
         <style>
             body {
                 background: #fff6f6;
@@ -133,6 +136,113 @@
                 background:#d31717;
             }
 
+            .dropdown {
+                display: none;
+            }
+            @media screen and (max-width: 900px) {
+                .header-wrap {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 10px;
+                }
+                .search-bar {
+                    width: 99vw;
+                    max-width: 98vw;
+                    margin: 10px 0 0 0;
+                }
+                .header-menu, .header-right {
+                    display: none;
+                }
+                .dropdown {
+                    display: block;
+                    position: absolute;
+                    top: 72px;
+                    right: 10px;
+                    z-index: 1000;
+                }
+            }
+            /* Slider Section */
+            .slider-section {
+                margin: 36px auto 0 auto;
+                max-width: 1000px;
+                min-height: 340px;
+                background: #000;
+                border-radius: 16px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+                overflow: hidden;
+            }
+            .slider-img {
+                width: 100%;
+                height: 340px;
+                object-fit: cover;
+                opacity: 0.88;
+                border-radius: 16px;
+                display: block;
+            }
+            .slider-content {
+                position: absolute;
+                left: 70px;
+                top: 48px;
+                color: #fff;
+                z-index: 2;
+                width: 370px;
+            }
+            .slider-content .genre {
+                background: #fff;
+                color: #222;
+                border-radius: 13px;
+                font-size: 1.02rem;
+                padding: 2px 13px;
+                display: inline-block;
+                font-weight: 500;
+                margin-bottom: 22px;
+            }
+            .slider-content h1 {
+                font-size: 2.6rem;
+                margin: 0 0 25px 0;
+                line-height: 1.18;
+                font-weight: bold;
+                text-shadow: 0 3px 16px #00000022;
+            }
+            .slider-content .btn {
+                background: #ea2222;
+                color: #fff;
+                border-radius: 24px;
+                font-weight: 600;
+                padding: 12px 30px;
+                text-decoration: none;
+                font-size: 1.13rem;
+                margin-top: 14px;
+                display: inline-block;
+                transition: background .2s;
+            }
+            .slider-content .btn:hover {
+                background: #c81c1c;
+            }
+            .slider-dots {
+                position: absolute;
+                bottom: 18px;
+                left: 50%;
+                transform: translateX(-50%);
+                display: flex;
+                gap: 9px;
+            }
+            .slider-dot {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background: #fff6f6;
+                border: 1.5px solid #ea2222;
+                cursor: pointer;
+                opacity: 0.65;
+            }
+            .slider-dot.active {
+                background: #ea2222;
+                opacity: 1;
+            }
             /* Banner */
             input[type="range"] {
                 accent-color: #ea2222;
@@ -465,20 +575,44 @@
                     </form>
                 </div>
                 <div class="header-menu">
-                    <a href="<%=request.getContextPath()%>/home">Home</a>
-                    <a href="./category.jsp" class="active">Categories</a>
+                    <a href="<%=request.getContextPath()%>/home" class="active">Home</a>
+                    <a href="category.jsp">Categories</a>
                 </div>
                 <div class="header-right">
-                    <a href="#" style="color:#3d3d3d;
-                       font-size:1.02rem;
-                       text-decoration:none;">FAQ</a>
-                    <a href="#" style="color:#3d3d3d;
-                       font-size:1.02rem;
-                       text-decoration:none;">Track Order</a>
+                    <a href="#" style="color:#3d3d3d;font-size:1.02rem;text-decoration:none;">FAQ</a>
+                    <% if(AuthUtils.isLoggedIn(request)){%>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            See More
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="viewDiscounts.jsp">View Discounts Code</a>
+                            <a class="dropdown-item" href="addressList.jsp">Your Address</a>
+                            <a class="dropdown-item" href="#">Something else here</a>
+                            <a class="dropdown-item" href="#">Something else here</a>
+                            <a class="dropdown-item" href="#">Something else here</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="reset.jsp">Reset Password</a>
+                        </div>
+                        <%}%>
+                    </div>
+
                     <a href="#" class="cart-btn"><i class="fa-solid fa-cart-shopping"></i>
                         <span class="cart-count">1</span>
                     </a>
-                    <a href="#" class="sign-btn">Sign in</a>
+                    <%
+                    UserDTO user = (UserDTO) session.getAttribute("user");
+                     if (user != null) {
+                    %>
+                    <span style="font-size: 1rem;"><%= user.getFullName() %></span>
+                    <a href="MainController?action=logout" class="sign-btn" style="background:#ccc;color:#222;">Logout</a>
+                    <%
+                        } else {
+                    %>
+                    <a href="login.jsp" class="sign-btn">Sign in</a>
+                    <%
+                        }
+                    %>
                 </div>
             </div>
         </div>

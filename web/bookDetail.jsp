@@ -20,6 +20,8 @@
         <!-- Font Awesome, CSS... -->
 
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
         <style>
             body {
                 background: #fff6f6;
@@ -142,80 +144,109 @@
             .dropdown {
                 display: none;
             }
-            @media screen and (max-width: 768px) {
-                .search-bar  {
-                    position: absolute;
-                    top: 71px;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    width: 70% !important;
-                    max-width: 600px;
-                    margin: 0;
-                    z-index: 999;
-                    background: white;
-                    padding: 6px 12px;
-                    border-radius: 28px;
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-                }
+            @media screen and (max-width: 900px) {
                 .header-wrap {
                     flex-direction: column;
                     align-items: flex-start;
                     gap: 10px;
                 }
-
-                .header-menu,
-                .header-right,
-                .cart-btn ,
-                .cart-count,
-                .sign-btn{
+                .search-bar {
+                    width: 99vw;
+                    max-width: 98vw;
+                    margin: 10px 0 0 0;
+                }
+                .header-menu, .header-right {
                     display: none;
                 }
-
                 .dropdown {
                     display: block;
                     position: absolute;
                     top: 72px;
                     right: 10px;
                     z-index: 1000;
-
                 }
-
-                .dropdown .dropdown-menu {
-                    min-width: 180px;
-                    background-color: #fff;
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-                }
-
-                .dropdown .dropdown-item {
-                    padding: 10px 15px;
-                    font-size: 0.95rem;
-                }
-
-                .dropdown .btn.dropdown-toggle {
-                    padding: 6px 10px;
-                    font-size: 1rem;
-                    border-radius: 50%;
-                    width: 38px;
-                    height: 38px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    background-color: #f5f5f5;
-                    border: 1px solid #ddd;
-                    color: #333;
-                    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-                    transition: background 0.2s;
-                }
-
-                .dropdown .btn.dropdown-toggle:hover {
-                    background-color: #e6e6e6;
-                }
-
-
-                .dropdown-divider {
-                    margin: 5px 0;
-                    border-top: 1px solid #ddd;
-                }
+            }
+            /* Slider Section */
+            .slider-section {
+                margin: 36px auto 0 auto;
+                max-width: 1000px;
+                min-height: 340px;
+                background: #000;
+                border-radius: 16px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+                overflow: hidden;
+            }
+            .slider-img {
+                width: 100%;
+                height: 340px;
+                object-fit: cover;
+                opacity: 0.88;
+                border-radius: 16px;
+                display: block;
+            }
+            .slider-content {
+                position: absolute;
+                left: 70px;
+                top: 48px;
+                color: #fff;
+                z-index: 2;
+                width: 370px;
+            }
+            .slider-content .genre {
+                background: #fff;
+                color: #222;
+                border-radius: 13px;
+                font-size: 1.02rem;
+                padding: 2px 13px;
+                display: inline-block;
+                font-weight: 500;
+                margin-bottom: 22px;
+            }
+            .slider-content h1 {
+                font-size: 2.6rem;
+                margin: 0 0 25px 0;
+                line-height: 1.18;
+                font-weight: bold;
+                text-shadow: 0 3px 16px #00000022;
+            }
+            .slider-content .btn {
+                background: #ea2222;
+                color: #fff;
+                border-radius: 24px;
+                font-weight: 600;
+                padding: 12px 30px;
+                text-decoration: none;
+                font-size: 1.13rem;
+                margin-top: 14px;
+                display: inline-block;
+                transition: background .2s;
+            }
+            .slider-content .btn:hover {
+                background: #c81c1c;
+            }
+            .slider-dots {
+                position: absolute;
+                bottom: 18px;
+                left: 50%;
+                transform: translateX(-50%);
+                display: flex;
+                gap: 9px;
+            }
+            .slider-dot {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background: #fff6f6;
+                border: 1.5px solid #ea2222;
+                cursor: pointer;
+                opacity: 0.65;
+            }
+            .slider-dot.active {
+                background: #ea2222;
+                opacity: 1;
             }
             /* DETAIL HEADER */
             .detail-section {
