@@ -12,6 +12,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
+import model.BookDAO;
+import model.BookDTO;
 import model.CategoryDAO;
 import model.CategoryDTO;
 import utils.AuthUtils;
@@ -24,6 +26,7 @@ import utils.AuthUtils;
 public class CategoryController extends HttpServlet {
 
     CategoryDAO cdao = new CategoryDAO();
+    BookDAO bdao = new BookDAO();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -101,7 +104,41 @@ public class CategoryController extends HttpServlet {
     }// </editor-fold>
 
     private String handleCategoryListing(HttpServletRequest request, HttpServletResponse response) {
+        String catIdRaw = request.getParameter("categoryID");
+//        String priceMinRaw = request.getParameter("priceMin");
+//        String priceMaxRaw = request.getParameter("priceMax");
+//        String publisher = request.getParameter("pub");
+//        String author = request.getParameter("author");
+//        String ratingRaw = request.getParameter("rating");
+        List<BookDTO> products;
+//        Integer categoryId = (catIdRaw != null && !catIdRaw.isEmpty()) ? Integer.parseInt(catIdRaw) : null;
+//        Integer priceMin = (priceMinRaw != null && !priceMinRaw.isEmpty()) ? Integer.parseInt(priceMinRaw) : null;
+//
+//        Integer priceMax = (priceMaxRaw != null && !priceMaxRaw.isEmpty()) ? Integer.parseInt(priceMaxRaw) : null;
+//
+//        Integer rating = (ratingRaw != null && !ratingRaw.isEmpty()) ? Integer.parseInt(ratingRaw) : null;
+//        if ((catIdRaw == null || catIdRaw.isEmpty())
+//                && (publisher == null || publisher.isEmpty())
+//                && (author == null || author.isEmpty())
+//                && priceMax == 500) {
+//            products = bdao.getAll();
+//        } else {
+//            products = bdao.getFilterBooks(categoryId, priceMin, priceMax, publisher, author, rating);
+//        }
+        if (catIdRaw != null && !catIdRaw.isEmpty()) {
+            int catId = Integer.parseInt(catIdRaw);
+            products = bdao.getBooksByCategory(catId);
+        } else {
+            products = bdao.getAll();
+        }
         List<CategoryDTO> categories = cdao.getAll();
+//        request.setAttribute("selectedCategoryId", catIdRaw);
+//        request.setAttribute("priceMin", priceMinRaw);
+//        request.setAttribute("priceMax", priceMaxRaw);
+//        request.setAttribute("selectedPub", publisher);
+//        request.setAttribute("selectedAuthor", author);
+//        request.setAttribute("selectedRating", ratingRaw);
+        request.setAttribute("products", products);
         request.setAttribute("categories", categories);
         return "category.jsp";
     }
@@ -188,7 +225,7 @@ public class CategoryController extends HttpServlet {
     }
 
     private String handleCategoryDeleting(HttpServletRequest request, HttpServletResponse response) {
-         if (AuthUtils.isAdmin(request)) {
+        if (AuthUtils.isAdmin(request)) {
             String cateID = request.getParameter("categoryID");
             int cate_value = 0;
             try {

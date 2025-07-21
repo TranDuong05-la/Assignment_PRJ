@@ -20,7 +20,9 @@ public class InventoryDAO {
     private static final String GET_QUANTITY_BY_BOOKID = "SELECT Quantity FROM Inventory WHERE BookID = ?";
     private static final String GET_All_INVENTORY = "SELECT * FROM Inventory";
     private static final String GET_INVENTORY_BY_BOOk_ID = "SELECT * FROM Inventory WHERE BookID=?";
-    private static final String UPDATE_INVENTORY = "UPDATE Inventory SET Quantity=?, LastUpdate=NOW() WHERE BookID=?";
+    private static final String CREATE_INVENTORY = "INSERT INTO Inventory(BookID, Quantity, LastUpdate) VALUES (?, ?, GETDATE())";
+    private static final String UPDATE_INVENTORY = "UPDATE Inventory SET BookID=?, Quantity=?, LastUpdate=GETDATE() WHERE InventoryID=?";
+    private static final String DELETE_INVENTORY = "DELETE FROM Inventory WHERE BookID = ?";
 
     public List<InventoryDTO> getAll() {
         List<InventoryDTO> inventories = new ArrayList<>();
@@ -99,6 +101,27 @@ public class InventoryDAO {
         }
     }
 
+    public boolean create(InventoryDTO inventory) {
+        boolean success = false;
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = DbUtils.getConnection();
+            ps = conn.prepareStatement(CREATE_INVENTORY);
+            ps.setInt(1, inventory.getBookID());
+            ps.setInt(2, inventory.getQuantity());
+
+            int rowAffected = ps.executeUpdate();
+            success = (rowAffected > 0);
+        } catch (Exception e) {
+            System.err.println("Error in create(): " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            closeResources(conn, ps, null);
+        }
+        return success;
+    }
+
     public boolean update(InventoryDTO inventory) {
         boolean success = false;
         Connection conn = null;
@@ -107,8 +130,9 @@ public class InventoryDAO {
             conn = DbUtils.getConnection();
             ps = conn.prepareStatement(UPDATE_INVENTORY);
 
-            ps.setInt(1, inventory.getQuantity());
-            ps.setInt(2, inventory.getBookID());
+            ps.setInt(1, inventory.getBookID());
+            ps.setInt(2, inventory.getQuantity());
+            ps.setInt(3, inventory.getInventoryID());
 
             int rowAffected = ps.executeUpdate();
             success = (rowAffected > 0);
@@ -119,6 +143,30 @@ public class InventoryDAO {
             closeResources(conn, ps, null);
         }
         return success;
+    }
+
+    public boolean delete(int bookID) {
+        boolean success = false;
+        Connection conn = null;
+        PreparedStatement ps = null;
+
+        try {
+            conn = DbUtils.getConnection();
+            ps = conn.prepareStatement(DELETE_INVENTORY);
+            ps.setInt(1, bookID);
+
+            int rowsAffected = ps.executeUpdate();// số lượng dòng thay đổi 
+            success = (rowsAffected > 0);// ít nhất có 1 dòng bị thay đổi: ko thêm đc có những lỗi như trùng Id hoặc thiếu data
+
+        } catch (Exception e) {
+            System.err.println("Error in delete(): " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            closeResources(conn, ps, null);
+        }
+
+        return success;
+
     }
 
 //     hàng tồn(còn hàng hay hết hàng)
@@ -138,5 +186,3 @@ public class InventoryDAO {
         return quantity;
     }
 }
-
-

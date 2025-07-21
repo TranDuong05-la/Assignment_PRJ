@@ -70,6 +70,7 @@ public class MainController extends HttpServlet {
 
     private boolean isInventoryAction(String action) {
         return "showInventory".equals(action)
+                || "createInventory".equals(action)
                 || "editInventory".equals(action)
                 || "updateInventory".equals(action);
     }
@@ -78,25 +79,6 @@ public class MainController extends HttpServlet {
         return "listReview".equals(action)
                 || "addReview".equals(action)
                 || "deleteReview".equals(action);
-    }
- private boolean isOrderAction(String action) {
-        return "addOrder".equals(action)
-                || "viewOrder".equals(action)
-                || "listOrder".equals(action)
-                || "updateOrderStatus".equals(action)
-                || "deleteOrder".equals(action)
-                || "createOrderFromCart".equals(action);
-    }
-    
-    private boolean isCartAction(String action) {
-        return "addCart".equals(action)
-                || "viewCart".equals(action)
-                || "listCart".equals(action)
-                || "updateQuantity".equals(action)
-                || "removeItem".equals(action)
-                || "viewDeleted".equals(action)
-                || "deleteCart".equals(action);
-        
     }
 
     /**
@@ -130,10 +112,6 @@ public class MainController extends HttpServlet {
                 url = "/InventoryController";
             } else if (isReviewAction(action)) {
                 url = "/ReviewController";
-            } else if (isOrderAction(action)) {
-                url = "/OrderController";
-            } else if (isCartAction(action)) {
-                url = "/CartController";
             }
         } catch (Exception e) {
 

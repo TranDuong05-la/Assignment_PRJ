@@ -47,6 +47,8 @@ public class InventoryController extends HttpServlet {
 //      Xữ lí action của user
             if (action.equals("showInventory")) {
                 url = handleInventoryShowing(request, response);
+            } else if (action.equals("createInventory")) {
+                url = handleInventoryCreating(request, response);
             } else if (action.equals("editInventory")) {
                 url = handleInventoryEditing(request, response);
             } else if (action.equals("updateInventory")) {
@@ -179,6 +181,56 @@ public class InventoryController extends HttpServlet {
             request.setAttribute("checkError", "Invalid inventory ID!");
         }
         return handleInventoryShowing(request, response);
+    }
+
+    private String handleInventoryCreating(HttpServletRequest request, HttpServletResponse response) {
+        String checkError = "";
+        String message = "";
+        String keyWord = request.getParameter("strKeyword");
+        List<BookDTO> books = bdao.getAll();
+        request.setAttribute("books", books);
+        if (AuthUtils.isAdmin(request)) {
+            try {
+                String bId = request.getParameter("bookID");
+                String quantity = request.getParameter("quantity");
+                int bookID = 0;
+                int quantity_value = 0;
+                try {
+                    bookID = Integer.parseInt(bId);
+                } catch (Exception e) {
+                    checkError = "Invalid Book ID!";
+                }
+                try {
+                    quantity_value = Integer.parseInt(quantity);
+                } catch (Exception e) {
+                    checkError = "Invalid Quantity!";
+                }
+                if (quantity_value < 0) {
+                    checkError = "Quantity must be >= 0";
+                }
+                if (checkError.isEmpty()) {
+                    InventoryDTO inventory = new InventoryDTO(0, bookID, quantity_value, null);
+                    boolean success = idao.create(inventory);
+                    if (success) {
+                        message = "Created inventory successfully!";
+                        return handleInventoryShowing(request, response);
+                    } else {
+                        checkError = "Cannot create inventory!";
+                    }
+                }
+                InventoryDTO inventory = new InventoryDTO(0, bookID, quantity_value, null);
+                request.setAttribute("inventory", inventory);
+
+            } catch (Exception e) {
+                checkError = "Error: " + e.getMessage();
+                e.printStackTrace();
+            }
+            request.setAttribute("isEdit", false);
+        }
+        request.setAttribute("checkError", checkError);
+        request.setAttribute("message", message);
+        request.setAttribute("keyword", keyWord);
+        return "inventoryForm.jsp";
     }
 
 }
