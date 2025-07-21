@@ -588,7 +588,7 @@
                 <%= book.getDescription() %>
             </div>
             <div class="tab-content d-none" id="tab-author">
-                <b>Athour:</b> <%= book.getAuthor() %><br>
+                <b>Aúthour:</b> <%= book.getAuthor() %><br>
                 <b>Publisher:</b> <%= book.getPublisher() %>
             </div>
             <div class="tab-content d-none" id="tab-review">

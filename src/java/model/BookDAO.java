@@ -99,7 +99,9 @@ public class BookDAO {
                 books.setImage(rs.getString("Image"));
                 books.setDescription(rs.getString("Description"));
                 books.setPublishYear(rs.getInt("PublishYear"));
-            }
+            }else{
+//            System.out.println("DAO: NO BOOK FOUND for BookID = " + bookID);
+        }
         } catch (Exception e) {
             System.err.println("Error in getBookById" + e.getMessage());
             e.printStackTrace();
@@ -116,6 +118,7 @@ public class BookDAO {
         try {
             conn = DbUtils.getConnection();
             ps = conn.prepareStatement(GET_CATEGORY_ID);
+            ps.setInt(1, categoryID);
             rs = ps.executeQuery();
             while (rs.next()) {
                 BookDTO book = new BookDTO();
@@ -150,15 +153,15 @@ public class BookDAO {
             conn = DbUtils.getConnection();
             ps = conn.prepareStatement(CREATE_BOOK);
 // truyền value
-            ps.setInt(1, book.getBookID());
-            ps.setInt(2, book.getCategoryID());
-            ps.setString(3, book.getBookTitle());
-            ps.setString(4, book.getAuthor());
-            ps.setString(5, book.getPublisher());
-            ps.setDouble(6, book.getPrice());
-            ps.setString(7, book.getImage());
-            ps.setString(8, book.getDescription());
-            ps.setInt(9, book.getPublishYear());
+//            ps.setInt(1, book.getBookID());
+            ps.setInt(1, book.getCategoryID());
+            ps.setString(2, book.getBookTitle());
+            ps.setString(3, book.getAuthor());
+            ps.setString(4, book.getPublisher());
+            ps.setDouble(5, book.getPrice());
+            ps.setString(6, book.getImage());
+            ps.setString(7, book.getDescription());
+            ps.setInt(8, book.getPublishYear());
 // select ko lm thay đổi data, insert, update, delete sẽ lm thay đổi -> executeUpdate()
 //executeQuery sẽ ko thay đỗi data
             int rowsAffected = ps.executeUpdate();// số lượng dòng thay đổi 
@@ -184,15 +187,16 @@ public class BookDAO {
             conn = DbUtils.getConnection();
             ps = conn.prepareStatement(UPDATE_BOOK);
 // truyền value
-            ps.setInt(1, book.getBookID());
-            ps.setInt(2, book.getCategoryID());
-            ps.setString(3, book.getBookTitle());
-            ps.setString(4, book.getAuthor());
-            ps.setString(5, book.getPublisher());
-            ps.setDouble(6, book.getPrice());
-            ps.setString(7, book.getImage());
-            ps.setString(8, book.getDescription());
-            ps.setInt(9, book.getPublishYear());
+            
+            ps.setInt(1, book.getCategoryID());
+            ps.setString(2, book.getBookTitle());
+            ps.setString(3, book.getAuthor());
+            ps.setString(4, book.getPublisher());
+            ps.setDouble(5, book.getPrice());
+            ps.setString(6, book.getImage());
+            ps.setString(7, book.getDescription());
+            ps.setInt(8, book.getPublishYear());
+            ps.setInt(9, book.getBookID());
 // select ko lm thay đổi data, insert, update, delete sẽ lm thay đổi -> executeUpdate()
 //executeQuery sẽ ko thay đỗi data
             int rowsAffected = ps.executeUpdate();// số lượng dòng thay đổi 
@@ -208,8 +212,8 @@ public class BookDAO {
         return success;
 
     }
-    
-     public boolean delete(int bookID) {
+
+    public boolean delete(int bookID) {
         boolean success = false;
         Connection conn = null;
         PreparedStatement ps = null;
@@ -218,7 +222,7 @@ public class BookDAO {
             conn = DbUtils.getConnection();
             ps = conn.prepareStatement(DELETE_BOOK);
             ps.setInt(1, bookID);
-            
+
             int rowsAffected = ps.executeUpdate();// số lượng dòng thay đổi 
             success = (rowsAffected > 0);// ít nhất có 1 dòng bị thay đổi: ko thêm đc có những lỗi như trùng Id hoặc thiếu data
 
@@ -236,19 +240,21 @@ public class BookDAO {
     public boolean isBookExists(int bookID) {
         return getBookById(bookID) != null;
     }
-    
-    
-     public List<BookDTO> getBooksByName(String name) {
+
+    public List<BookDTO> getBooksByName(String name) {
         List<BookDTO> books = new ArrayList<>();
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        String query = GET_ALL + " WHERE BookTitle LIKE ?";
+        String query = GET_ALL + " WHERE bookTitle LIKE ? OR author LIKE ? OR publisher LIKE ?";
         System.out.println("QUERY: " + query);
 //        BookTitle
         try {
             conn = DbUtils.getConnection();
+            ps = conn.prepareStatement(query);
             ps.setString(1, "%" + name + "%");
+            ps.setString(2, "%" + name + "%");
+            ps.setString(3, "%" + name + "%");
             rs = ps.executeQuery();
             while (rs.next()) {
                 BookDTO book = new BookDTO();
@@ -273,41 +279,78 @@ public class BookDAO {
         return books;
 
     }
-     
-     
-//     public List<BookDTO> getActiveBooksByName(String name) {
-//        List<BookDTO> books = new ArrayList<>();
-//        Connection conn = null;
-//        PreparedStatement ps = null;
-//        ResultSet rs = null;
-//        String query = GET_ALL + " WHERE BookTitle LIKE ?";
-//        System.out.println("QUERY: " + query);
-////        BookTitle
-//        try {
-//            conn = DbUtils.getConnection();
-//            ps.setString(1, "%" + name + "%");
-//            rs = ps.executeQuery();
-//            while (rs.next()) {
-//                BookDTO book = new BookDTO();
-//                book.setBookID(rs.getInt("BookID"));
-//                book.setCategoryID(rs.getInt("CategoryID"));
-//                book.setBookTitle(rs.getString("BookTitle"));
-//                book.setAuthor(rs.getString("Author"));
-//                book.setPublisher(rs.getString("Publisher"));
-//                book.setPrice(rs.getDouble("Price"));
-//                book.setImage(rs.getString("Image"));
-//                book.setDescription(rs.getString("Description"));
-//                book.setPublishYear(rs.getInt("PublishYear"));
-//
-//                books.add(book);
-//            }
-//        } catch (Exception e) {
-//            System.err.println("Error in getAll()" + e.getMessage());
-//            e.printStackTrace();
-//        } finally {
-//            closeResources(conn, ps, rs);
-//        }
-//        return books;
-//
-//    }
+
+    public List<BookDTO> getFilterBooks(Integer categoryId, Integer priceMin, Integer priceMax, String publisher, String author, Integer rating) {
+//        Integer categoryId, Integer priceMin, Integer priceMax, String publisher, String author, Integer rating
+//  khai báo tham số có khả năng null để truyền dữ liệu/ ko truyền khi gọi hàm
+        List<BookDTO> list = new ArrayList<>();
+        String sql = "SELECT * FROM Book WHERE 1=1";
+        if (categoryId != null) {
+            sql += " AND CategoryID = ?";
+        }
+        if (priceMin != null) {
+            sql += " AND Price >= ?";
+        }
+        if (priceMax != null) {
+            sql += " AND Price <= ?";
+        }
+        if (publisher != null && !publisher.isEmpty()) {
+            sql += " AND Publisher = ?";
+        }
+        if (author != null && !author.isEmpty()) {
+            sql += " AND Author = ?";
+        }
+        if (rating != null) {
+            sql += " AND Rating >= ?";
+        }
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = DbUtils.getConnection();
+            ps = conn.prepareStatement(GET_CATEGORY_ID);
+//            set data
+            int idx = 1;
+            if (categoryId != null) {
+                ps.setInt(idx++, categoryId);
+            }
+            if (priceMin != null) {
+                ps.setInt(idx++, priceMin);
+            }
+            if (priceMax != null) {
+                ps.setInt(idx++, priceMax);
+            }
+            if (publisher != null && !publisher.isEmpty()) {
+                ps.setString(idx++, publisher);
+            }
+            if (author != null && !author.isEmpty()) {
+                ps.setString(idx++, author);
+            }
+            if (rating != null) {
+                ps.setInt(idx++, rating);
+            }
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                BookDTO book = new BookDTO();
+                book.setBookID(rs.getInt("BookID"));
+                book.setCategoryID(rs.getInt("CategoryID"));
+                book.setBookTitle(rs.getString("BookTitle"));
+                book.setAuthor(rs.getString("Author"));
+                book.setPublisher(rs.getString("Publisher"));
+                book.setPrice(rs.getDouble("Price"));
+                book.setImage(rs.getString("Image"));
+                book.setDescription(rs.getString("Description"));
+                book.setPublishYear(rs.getInt("PublishYear"));
+
+                list.add(book);
+            }
+        } catch (Exception e) {
+            System.err.println("Error in getAll()" + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            closeResources(conn, ps, rs);
+        }
+        return list;
+
+    }
 }
