@@ -151,19 +151,19 @@
             }
             @media screen and (max-width: 768px) {
                 .search-bar  {
-    position: absolute;
-    top: 71px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 70% !important;
-    max-width: 600px;
-    margin: 0;
-    z-index: 999;
-    background: white;
-    padding: 6px 12px;
-    border-radius: 28px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-}
+                    position: absolute;
+                    top: 71px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    width: 70% !important;
+                    max-width: 600px;
+                    margin: 0;
+                    z-index: 999;
+                    background: white;
+                    padding: 6px 12px;
+                    border-radius: 28px;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+                }
                 .header-wrap {
                     flex-direction: column;
                     align-items: flex-start;
@@ -184,9 +184,9 @@
                     top: 72px;
                     right: 10px;
                     z-index: 1000;
-                    
+
                 }
-                
+
                 .dropdown .dropdown-menu {
                     min-width: 180px;
                     background-color: #fff;
@@ -197,26 +197,26 @@
                     padding: 10px 15px;
                     font-size: 0.95rem;
                 }
-                
-.dropdown .btn.dropdown-toggle {
-    padding: 6px 10px;
-    font-size: 1rem;
-    border-radius: 50%;
-    width: 38px;
-    height: 38px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #f5f5f5;
-    border: 1px solid #ddd;
-    color: #333;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-    transition: background 0.2s;
-}
 
-.dropdown .btn.dropdown-toggle:hover {
-    background-color: #e6e6e6;
-}
+                .dropdown .btn.dropdown-toggle {
+                    padding: 6px 10px;
+                    font-size: 1rem;
+                    border-radius: 50%;
+                    width: 38px;
+                    height: 38px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background-color: #f5f5f5;
+                    border: 1px solid #ddd;
+                    color: #333;
+                    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+                    transition: background 0.2s;
+                }
+
+                .dropdown .btn.dropdown-toggle:hover {
+                    background-color: #e6e6e6;
+                }
 
 
                 .dropdown-divider {
@@ -479,7 +479,7 @@
                 color:#ea2222;
             }
 
-            
+
 
             /* FOOTER STYLE */
             footer {
@@ -606,31 +606,32 @@
                 </div>
                 <div class="header-right">
                     <a href="#" style="color:#3d3d3d;font-size:1.02rem;text-decoration:none;">FAQ</a>
-                    <% if(AuthUtils.isLoggedIn(request)){%>
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            See More
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item" href="viewDiscounts.jsp">View Discounts Code</a>
-                            <a class="dropdown-item" href="addressList.jsp">Your Address</a>
-                            <a class="dropdown-item" href="#">Something else here</a>
-                            <a class="dropdown-item" href="#">Something else here</a>
-                            <a class="dropdown-item" href="#">Something else here</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="reset.jsp">Reset Password</a>
-                        </div>
-                        <%}%>
-                    </div>
 
-                    <a href="#" class="cart-btn"><i class="fa-solid fa-cart-shopping"></i>
-                        <span class="cart-count">1</span>
-                    </a>
-                    <%
-                    UserDTO user = (UserDTO) session.getAttribute("user");
-                     if (user != null) {
-                    %>
-                    <span style="font-size: 1rem;"><%= user.getFullName() %></span>
+                </div>
+
+                <a href="#" class="cart-btn"><i class="fa-solid fa-cart-shopping"></i>
+                    <span class="cart-count">1</span>
+                </a>
+                <%
+                UserDTO user = (UserDTO) session.getAttribute("user");
+                 if (user != null) {
+                %>
+                <% if(AuthUtils.isLoggedIn(request)){%>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <%= user.getFullName() %>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a class="dropdown-item" href="viewDiscounts.jsp">View Discounts Code</a>
+                        <a class="dropdown-item" href="addressList.jsp">Your Address</a>
+                        <a class="dropdown-item" href="#">Something else here</a>
+                        <a class="dropdown-item" href="#">Something else here</a>
+                        <a class="dropdown-item" href="#">Something else here</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="reset.jsp">Reset Password</a>
+                    </div>
+                    <%}%>
+
                     <a href="MainController?action=logout" class="sign-btn" style="background:#ccc;color:#222;">Logout</a>
                     <%
                         } else {
@@ -764,15 +765,16 @@
                         </ul>
                     </div>
                     <div class="footer-col">
-                        <div class="footer-title">Hỗ trợ</div>
+                        <div class="footer-title">Support</div>
                         <ul class="footer-list">
-                            <li><a href="#">Chính sách đổi trả</a></li>
-                            <li><a href="#">Câu hỏi thường gặp</a></li>
-                            <li><a href="#">Liên hệ hỗ trợ</a></li>
+                            <li><a title="Use Chatbot for more info">Refund and Exchange Policy</a></li>
+                            <li><a title="Use Chatbot for more info">Frequently Asked Questions</a></li>
+                            <li><a title="Use chatbot for more info">Customer Support</a></li>
+
                         </ul>
                     </div>
                     <div class="footer-col">
-                        <div class="footer-title">Liên hệ</div>
+                        <div class="footer-title">Contact</div>
                         <div class="footer-contact">
                             <div><i class="fa fa-map-marker-alt"></i> FPT University, HCM</div>
                             <div><i class="fa fa-envelope"></i> kiemtienonl2108@gmail.com</div>
@@ -786,6 +788,24 @@
             </footer>
             <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+            <!--Chatbot session  -->
+            <script type="text/javascript">
+                            var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+                            (function () {
+                                var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
+                                s1.async = true;
+                                s1.src = 'https://embed.tawk.to/6879c8a03d9d30190be79d42/1j0drfcq5';
+                                s1.charset = 'UTF-8';
+                                s1.setAttribute('crossorigin', '*');
+                                s0.parentNode.insertBefore(s1, s0);
+                            })();
+            </script>
+            
+
+
+
+
+
 
     </body>
 </html>

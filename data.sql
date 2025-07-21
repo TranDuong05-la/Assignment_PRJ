@@ -26,7 +26,7 @@ INSERT INTO tblUsers (userID, fullName, password, email, roleID, status)
 VALUES 
 ('ant', 'Ánh Ngân', '123', 'kieuantran123@gmail.com', 'admin', 1),
 ('rosie', 'Rosie', '1102', 'ntlinh11297@gmail.com', 'admin', 1),
-('admin', 'Duơng', '123', 'duongkieu090302@gmail.com', 'admin', 1),
+('admin', 'Dương', '123', 'duongkieu090302@gmail.com', 'admin', 1),
 ('user01', 'Nguyễn Văn A', '123456', 'a@example.com', 'user', 1),
 ('user02', 'Lê Văn C', '123abc', 'c@example.com', 'user', 1);
 

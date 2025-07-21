@@ -53,28 +53,29 @@ public class DiscountDAO {
         return list;
     }
 
-    public DiscountDTO getDiscountByCode(String code) {
-        String sql = "SELECT * FROM tblDiscounts WHERE code = ?";
+    public List<DiscountDTO> getDiscountByCode(String code) {
+        String sql = "SELECT * FROM tblDiscounts WHERE code LIKE ?";
+        List <DiscountDTO> discounts = new ArrayList<>();
         try (Connection conn = DbUtils.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, code);
+            ps.setString(1, "%" + code + "%");
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return new DiscountDTO(
-                        rs.getInt("discountID"),
-                        rs.getString("code"),
-                        rs.getString("type"),
-                        rs.getDouble("value"),
-                        rs.getDouble("minOrderAmount"),
-                        rs.getDate("expiryDate")
-                    );
+                        int discountID = rs.getInt("discountID");
+                        String coDe = rs.getString("code");
+                        String type = rs.getString("type");
+                        double value = rs.getDouble("value");
+                        double minOrder = rs.getDouble("minOrderAmount");
+                        Date expiryDate = rs.getDate("expiryDate");
+                    DiscountDTO dTO = new DiscountDTO(discountID, coDe, type, value, minOrder, expiryDate);
+                    discounts.add(dTO);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return discounts;
     }
 
     public DiscountDTO getValidDiscount(String code) {
@@ -102,4 +103,5 @@ public class DiscountDAO {
         }
         return null;
     }
+    
 }
