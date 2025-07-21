@@ -22,6 +22,7 @@ import model.UserDTO;
  */
 @WebServlet(name = "AddressController", urlPatterns = {"/AddressController"})
 public class AddressController extends HttpServlet {
+
     private static final String LIST_PAGE = "addressList.jsp";
     private static final String FORM_PAGE = "addressForm.jsp";
 
@@ -72,68 +73,68 @@ public class AddressController extends HttpServlet {
 
     private String handleList(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
-    UserDTO user = (UserDTO) session.getAttribute("user");
-    if (user == null) {
-        request.setAttribute("message", "Please log in first.");
-        return "login.jsp";
-    }
+        UserDTO user = (UserDTO) session.getAttribute("user");
+        if (user == null) {
+            request.setAttribute("message", "Please log in first.");
+            return "login.jsp";
+        }
 
-    String userID = user.getUserID(); 
+        String userID = user.getUserID();
 
-    AddressDAO dao = new AddressDAO();
-    List<AddressDTO> list = dao.getAddressesByUser(userID);
-    request.setAttribute("addresses", list);
+        AddressDAO dao = new AddressDAO();
+        List<AddressDTO> list = dao.getAddressesByUser(userID);
+        request.setAttribute("addresses", list);
 
-    String msg = request.getParameter("message");
-    if (msg != null) request.setAttribute("message", msg);
+        String msg = request.getParameter("message");
+        if (msg != null) {
+            request.setAttribute("message", msg);
+        }
 
-    return LIST_PAGE;
+        return LIST_PAGE;
     }
 
     private String handleAddressAdding(HttpServletRequest request, HttpServletResponse response) {
-    HttpSession session = request.getSession();
-    UserDTO user = (UserDTO) session.getAttribute("user");
+        HttpSession session = request.getSession();
+        UserDTO user = (UserDTO) session.getAttribute("user");
 
-    if (user == null) {
-        request.setAttribute("message", "Please log in first.");
-        return "login.jsp";
-    }
+        if (user == null) {
+            request.setAttribute("message", "Please log in first.");
+            return "login.jsp";
+        }
 
-    if (request.getParameter("recipientName") == null) {
-        request.setAttribute("isEdit", false);
-        return FORM_PAGE;
-    }
-    
-    
-    String userID = user.getUserID();
-    AddressDTO address = new AddressDTO();
-    address.setUserID(userID);
-    address.setRecipientName(request.getParameter("recipientName"));
-    address.setPhone(request.getParameter("phone"));
-    address.setAddressDetail(request.getParameter("addressDetail"));
-    address.setDistrict(request.getParameter("district"));
-    address.setCity(request.getParameter("city"));
-    address.setDefault("on".equals(request.getParameter("isDefault")));
+        if (request.getParameter("recipientName") == null) {
+            request.setAttribute("isEdit", false);
+            return FORM_PAGE;
+        }
 
-    AddressDAO dao = new AddressDAO();
-    if (address.isDefault()) {
-        dao.unsetDefaultAddress(userID);
-    }
-    String phone = request.getParameter("phone");
-    if (!phone.matches("^09\\d{8}$")) {
-        request.setAttribute("message", "Phone number must start with 09 and contain exactly 10 digits.");
-        request.setAttribute("isEdit", false);
+        String userID = user.getUserID();
+        AddressDTO address = new AddressDTO();
+        address.setUserID(userID);
+        address.setRecipientName(request.getParameter("recipientName"));
+        address.setPhone(request.getParameter("phone"));
+        address.setAddressDetail(request.getParameter("addressDetail"));
+        address.setDistrict(request.getParameter("district"));
+        address.setCity(request.getParameter("city"));
+        address.setDefault("on".equals(request.getParameter("isDefault")));
+
+        AddressDAO dao = new AddressDAO();
+        if (address.isDefault()) {
+            dao.unsetDefaultAddress(userID);
+        }
+        String phone = request.getParameter("phone");
+        if (!phone.matches("^09\\d{8}$")) {
+            request.setAttribute("message", "Phone number must start with 09 and contain exactly 10 digits.");
+            request.setAttribute("isEdit", false);
+            request.setAttribute("address", address);
+            return FORM_PAGE;
+        }
+        boolean success = dao.insertAddress(address);
+        request.setAttribute("message", success ? "Address added successfully." : "Failed to add address.");
         request.setAttribute("address", address);
+        request.setAttribute("isEdit", false);
         return FORM_PAGE;
-    }
-    boolean success = dao.insertAddress(address);
-    request.setAttribute("message", success ? "Address added successfully." : "Failed to add address.");
-    request.setAttribute("address", address);
-    request.setAttribute("isEdit", false);
-    return FORM_PAGE;
-    
-}
 
+    }
 
     private String handleEdit(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
@@ -153,7 +154,7 @@ public class AddressController extends HttpServlet {
             request.setAttribute("isEdit", true);
             return FORM_PAGE;
         }
-    
+
         AddressDTO addr = new AddressDTO();
         addr.setAddressID(Integer.parseInt(request.getParameter("addressID")));
         addr.setUserID(userID);
@@ -163,21 +164,20 @@ public class AddressController extends HttpServlet {
         addr.setDistrict(request.getParameter("district"));
         addr.setCity(request.getParameter("city"));
         addr.setDefault("on".equals(request.getParameter("isDefault")));
-        
-        
+
         AddressDAO dao = new AddressDAO();
-        
+
         if (addr.isDefault()) {
             dao.unsetDefaultAddress(userID);
         }
-         String phone = request.getParameter("phone");
+        String phone = request.getParameter("phone");
 
-    if (!phone.matches("^09\\d{8}$")) {
-        request.setAttribute("message", "Phone number must start with 09 and contain exactly 10 digits.");
-        request.setAttribute("isEdit", true);
-        request.setAttribute("address", addr);
-        return FORM_PAGE;
-    }
+        if (!phone.matches("^09\\d{8}$")) {
+            request.setAttribute("message", "Phone number must start with 09 and contain exactly 10 digits.");
+            request.setAttribute("isEdit", true);
+            request.setAttribute("address", addr);
+            return FORM_PAGE;
+        }
         boolean success = dao.updateAddress(addr);
         request.setAttribute("message", success ? "Address updated." : "Failed to update.");
         request.setAttribute("isEdit", true);
@@ -192,16 +192,16 @@ public class AddressController extends HttpServlet {
         return handleList(request, response);
     }
 
-private String handleSetDefault(HttpServletRequest request, HttpServletResponse response) {
-    HttpSession session = request.getSession();
-    String userID = (String) session.getAttribute("userID");
-    int addressID = Integer.parseInt(request.getParameter("addressID"));
+    private String handleSetDefault(HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession();
+        String userID = (String) session.getAttribute("userID");
+        int addressID = Integer.parseInt(request.getParameter("addressID"));
 
-    AddressDAO dao = new AddressDAO();
-    dao.unsetDefaultAddress(userID);   
-    dao.setDefaultAddress(addressID);  
+        AddressDAO dao = new AddressDAO();
+        dao.unsetDefaultAddress(userID);
+        dao.setDefaultAddress(addressID);
 
-    return handleList(request, response);
-}
+        return handleList(request, response);
+    }
 
 }

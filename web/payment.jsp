@@ -9,6 +9,7 @@
     }
 
     String message = (String) request.getAttribute("message");
+    String error = (String) request.getAttribute("error");
     String qrUrl = (String) request.getAttribute("qrUrl");
     int orderID = (Integer) request.getAttribute("orderID");
     double originalAmount = (Double) request.getAttribute("amount");
@@ -79,7 +80,12 @@
         .message {
             text-align: center;
             font-weight: bold;
-            color: #d84315;
+            color: green;
+        }
+        .error {
+            text-align: center;
+            font-weight: bold;
+            color: red;
         }
 
         hr {
@@ -93,6 +99,9 @@
 
     <% if (message != null) { %>
         <p class="message"><%= message %></p>
+    <% } %>
+    <% if (error != null) { %>
+        <p class="error"><%= error %></p>
     <% } %>
 
     <p><strong>Order ID:</strong> <%= orderID %></p>

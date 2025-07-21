@@ -83,7 +83,7 @@ public class OrderDAO {
     }
 
     public boolean updateOrderStatus(int orderId, String status) {
-        String sql = "UPDATE [Order] SET status=? WHERE orderId=?";
+        String sql = "UPDATE [tblOrders] SET status=? WHERE orderID=?";
         try (Connection conn = DbUtils.getConnection();
              PreparedStatement pr = conn.prepareStatement(sql)) {
             pr.setString(1, status);

@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import model.DiscountDAO;
 import model.DiscountDTO;
+import model.OrderDAO;
 import model.PaymentDAO;
 import model.PaymentDTO;
 
@@ -39,51 +40,53 @@ public class PaymentController extends HttpServlet {
     }
 
     private void handleShowQR(HttpServletRequest request, HttpServletResponse response) {
-    int orderID = Integer.parseInt(request.getParameter("orderID"));
-    double originalAmount = Double.parseDouble(request.getParameter("amount"));
-    double amount = originalAmount;
-
-    String discountCode = request.getParameter("discountCode");
-    if (discountCode != null && !discountCode.trim().isEmpty()) {
-        DiscountDAO discountDAO = new DiscountDAO();
-        DiscountDTO discount = discountDAO.getValidDiscount(discountCode);
-
-        if (discount != null && originalAmount >= discount.getMinOrderAmount()) {
-            if (discount.getType().equalsIgnoreCase("percent")) {
-                amount = originalAmount * (1 - discount.getValue() / 100);
-            } else if (discount.getType().equalsIgnoreCase("fixed")) {
-                amount = originalAmount - discount.getValue();
-            }
-            if (amount < 0) amount = 0;
-
-            request.setAttribute("message", "Discount applied successfully!");
-        } else {
-            request.setAttribute("message", "Invalid or expired discount code.");
-        }
-    }
-
-    String bankId = "TPB";
-    String accountNo = "08080512276";
-    String template = "compact2";
-    String addInfo = "Order #" + orderID;
-    String accountName = "Tran Anh Ngan";
-
-    try {
-        String qrUrl = "https://img.vietqr.io/image/" + bankId + "-" + accountNo + "-" + template + ".png"
-                + "?amount=" + (long)amount
-                + "&addInfo=" + URLEncoder.encode(addInfo, "UTF-8")
-                + "&accountName=" + URLEncoder.encode(accountName, "UTF-8");
-        request.setAttribute("qrUrl", qrUrl);
-    } catch (Exception ex) {
-        request.setAttribute("message", "Can't create QR code.");
-    }
-
-    request.setAttribute("orderID", orderID);
-    request.setAttribute("amount", amount);
-}
-
-    private void handleConfirm(HttpServletRequest request, HttpServletResponse response) {
         int orderID = Integer.parseInt(request.getParameter("orderID"));
+        double originalAmount = Double.parseDouble(request.getParameter("amount"));
+        double amount = originalAmount;
+
+        String discountCode = request.getParameter("discountCode");
+        if (discountCode != null && !discountCode.trim().isEmpty()) {
+            DiscountDAO discountDAO = new DiscountDAO();
+            DiscountDTO discount = discountDAO.getValidDiscount(discountCode);
+
+            if (discount != null && originalAmount >= discount.getMinOrderAmount()) {
+                if (discount.getType().equalsIgnoreCase("percent")) {
+                    amount = originalAmount * (1 - discount.getValue() / 100);
+                } else if (discount.getType().equalsIgnoreCase("fixed")) {
+                    amount = originalAmount - discount.getValue();
+                }
+                if (amount < 0) {
+                    amount = 0;
+                }
+
+                request.setAttribute("message", "Discount applied successfully!");
+            } else {
+                request.setAttribute("error", "Invalid or expired discount code.");
+            }
+        }
+
+        String bankId = "TPB";
+        String accountNo = "08080512276";
+        String template = "compact2";
+        String addInfo = "Order #" + orderID;
+        String accountName = "Tran Anh Ngan";
+
+        try {
+            String qrUrl = "https://img.vietqr.io/image/" + bankId + "-" + accountNo + "-" + template + ".png"
+                    + "?amount=" + (long) amount
+                    + "&addInfo=" + URLEncoder.encode(addInfo, "UTF-8")
+                    + "&accountName=" + URLEncoder.encode(accountName, "UTF-8");
+            request.setAttribute("qrUrl", qrUrl);
+        } catch (Exception ex) {
+            request.setAttribute("error", "Can't create QR code.");
+        }
+
+        request.setAttribute("orderID", orderID);
+        request.setAttribute("amount", amount);
+    }
+
+    private void handleConfirm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+       int orderID = Integer.parseInt(request.getParameter("orderID"));
         double amount = Double.parseDouble(request.getParameter("amount"));
         String method = "VietQR";
 
@@ -98,14 +101,17 @@ public class PaymentController extends HttpServlet {
         boolean success = dao.addPayment(payment);
 
         if (success) {
+            OrderDAO odao = new OrderDAO();
+            odao.updateOrderStatus(orderID, "Paid");
             request.setAttribute("message", "Payment successful!");
         } else {
-            request.setAttribute("message", "Payment failed. Please try again.");
+            request.setAttribute("error", "Payment failed. Please try again.");
         }
 
         request.setAttribute("orderID", orderID);
         request.setAttribute("amount", amount);
         handleShowQR(request, response);
+    
     }
 
     private void handleApplyDiscount(HttpServletRequest request, HttpServletResponse response) {
@@ -117,11 +123,11 @@ public class PaymentController extends HttpServlet {
         DiscountDTO discount = ddao.getValidDiscount(code);
 
         if (discount == null) {
-            request.setAttribute("message", "Invalid or expired discount code.");
+            request.setAttribute("error", "Invalid or expired discount code.");
             request.setAttribute("orderID", orderID);
             request.setAttribute("amount", originalAmount);
             request.setAttribute("discountCode", code);
-            handleShowQR(request, response); 
+            handleShowQR(request, response);
             return;
         }
 
