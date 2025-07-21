@@ -8,6 +8,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.DiscountDAO;
 import model.DiscountDTO;
 
@@ -68,10 +70,16 @@ public class DiscountController extends HttpServlet {
         }
     }
 
-    private void handleViewAll(HttpServletRequest request, HttpServletResponse response){
-        DiscountDAO dao = new DiscountDAO();
-        List<DiscountDTO> discounts = dao.getAllDiscounts();
-        request.setAttribute("discounts", discounts);
+    private String handleViewAll(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+            String search = request.getParameter("search");
+    List<DiscountDTO> discounts;
+    if (search != null && !search.trim().isEmpty()) {
+        discounts = new DiscountDAO().searchByCode(search.trim());
+    } else {
+        discounts = new DiscountDAO().getAllDiscounts();
+    }
+    request.setAttribute("discounts", discounts);
+    return "viewDiscounts.jsp";
         
     }
 

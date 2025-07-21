@@ -156,12 +156,18 @@
     <h2><i class="bi bi-tags-fill"></i> Available Discounts</h2>
 
     <div class="top-actions">
+        
         <% if (AuthUtils.isAdmin(request)) { %>
             <a href="createDiscount.jsp" class="btn btn-custom"><i class="bi bi-plus-circle"></i> Add Discount</a>
         <% } else { %>
             <div></div>
         <% } %>
         <a href="MainController" class="btn btn-outline-secondary"><i class="bi bi-house-door-fill"></i> Home</a>
+        <form action="MainController" method="get" class="d-flex" style="gap: 10px;">
+        <input type="hidden" name="action" value="viewAll" />
+        <input type="text" name="search" class="form-control" placeholder="Search by Code..." value="<%= request.getParameter("search") != null ? request.getParameter("search") : "" %>"/>
+        <button type="submit" class="btn btn-custom"><i class="bi bi-search"></i> Search</button>
+    </form>
     </div>
 
     <% if (discounts.isEmpty()) { %>

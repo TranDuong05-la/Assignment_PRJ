@@ -13,8 +13,7 @@ public class DiscountDAO {
 
     public boolean addDiscount(DiscountDTO discount) {
         String sql = "INSERT INTO tblDiscounts (code, type, value, minOrderAmount, expiryDate) VALUES (?, ?, ?, ?, ?)";
-        try (Connection conn = DbUtils.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try ( Connection conn = DbUtils.getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, discount.getCode());
             ps.setString(2, discount.getType());
@@ -32,18 +31,16 @@ public class DiscountDAO {
     public List<DiscountDTO> getAllDiscounts() {
         List<DiscountDTO> list = new ArrayList<>();
         String sql = "SELECT * FROM tblDiscounts ORDER BY expiryDate DESC";
-        try (Connection conn = DbUtils.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try ( Connection conn = DbUtils.getConnection();  PreparedStatement ps = conn.prepareStatement(sql);  ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 DiscountDTO dto = new DiscountDTO(
-                    rs.getInt("discountID"),
-                    rs.getString("code"),
-                    rs.getString("type"),
-                    rs.getDouble("value"),
-                    rs.getDouble("minOrderAmount"),
-                    rs.getDate("expiryDate")
+                        rs.getInt("discountID"),
+                        rs.getString("code"),
+                        rs.getString("type"),
+                        rs.getDouble("value"),
+                        rs.getDouble("minOrderAmount"),
+                        rs.getDate("expiryDate")
                 );
                 list.add(dto);
             }
@@ -53,48 +50,45 @@ public class DiscountDAO {
         return list;
     }
 
-    public List<DiscountDTO> getDiscountByCode(String code) {
+    public DiscountDTO getDiscountByCode(String code) {
         String sql = "SELECT * FROM tblDiscounts WHERE code LIKE ?";
-        List <DiscountDTO> discounts = new ArrayList<>();
-        try (Connection conn = DbUtils.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try ( Connection conn = DbUtils.getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, "%" + code + "%");
-            try (ResultSet rs = ps.executeQuery()) {
+            ps.setString(1, code);
+            try ( ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                        int discountID = rs.getInt("discountID");
-                        String coDe = rs.getString("code");
-                        String type = rs.getString("type");
-                        double value = rs.getDouble("value");
-                        double minOrder = rs.getDouble("minOrderAmount");
-                        Date expiryDate = rs.getDate("expiryDate");
+                    int discountID = rs.getInt("discountID");
+                    String coDe = rs.getString("code");
+                    String type = rs.getString("type");
+                    double value = rs.getDouble("value");
+                    double minOrder = rs.getDouble("minOrderAmount");
+                    Date expiryDate = rs.getDate("expiryDate");
                     DiscountDTO dTO = new DiscountDTO(discountID, coDe, type, value, minOrder, expiryDate);
-                    discounts.add(dTO);
+                    return dTO;
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return discounts;
+        return null;
     }
 
     public DiscountDTO getValidDiscount(String code) {
         String sql = "SELECT * FROM tblDiscounts WHERE code = ? AND expiryDate >= ?";
-        try (Connection conn = DbUtils.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try ( Connection conn = DbUtils.getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, code);
             ps.setDate(2, Date.valueOf(LocalDate.now()));
 
-            try (ResultSet rs = ps.executeQuery()) {
+            try ( ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return new DiscountDTO(
-                        rs.getInt("discountID"),
-                        rs.getString("code"),
-                        rs.getString("type"),
-                        rs.getDouble("value"),
-                        rs.getDouble("minOrderAmount"),
-                        rs.getDate("expiryDate")
+                            rs.getInt("discountID"),
+                            rs.getString("code"),
+                            rs.getString("type"),
+                            rs.getDouble("value"),
+                            rs.getDouble("minOrderAmount"),
+                            rs.getDate("expiryDate")
                     );
                 }
             }
@@ -103,5 +97,32 @@ public class DiscountDAO {
         }
         return null;
     }
-    
+
+    public List<DiscountDTO> searchByCode(String keyword) {
+        List<DiscountDTO> list = new ArrayList<>();
+        String sql = "SELECT * FROM tblDiscounts WHERE code LIKE ? ORDER BY expiryDate DESC";
+        try {
+            Connection conn = DbUtils.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, "%" + keyword + "%");
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                DiscountDTO dto = new DiscountDTO(
+                        rs.getInt("discountID"),
+                        rs.getString("code"),
+                        rs.getString("type"),
+                        rs.getDouble("value"),
+                        rs.getDouble("minOrderAmount"),
+                        rs.getDate("expiryDate")
+                );
+                list.add(dto);
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
 }
