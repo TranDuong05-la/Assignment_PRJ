@@ -191,18 +191,23 @@
         <div class="container">
             <h2><%=isEdit ? "Edit Inventory" : "Add Inventory"%></h2>
             <form method="post" action="InventoryController">
-               
+                <input type="hidden" name="action" value="<%= isEdit ? "updateInventory" : "createInventory" %>"/>
+                <input type="hidden" name="inventoryID" value="<%=inventory!=null ? inventory.getInventoryID() : ""%>" />
+                
+                <% if(isEdit && inventory != null) { %>
+                
+                <% } %>
                 <div>
                     <label for="bookID">Book ID</label>
                     <select name="bookID" id="bookID" required style="width:100%;padding:12px 15px;font-size:17px;border:2px solid #faeceb;border-radius:10px;background:#fff6f6;">
                         <option value="">-- Select Book --</option>
                         <% if (books != null) {
-                            for (BookDTO b : books) { %>
+                for (BookDTO b : books) { %>
                         <option value="<%=b.getBookID()%>" <%= (selectedBookId == b.getBookID()) ? "selected" : "" %>>
                             <%=b.getBookID()%> - <%=b.getBookTitle()%>
                         </option>
                         <%  }
-                    } %>
+            } %>
                     </select>
                 </div>
                 <div>
@@ -210,9 +215,8 @@
                     <input type="number" name="quantity" id="quantity" min="0" required
                            value="<%=inventory!=null ? inventory.getQuantity() : ""%>" />
                 </div>
-
                 <div class="form-actions">
-                    <input type="hidden" name="action" value="<%=isEdit?"updateInventory":"addInventory"%>"/>
+                    <input type="hidden" name="action" value="<%=isEdit?"updateInventory":"createInventory"%>"/>
                     <input type="submit" class="btn" value="<%=isEdit ? "Update" : "Add"%>"/>
                     <a href="inventory.jsp" class="btn cancel-btn">Cancel</a>
                 </div>

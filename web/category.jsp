@@ -658,16 +658,27 @@
                         <input type="hidden" name="action" value="listCategory"/>
                         <% if (categories != null && !categories.isEmpty()) {
                             for (CategoryDTO cat : categories) { %>
-                        <label>
-                            <input type="checkbox" name="categoryID" value="<%=cat.getCategoryID()%>"
-                                   <%= (selectedCategoryId != null && selectedCategoryId.equals(String.valueOf(cat.getCategoryID()))) ? "checked" : "" %> />
-                            <%= cat.getCategoryName() %>
-                        </label>
+                        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+                            <label style="flex:1;display:flex;align-items:center;gap:8px;margin:0;">
+                                <input type="checkbox" name="categoryID" value="<%=cat.getCategoryID()%>"
+                                       <%= (selectedCategoryId != null && selectedCategoryId.equals(String.valueOf(cat.getCategoryID()))) ? "checked" : "" %> />
+                                <span><%= cat.getCategoryName() %></span>
+                            </label>
+                            <% if (session.getAttribute("user") != null && utils.AuthUtils.isAdmin(request)) { %>
+                            <form action="CategoryController" method="post" style="display:inline;margin:0;">
+                                <input type="hidden" name="action" value="deleteCategory"/>
+                                <input type="hidden" name="categoryID" value="<%=cat.getCategoryID()%>"/>
+                                <button type="submit" style="background:#ea2222;color:#fff;border:none;border-radius:6px;padding:3px 10px;font-size:0.97rem;font-weight:bold;cursor:pointer;"
+                                        onclick="return confirm('Delete this category?');">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </form>
+                            <% } %>
+                        </div>
                         <%  }
-                           } else { %>
+                         } else { %>
                         <span>No Found Categories.</span>
                         <% } %>
-
                     </div>
                     <!-- Price Filter -->
                     <div class="filter-group" style="margin-bottom: 24px;">

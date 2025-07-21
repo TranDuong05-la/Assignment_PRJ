@@ -19,7 +19,7 @@ public class InventoryDAO {
 
     private static final String GET_QUANTITY_BY_BOOKID = "SELECT Quantity FROM Inventory WHERE BookID = ?";
     private static final String GET_All_INVENTORY = "SELECT * FROM Inventory";
-    private static final String GET_INVENTORY_BY_BOOk_ID = "SELECT * FROM Inventory WHERE BookID=?";
+    private static final String GET_INVENTORY_BY_BOOk_ID = "SELECT * FROM Inventory WHERE InventoryID=?";
     private static final String CREATE_INVENTORY = "INSERT INTO Inventory(BookID, Quantity, LastUpdate) VALUES (?, ?, GETDATE())";
     private static final String UPDATE_INVENTORY = "UPDATE Inventory SET BookID=?, Quantity=?, LastUpdate=GETDATE() WHERE InventoryID=?";
     private static final String DELETE_INVENTORY = "DELETE FROM Inventory WHERE BookID = ?";
