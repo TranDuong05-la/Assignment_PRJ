@@ -1,39 +1,30 @@
 package model;
 
 public class CartItemDTO {
-    private int cartId;
-    private int productId;
+    private int cartItemID;
+    private int cartID;
+    private int bookID;
     private int quantity;
+    private BookDTO book;
 
     public CartItemDTO() {}
 
-    public CartItemDTO(int cartId, int productId, int quantity) {
-        this.cartId = cartId;
-        this.productId = productId;
+    public CartItemDTO(int cartItemID, int cartID, int bookID, int quantity, BookDTO book) {
+        this.cartItemID = cartItemID;
+        this.cartID = cartID;
+        this.bookID = bookID;
         this.quantity = quantity;
+        this.book = book;
     }
 
-    public int getCartId() {
-        return cartId;
-    }
-
-    public void setCartId(int cartId) {
-        this.cartId = cartId;
-    }
-
-    public int getProductId() {
-        return productId;
-    }
-
-    public void setProductId(int productId) {
-        this.productId = productId;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
+    public int getCartItemID() { return cartItemID; }
+    public void setCartItemID(int cartItemID) { this.cartItemID = cartItemID; }
+    public int getCartID() { return cartID; }
+    public void setCartID(int cartID) { this.cartID = cartID; }
+    public int getBookID() { return bookID; }
+    public void setBookID(int bookID) { this.bookID = bookID; }
+    public int getQuantity() { return quantity; }
+    public void setQuantity(int quantity) { this.quantity = quantity; }
+    public BookDTO getBook() { return book; }
+    public void setBook(BookDTO book) { this.book = book; }
 } 
