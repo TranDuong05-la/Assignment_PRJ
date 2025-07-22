@@ -24,6 +24,18 @@ public class CartDAO {
         return false;
     }
 
+    public boolean createCartForUser(String userId) {
+        String sql = "INSERT INTO Cart (userID) VALUES (?)";
+        try (Connection conn = DbUtils.getConnection();
+             PreparedStatement pr = conn.prepareStatement(sql)) {
+            pr.setString(1, userId);
+            return pr.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public CartDTO getCartByUserId(String userId) {
         CartDTO cart = null;
         List<CartItemDTO> items = new ArrayList<>();

@@ -102,40 +102,82 @@ public class CartItemDAO {
         return false;
     }
 
-    public CartItemDTO getCartItemById(int cartItemID) {
-        String sql = "SELECT ci.cartItemID, ci.cartID, ci.bookID, ci.quantity, " +
-                     "b.BookTitle, b.Price, b.Image, b.Author, b.Publisher, b.Description, b.PublishYear, b.CategoryID " +
-                     "FROM CartItem ci " +
-                     "JOIN Book b ON ci.bookID = b.BookID " +
-                     "WHERE ci.cartItemID = ?";
+    public CartItemDTO getCartItemByCartIdAndProductId(int cartId, int productId) {
+        String sql = "SELECT * FROM CartItem WHERE cartID = ? AND bookID = ?";
         try (Connection conn = DbUtils.getConnection();
              PreparedStatement pr = conn.prepareStatement(sql)) {
-            pr.setInt(1, cartItemID);
+            pr.setInt(1, cartId);
+            pr.setInt(2, productId);
             ResultSet rs = pr.executeQuery();
             if (rs.next()) {
-                BookDTO book = new BookDTO(
-                    rs.getInt("bookID"),
-                    rs.getInt("CategoryID"),
-                    rs.getString("BookTitle"),
-                    rs.getString("Author"),
-                    rs.getString("Publisher"),
-                    rs.getDouble("Price"),
-                    rs.getString("Image"),
-                    rs.getString("Description"),
-                    rs.getInt("PublishYear")
-                );
-                return new CartItemDTO(
-                    rs.getInt("cartItemID"),
-                    rs.getInt("cartID"),
-                    rs.getInt("bookID"),
-                    rs.getInt("quantity"),
-                    book
-                );
+                CartItemDTO item = new CartItemDTO();
+                item.setCartItemID(rs.getInt("cartItemID"));
+                item.setCartID(rs.getInt("cartID"));
+                item.setBookID(rs.getInt("bookID"));
+                item.setQuantity(rs.getInt("quantity"));
+                return item;
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public CartItemDTO getCartItemById(int cartItemId) {
+        String sql = "SELECT * FROM CartItem WHERE cartItemID = ?";
+        try (Connection conn = DbUtils.getConnection();
+             PreparedStatement pr = conn.prepareStatement(sql)) {
+            pr.setInt(1, cartItemId);
+            ResultSet rs = pr.executeQuery();
+            if (rs.next()) {
+                CartItemDTO item = new CartItemDTO();
+                item.setCartItemID(rs.getInt("cartItemID"));
+                item.setCartID(rs.getInt("cartID"));
+                item.setBookID(rs.getInt("bookID"));
+                item.setQuantity(rs.getInt("quantity"));
+                return item;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // Hàm chính
+    public boolean deleteByCartItemIds(java.util.List<Integer> cartItemIds) {
+        if (cartItemIds == null || cartItemIds.isEmpty()) return false;
+        StringBuilder sql = new StringBuilder("DELETE FROM CartItem WHERE cartItemID IN (");
+        for (int i = 0; i < cartItemIds.size(); i++) {
+            sql.append("?");
+            if (i < cartItemIds.size() - 1) sql.append(",");
+        }
+        sql.append(")");
+        try (Connection conn = utils.DbUtils.getConnection();
+             PreparedStatement pr = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < cartItemIds.size(); i++) {
+                pr.setInt(i + 1, cartItemIds.get(i));
+            }
+            return pr.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    // Alias cho tên gọi khác
+    public boolean deleteByCartItemIts(java.util.List<Integer> cartItemIds) {
+        return deleteByCartItemIds(cartItemIds);
+    }
+
+    public boolean deleteAllByCartId(int cartId) {
+        String sql = "DELETE FROM CartItem WHERE cartID = ?";
+        try (Connection conn = utils.DbUtils.getConnection();
+             PreparedStatement pr = conn.prepareStatement(sql)) {
+            pr.setInt(1, cartId);
+            return pr.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
      
      private void closeResources(Connection conn, PreparedStatement ps, ResultSet rs) {

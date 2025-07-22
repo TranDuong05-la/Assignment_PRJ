@@ -3,18 +3,20 @@ package model;
 
 public class OrderDTO {
     private int orderId;
-    private int userId;
+    private String userId;
     private String orderDate;
     private double totalAmount;
     private String status;
     private int addressId;
     private int paymentId;
-    private int discountId;  
+    private int discountId;
+    private String paymentMethod;
+    private String comment;
 
     public OrderDTO() {
     }
 
-    public OrderDTO(int orderId, int userId, String orderDate, double totalAmount, String status, int addressId, int paymentId, int discountId) {
+    public OrderDTO(int orderId, String userId, String orderDate, double totalAmount, String status, int addressId, int paymentId, int discountId) {
         this.orderId = orderId;
         this.userId = userId;
         this.orderDate = orderDate;
@@ -33,11 +35,11 @@ public class OrderDTO {
         this.orderId = orderId;
     }
 
-    public int getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
@@ -69,6 +71,18 @@ public class OrderDTO {
         return discountId;
     }
 
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+    public String getComment() {
+        return comment;
+    }
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 
 
     public void setTotalAmount(double totalAmount) {

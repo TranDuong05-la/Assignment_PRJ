@@ -11,10 +11,19 @@
     String message = (String) request.getAttribute("message");
     String error = (String) request.getAttribute("error");
     String qrUrl = (String) request.getAttribute("qrUrl");
-    int orderID = (Integer) request.getAttribute("orderID");
-    double originalAmount = (Double) request.getAttribute("amount");
-    Double finalAmountObj = (Double) request.getAttribute("finalAmount");
-    double finalAmount = (finalAmountObj != null) ? finalAmountObj : originalAmount;
+    Integer orderID = null;
+    Double originalAmount = null;
+    Double finalAmountObj = null;
+    try {
+        orderID = (request.getAttribute("orderID") != null) ? Integer.parseInt(request.getAttribute("orderID").toString()) : null;
+    } catch(Exception e) { orderID = null; }
+    try {
+        originalAmount = (request.getAttribute("amount") != null) ? Double.parseDouble(request.getAttribute("amount").toString()) : null;
+    } catch(Exception e) { originalAmount = null; }
+    try {
+        finalAmountObj = (request.getAttribute("finalAmount") != null) ? Double.parseDouble(request.getAttribute("finalAmount").toString()) : null;
+    } catch(Exception e) { finalAmountObj = null; }
+    double finalAmount = (finalAmountObj != null) ? finalAmountObj : (originalAmount != null ? originalAmount : 0);
     String discountCode = (String) request.getAttribute("discountCode");
 %>
 <!DOCTYPE html>

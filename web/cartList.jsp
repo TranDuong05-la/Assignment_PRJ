@@ -206,7 +206,7 @@
         <input type="hidden" id="currentQuantityInput" name="currentQuantity" value="" />
         <div class="cart-total">Total: <span id="grandTotal"></span></div>
         <div class="cart-actions">
-            <button type="button" onclick="submitRestore()" class="payment-btn">Restore Items</button>
+            <button type="button" onclick="submitRestore()" class="payment-btn" style="margin-right:16px;">Restore Items</button>
             <button type="button" onclick="window.location.href='checkout.jsp'" class="payment-btn">Payment</button>
         </div>
         </form>

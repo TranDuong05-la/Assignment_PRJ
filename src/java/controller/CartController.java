@@ -25,6 +25,7 @@ public class CartController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         String url = "cartList.jsp";
+        boolean redirected = false;
         try {
             HttpSession session = request.getSession(false);
             UserDTO currentUser = (session != null) ? (UserDTO) session.getAttribute("user") : null;
@@ -39,6 +40,11 @@ public class CartController extends HttpServlet {
                 }
 
                 switch (action) {
+                    case "addCart":
+                        handleAddCart(request, session);
+                        response.sendRedirect("cartList.jsp");
+                        redirected = true;
+                        return;
                     case "updateQuantity":
                         handleUpdateQuantity(request);
                         break;
@@ -62,7 +68,6 @@ public class CartController extends HttpServlet {
                     CartDAO cartDAO = new CartDAO();
                     CartDTO cart = cartDAO.getCartByUserId(currentUser.getUserID());
                     request.setAttribute("cart", cart);
-                    // --- Cập nhật cartCount vào session: đếm số sản phẩm khác nhau ---
                     int cartCount = 0;
                     if (cart != null && cart.getItems() != null) {
                         cartCount = cart.getItems().size();
@@ -74,7 +79,44 @@ public class CartController extends HttpServlet {
             e.printStackTrace();
             request.setAttribute("message", "An error occurred: " + e.getMessage());
         } finally {
-            request.getRequestDispatcher(url).forward(request, response);
+            if (!redirected) {
+                request.getRequestDispatcher(url).forward(request, response);
+            }
+        }
+    }
+
+    private void handleAddCart(HttpServletRequest request, HttpSession session) {
+        try {
+            UserDTO user = (UserDTO) session.getAttribute("user");
+            if (user == null) return;
+            String userId = user.getUserID();
+            int productId = Integer.parseInt(request.getParameter("productId"));
+            int quantity = 1;
+            try {
+                quantity = Integer.parseInt(request.getParameter("quantity"));
+            } catch (Exception ignored) {}
+            CartDAO cartDAO = new CartDAO();
+            CartDTO cart = cartDAO.getCartByUserId(userId);
+            if (cart == null) {
+                cartDAO.createCartForUser(userId);
+                cart = cartDAO.getCartByUserId(userId);
+            }
+            CartItemDAO itemDAO = new CartItemDAO();
+            CartItemDTO existing = itemDAO.getCartItemByCartIdAndProductId(cart.getCartId(), productId);
+            if (existing != null) {
+                itemDAO.updateCartItemQuantity(existing.getCartItemID(), existing.getQuantity() + quantity);
+            } else {
+                CartItemDTO newItem = new CartItemDTO();
+                newItem.setCartID(cart.getCartId());
+                newItem.setBookID(productId);
+                newItem.setQuantity(quantity);
+                itemDAO.insertCartItem(newItem);
+            }
+            CartDTO updatedCart = cartDAO.getCartByUserId(userId);
+            int cartCount = (updatedCart != null && updatedCart.getItems() != null) ? updatedCart.getItems().size() : 0;
+            session.setAttribute("cartCount", cartCount);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -98,11 +140,21 @@ public class CartController extends HttpServlet {
         try {
             int cartItemID = Integer.parseInt(request.getParameter("cartItemID"));
             CartItemDAO itemDAO = new CartItemDAO();
-            CartItemDTO deletedItem = itemDAO.getCartItemById(cartItemID); // Sửa lại thành getCartItemById
+            CartItemDTO deletedItem = itemDAO.getCartItemById(cartItemID);
             if (deletedItem != null) {
                 List<CartItemDTO> deletedList = (List<CartItemDTO>) session.getAttribute("deletedCartItems");
                 if (deletedList == null) deletedList = new java.util.ArrayList<>();
-                deletedList.add(deletedItem);
+                // Không thêm trùng cartItemID đã xóa
+                boolean exists = false;
+                for (CartItemDTO item : deletedList) {
+                    if (item.getCartItemID() == deletedItem.getCartItemID()) {
+                        exists = true;
+                        break;
+                    }
+                }
+                if (!exists) {
+                    deletedList.add(deletedItem);
+                }
                 session.setAttribute("deletedCartItems", deletedList);
                 request.setAttribute("message", "Item moved to Recently Deleted. You can restore it!");
             }
@@ -126,7 +178,11 @@ public class CartController extends HttpServlet {
                 }
                 if (toRestore != null) {
                     CartItemDAO itemDAO = new CartItemDAO();
-                    itemDAO.insertCartItem(toRestore);
+                    // Đảm bảo không thêm trùng sản phẩm vào cart
+                    CartItemDTO checkExist = itemDAO.getCartItemByCartIdAndProductId(toRestore.getCartID(), toRestore.getBookID());
+                    if (checkExist == null) {
+                        itemDAO.insertCartItem(toRestore);
+                    }
                     deletedList.remove(toRestore);
                     session.setAttribute("deletedCartItems", deletedList);
                     request.setAttribute("message", "Item restored to your cart!");

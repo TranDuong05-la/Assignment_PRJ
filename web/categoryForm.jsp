@@ -99,8 +99,9 @@
     <div class="form-container">
         <h2>Category Form</h2>
         <form method="post" action="CategoryController">
+            <input type="hidden" name="action" value="addCategory"/>
             <label>Category Name
-                <input type="text" name="name" required>
+                <input type="text" name="categoryName" required>
             </label>
             <label>Description
                 <textarea name="description" rows="3"></textarea>

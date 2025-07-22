@@ -126,7 +126,7 @@ public class CategoryDAO {
             ps = conn.prepareStatement(UPDATE_CATEGORY);
 
             ps.setString(1, category.getCategoryName());
-            ps.setInt(2, category.getCategoryID());
+//            ps.setInt(2, category.getCategoryID());
             
 
             int rowAffected = ps.executeUpdate();

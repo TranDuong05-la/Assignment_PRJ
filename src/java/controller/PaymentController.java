@@ -58,11 +58,12 @@ public class PaymentController extends HttpServlet {
                 if (amount < 0) {
                     amount = 0;
                 }
-
+                request.setAttribute("finalAmount", amount);
                 request.setAttribute("message", "Discount applied successfully!");
             } else {
                 request.setAttribute("error", "Invalid or expired discount code.");
             }
+            request.setAttribute("discountCode", discountCode);
         }
 
         String bankId = "TPB";
@@ -79,10 +80,18 @@ public class PaymentController extends HttpServlet {
             request.setAttribute("qrUrl", qrUrl);
         } catch (Exception ex) {
             request.setAttribute("error", "Can't create QR code.");
+            request.setAttribute("qrUrl", "");
         }
 
         request.setAttribute("orderID", orderID);
-        request.setAttribute("amount", amount);
+        request.setAttribute("amount", originalAmount);
+        // Đảm bảo luôn set finalAmount (nếu không có discount thì null)
+        if (request.getAttribute("finalAmount") == null) {
+            request.setAttribute("finalAmount", null);
+        }
+        if (request.getAttribute("discountCode") == null) {
+            request.setAttribute("discountCode", null);
+        }
     }
 
     private void handleConfirm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
