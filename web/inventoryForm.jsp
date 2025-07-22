@@ -189,25 +189,23 @@
          int selectedBookId = (inventory != null) ? inventory.getBookID() : 0;
         %>
         <div class="container">
-            <h2><%=isEdit ? "Edit Inventory" : "Add Inventory"%></h2>
-            <form method="post" action="InventoryController">
+            <h2><%=isEdit ? "Edit Inventory" : "createInventory"%></h2>
+            <form method="post" action="MainController">
                 <input type="hidden" name="action" value="<%= isEdit ? "updateInventory" : "createInventory" %>"/>
-                <input type="hidden" name="inventoryID" value="<%=inventory!=null ? inventory.getInventoryID() : ""%>" />
-                
-                <% if(isEdit && inventory != null) { %>
-                
-                <% } %>
+                <% if (isEdit && inventory != null) { %>
+                <input type="hidden" name="inventoryID" value="<%= inventory.getInventoryID() %>" />
+                <% } %> 
                 <div>
                     <label for="bookID">Book ID</label>
                     <select name="bookID" id="bookID" required style="width:100%;padding:12px 15px;font-size:17px;border:2px solid #faeceb;border-radius:10px;background:#fff6f6;">
                         <option value="">-- Select Book --</option>
                         <% if (books != null) {
-                for (BookDTO b : books) { %>
+                            for (BookDTO b : books) { %>
                         <option value="<%=b.getBookID()%>" <%= (selectedBookId == b.getBookID()) ? "selected" : "" %>>
                             <%=b.getBookID()%> - <%=b.getBookTitle()%>
                         </option>
                         <%  }
-            } %>
+                        } %>
                     </select>
                 </div>
                 <div>
@@ -216,7 +214,7 @@
                            value="<%=inventory!=null ? inventory.getQuantity() : ""%>" />
                 </div>
                 <div class="form-actions">
-                    <input type="hidden" name="action" value="<%=isEdit?"updateInventory":"createInventory"%>"/>
+
                     <input type="submit" class="btn" value="<%=isEdit ? "Update" : "Add"%>"/>
                     <a href="inventory.jsp" class="btn cancel-btn">Cancel</a>
                 </div>

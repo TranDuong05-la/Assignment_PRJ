@@ -32,4 +32,5 @@
         <filter-name>BookDetailFilter</filter-name>
         <url-pattern>/book/*</url-pattern>
     </filter-mapping>
+    
 </web-app>

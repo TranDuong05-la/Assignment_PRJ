@@ -76,7 +76,7 @@ public class CategoryDAO {
 
         try {
             conn = DbUtils.getConnection();
-            ps = conn.prepareStatement(GET_ALL_CATEGORY);
+            ps = conn.prepareStatement(GET_CATEGORY_BY_ID);
             ps.setInt(1, CategoryID);
             rs = ps.executeQuery();
             if (rs.next()) {
@@ -103,8 +103,8 @@ public class CategoryDAO {
             conn = DbUtils.getConnection();
             ps = conn.prepareStatement(CREATE_CATEGORY);
 
-            ps.setInt(1, category.getCategoryID());
-            ps.setString(2, category.getCategoryName());
+//            ps.setInt(1, category.getCategoryID());
+            ps.setString(1, category.getCategoryName());
 
             int rowAffected = ps.executeUpdate();
             success = (rowAffected > 0);

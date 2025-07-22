@@ -161,6 +161,7 @@ public class CategoryController extends HttpServlet {
         }
         if (checkError.isEmpty()) {
             message = "Add category successfully";
+            return handleCategoryListing(request, response);
         }
         // gửi data
         request.setAttribute("checkError", checkError);

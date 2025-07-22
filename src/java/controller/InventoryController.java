@@ -116,6 +116,7 @@ public class InventoryController extends HttpServlet {
         String keyWord = request.getParameter("strKeyword");
         if (AuthUtils.isAdmin(request)) {
             String inId = request.getParameter("inventoryID");
+            System.out.println("Inventory ID = " + inId); // debug
             String bId = request.getParameter("bookID");
             String quantity = request.getParameter("quantity");
             int inventoryID = 0;

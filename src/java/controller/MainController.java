@@ -72,12 +72,15 @@ public class MainController extends HttpServlet {
         return "showInventory".equals(action)
                 || "createInventory".equals(action)
                 || "editInventory".equals(action)
-                || "updateInventory".equals(action);
+                || "updateInventory".equals(action)
+                || "deleteInventory".equals(action);
     }
 
     private boolean isReviewAction(String action) {
         return "listReview".equals(action)
                 || "addReview".equals(action)
+                || "editReview".equals(action)
+                || "updateReview".equals(action)
                 || "deleteReview".equals(action);
     }
 

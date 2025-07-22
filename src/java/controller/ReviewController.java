@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import model.BookDAO;
 import model.BookDTO;
+import model.CategoryDTO;
 import model.ReviewDAO;
 import model.ReviewDTO;
 import model.UserDTO;
@@ -42,7 +43,7 @@ public class ReviewController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String url = "review.jsp";
+        String url = "bookdetail.jsp";
         //                System.out.println("1");
         try {
             String action = request.getParameter("action");
@@ -51,6 +52,10 @@ public class ReviewController extends HttpServlet {
                 url = handleReviewListing(request, response);
             } else if (action.equals("addReview")) {
                 url = handleReviewAdding(request, response);
+            } else if (action.equals("editReview")) {
+                url = handleReviewEditing(request, response);
+            } else if (action.equals("updateReview")) {
+                url = handleReviewUpdating(request, response);
             } else if (action.equals("deleteReview")) {
                 url = handleReviewDeleting(request, response);
             }
@@ -112,40 +117,33 @@ public class ReviewController extends HttpServlet {
         BookDTO book = bdao.getBookById(bookID);
         request.setAttribute("reviews", reviews);
         request.setAttribute("book", book);
-        return "review.jsp";
+        return "bookDetail.jsp";
     }
 
     private String handleReviewAdding(HttpServletRequest request, HttpServletResponse response) {
         String checkError = "";
         String message = "";
-        String userID = null;
         String bookID = request.getParameter("bookID");
-        String reviewID = request.getParameter("reviewID");
         String rating = request.getParameter("rating");
-//        String userID = request.getParameter("userID");
         String comment = request.getParameter("comment");
-        int review_value = 0;
-        int book_value = 0;
-        int rate_value = 0;
+
+        // Lấy user từ session
+        UserDTO user = (UserDTO) request.getSession().getAttribute("user");
+        String userID = (user != null) ? user.getUserID() : null;
+
+        int book_value = 0, rate_value = 0;
         try {
-            review_value = Integer.parseInt(reviewID);
             book_value = Integer.parseInt(bookID);
             rate_value = Integer.parseInt(rating);
+        } catch (Exception e) {
+        }
 
-        } catch (Exception e) {
-        }
-        try {
-            HttpSession session = request.getSession(false); // false: không tạo mới session nếu chưa có
-            if (session != null) {
-                Object objUser = session.getAttribute("userID"); // session nên lưu userID là String
-                if (objUser != null) {
-                    userID = objUser.toString();
-                }
-            }
-        } catch (Exception e) {
-            // Trường hợp bất ngờ, bỏ qua, userID sẽ là null
-        }
-        if (!AuthUtils.isLoggedIn(request)) {
+        System.out.println("bookID khi save review: " + bookID);
+        BookDTO book = bdao.getBookById(book_value);
+        System.out.println("book trả về: " + (book == null ? "null" : book.getBookTitle()));
+
+        // Validate
+        if (userID == null) {
             checkError = "You must log in to rate!";
         } else if (rate_value < 1 || rate_value > 5) {
             checkError = "Rating should be from 1-5!";
@@ -154,21 +152,24 @@ public class ReviewController extends HttpServlet {
         }
 
         if (checkError.isEmpty()) {
-            ReviewDTO review = new ReviewDTO(0, book_value, bookID, rate_value, comment, null);
+            ReviewDTO review = new ReviewDTO(0, book_value, userID, rate_value, comment, null);
             if (rdao.create(review)) {
-                message = "Evaluate success!";
-
+                message = "Review submitted successfully!";
             } else {
                 checkError = "Cannot add review!";
             }
         }
+
+//        BookDTO book = bdao.getBookById(book_value);
+        List<ReviewDTO> reviews = rdao.getReviewByBookId(book_value);
+        request.setAttribute("book", book);
+        request.setAttribute("reviews", reviews);
         request.setAttribute("checkError", checkError);
         request.setAttribute("message", message);
-        // load lại list review cho sách này
-        request.setAttribute("bookID", bookID);
-        return handleReviewListing(request, response);
+
+        return "bookDetail.jsp";
     }
-    
+
     private String handleReviewDeleting(HttpServletRequest request, HttpServletResponse response) {
         String checkError = "";
         String bookID = request.getParameter("bookID");
@@ -192,5 +193,75 @@ public class ReviewController extends HttpServlet {
         request.setAttribute("checkError", checkError);
         request.setAttribute("book_value", book_value); // truyền lại bookID để list lại đúng sách
         return handleReviewListing(request, response);
+    }
+
+    private String handleReviewEditing(HttpServletRequest request, HttpServletResponse response) {
+        if (AuthUtils.isAdmin(request)) {
+            String reviewID = request.getParameter("reviewID");
+            int reviewIdValue = 0;
+            try {
+                reviewIdValue = Integer.parseInt(reviewID);
+            } catch (Exception e) {
+            }
+
+            // Lấy review và book tương ứng
+            ReviewDTO review = rdao.getReviewById(reviewIdValue);
+            if (review != null) {
+                BookDTO book = bdao.getBookById(review.getBookID());
+                request.setAttribute("review", review);
+                request.setAttribute("book", book);
+                return "reviewForm.jsp";
+            } else {
+                request.setAttribute("checkError", "Review not found!");
+            }
+        }
+        // Nếu không phải admin hoặc lỗi thì quay về list review của sách
+        return handleReviewListing(request, response);
+    }
+
+    private String handleReviewUpdating(HttpServletRequest request, HttpServletResponse response) {
+        String checkError = "";
+        String message = "";
+        String bookID = request.getParameter("bookID");
+        String rating = request.getParameter("rating");
+        String comment = request.getParameter("comment");
+
+        // Lấy user từ session
+        UserDTO user = (UserDTO) request.getSession().getAttribute("user");
+        String userID = (user != null) ? user.getUserID() : null;
+
+        int book_value = 0, rate_value = 0;
+        try {
+            book_value = Integer.parseInt(bookID);
+            rate_value = Integer.parseInt(rating);
+        } catch (Exception e) {
+        }
+
+        // Validate
+        if (userID == null) {
+            checkError = "You must log in to rate!";
+        } else if (rate_value < 1 || rate_value > 5) {
+            checkError = "Rating should be from 1-5!";
+        } else if (comment == null || comment.trim().isEmpty()) {
+            checkError = "Comment cannot be empty!";
+        }
+
+        if (checkError.isEmpty()) {
+            ReviewDTO review = new ReviewDTO(0, book_value, userID, rate_value, comment, null);
+            if (rdao.create(review)) {
+                message = "Review submitted successfully!";
+            } else {
+                checkError = "Cannot add review!";
+            }
+        }
+
+        BookDTO book = bdao.getBookById(book_value);
+        List<ReviewDTO> reviews = rdao.getReviewByBookId(book_value);
+        request.setAttribute("book", book);
+        request.setAttribute("reviews", reviews);
+        request.setAttribute("checkError", checkError);
+        request.setAttribute("message", message);
+
+        return "bookDetail.jsp";
     }
 }

@@ -369,7 +369,7 @@
             </div>
             <div class="header-menu">
                 <a href="<%=request.getContextPath()%>/home" class="active">Home</a>
-                <a href="category.jsp">Categories</a>
+                <a href="<%=request.getContextPath()%>/CategoryController?action=listCategory">Categories</a>
             </div>
             <div class="header-right">
                 <a href="#" style="color:#3d3d3d;font-size:1.02rem;text-decoration:none;">FAQ</a>
@@ -400,7 +400,7 @@
                 <%
                     } else {
                 %>
-                <a href="login.jsp" class="sign-btn">Sign in</a>
+                <a href="<%=request.getContextPath()%>/login.jsp" class="sign-btn">Sign in</a>
                 <%
                     }
                 %>

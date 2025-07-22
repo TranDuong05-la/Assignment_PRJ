@@ -110,6 +110,7 @@ public class InventoryDAO {
             ps = conn.prepareStatement(CREATE_INVENTORY);
             ps.setInt(1, inventory.getBookID());
             ps.setInt(2, inventory.getQuantity());
+            
 
             int rowAffected = ps.executeUpdate();
             success = (rowAffected > 0);

@@ -30,17 +30,39 @@ public class BookDetailFilter implements Filter {
             throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) req;
         String path = request.getRequestURI(); // VD: /Assignment_PRJ/book/1
+        // Nếu là đường dẫn category thì cho đi thẳng, KHÔNG forward
+        if (path.endsWith("/category.jsp") || path.contains("CategoryController")) {
+            chain.doFilter(req, resp); // Cho qua bình thường
+            return;
+        }
 
-        // Cắt lấy số id cuối cùng (dạng /book/1)
-        String[] split = path.split("/");
-        String bookId = split[split.length - 1];
-
-        // Chuyển sang controller, forward nội bộ, KHÔNG chuyển địa chỉ trình duyệt
-        // (có thể dùng forward, không dùng sendRedirect)
-        request.getRequestDispatcher(
+        // Nếu là /bookDetail hoặc /book/{id}
+        if (path.endsWith("/bookDetail")) {
+            // Nếu là /bookDetail?id=123 (query string)
+            String bookId = request.getParameter("id");
+            if (bookId == null) {
+                // fallback: nếu có dạng /book/{id}
+                String[] split = path.split("/");
+                bookId = split[split.length - 1];
+            }
+            request.getRequestDispatcher(
                 "/ProductController?action=bookDetail&bookID=" + bookId
-        ).forward(req, resp);
+            ).forward(req, resp);
+            return;
+        }
+
+        // Nếu là /book/{id} thì cắt id cuối cùng
+        if (path.matches(".*/book/\\d+$")) {
+            String[] split = path.split("/");
+            String bookId = split[split.length - 1];
+            request.getRequestDispatcher(
+                "/ProductController?action=bookDetail&bookID=" + bookId
+            ).forward(req, resp);
+            return;
+        }
 
         // KHÔNG gọi chain.doFilter nữa vì đã forward xong
+         // Các trường hợp khác cứ cho đi qua
+        chain.doFilter(req, resp);
     }
 }

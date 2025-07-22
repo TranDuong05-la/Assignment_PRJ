@@ -98,13 +98,10 @@
     %>
     <div class="form-container">
         <h2>Category Form</h2>
-        <form method="post" action="CategoryController">
+        <form method="post" action="MainController">
             <input type="hidden" name="action" value="addCategory"/>
             <label>Category Name
                 <input type="text" name="categoryName" required>
-            </label>
-            <label>Description
-                <textarea name="description" rows="3"></textarea>
             </label>
             <button type="submit" class="btn">Save</button>
             <a href="category.jsp" class="btn cancel">Cancel</a>
