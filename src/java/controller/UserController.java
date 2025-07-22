@@ -101,7 +101,6 @@ public class UserController extends HttpServlet {
         HttpSession session = request.getSession();
         String strUsername = request.getParameter("strUsername");
         String strPassword = request.getParameter("strPassword");
-        strPassword = PasswordUtils.encryptSHA256(strPassword);
         UserDAO userDAO = new UserDAO();
         if (userDAO.login(strUsername, strPassword)) {
             UserDTO user = userDAO.getUserById(strUsername);
