@@ -582,7 +582,6 @@
                 </a>
                 </div>
                 <div class="header-right">
-                    <a href="#" style="color:#3d3d3d;font-size:1.02rem;text-decoration:none;">FAQ</a>
                     <% if(AuthUtils.isLoggedIn(request)){%>
                     <%
                     UserDTO user = (UserDTO) session.getAttribute("user");
