@@ -5,10 +5,15 @@
         <group>
             <file>file:/D:/PRJ301/Assignment_PRJ/web/payment.jsp</file>
             <file>file:/D:/PRJ301/Assignment_PRJ/src/java/controller/ImageServlet.java</file>
+            <file>file:/D:/PRJ301/Assignment_PRJ/web/cartDetail.jsp</file>
+            <file>file:/D:/PRJ301/Assignment_PRJ/web/cartList.jsp</file>
             <file>file:/D:/PRJ301/Assignment_PRJ/web/home.jsp</file>
+            <file>file:/D:/PRJ301/Assignment_PRJ/web/bookDetail.jsp</file>
             <file>file:/D:/PRJ301/Assignment_PRJ/src/java/model/PaymentDTO.java</file>
-            <file>file:/D:/PRJ301/Assignment_PRJ/src/java/controller/PaymentController.java</file>
-            <file>file:/D:/PRJ301/Assignment_PRJ/src/java/model/CartDAO.java</file>
+            <file>file:/D:/PRJ301/Assignment_PRJ/web/category.jsp</file>
+            <file>file:/D:/PRJ301/Assignment_PRJ/src/java/controller/ProductController.java</file>
+            <file>file:/D:/PRJ301/Assignment_PRJ/web/reset.jsp</file>
+            <file>file:/D:/PRJ301/Assignment_PRJ/src/java/model/BookDAO.java</file>
         </group>
     </open-files>
 </project-private>
