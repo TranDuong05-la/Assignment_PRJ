@@ -57,7 +57,7 @@
             }
             .search-bar {
                 flex:1;
-                max-width:320px;
+                max-width:420px;
                 margin:0 32px;
                 position:relative;
             }
@@ -577,11 +577,10 @@
                 <div class="header-menu">
                     <a href="<%=request.getContextPath()%>/home" class="active">Home</a>
                     <a href="category.jsp">Categories</a>
-                    <a href="CartController?action=viewCart" class="cart-btn"><i class="fa-solid fa-cart-shopping"></i>
-                    <span class="cart-count"><%= session.getAttribute("cartCount") != null ? session.getAttribute("cartCount") : 0 %></span>
-                </a>
+                    
                 </div>
                 <div class="header-right">
+                    <a href="#" style="color:#3d3d3d;font-size:1.02rem;text-decoration:none;">FAQ</a>
                     <% if(AuthUtils.isLoggedIn(request)){%>
                     <%
                     UserDTO user = (UserDTO) session.getAttribute("user");
@@ -594,15 +593,17 @@
                         <div class="dropdown-menu dropdown-menu-right">
                             <a class="dropdown-item" href="viewDiscounts.jsp">View Discounts Code</a>
                             <a class="dropdown-item" href="addressList.jsp">Your Address</a>
-                            
+
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="reset.jsp">Reset Password</a>
                         </div>
                         <%}%>
                     </div>
 
-                    
-                    
+                    <a href="cartList.jsp" class="cart-btn"><i class="fa-solid fa-cart-shopping"></i>
+                        <span class="cart-count"><%= session.getAttribute("cartCount") != null ? session.getAttribute("cartCount") : 0 %></span>
+                    </a>
+
 
                     <a href="MainController?action=logout" class="sign-btn" style="background:#ccc;color:#222;">Logout</a>
                     <%
@@ -732,7 +733,7 @@
                         </select>
                     </div>
                     <button type="submit" class="browse-more-btn" style="margin:12px 0 0 0;
-                            width:100%;">Lọc</button>
+                            width:100%;">Filter</button>
                 </form>
 
             </div>
@@ -824,16 +825,19 @@
                 label.textContent = slider.value;
             }
         </script>
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+        <!--Start of Tawk.to Script-->
         <script type="text/javascript">
-                                            var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
-                                            (function () {
-                                                var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
-                                                s1.async = true;
-                                                s1.src = 'https://embed.tawk.to/6879c8a03d9d30190be79d42/1j0drfcq5';
-                                                s1.charset = 'UTF-8';
-                                                s1.setAttribute('crossorigin', '*');
-                                                s0.parentNode.insertBefore(s1, s0);
-                                            })();
+            var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+            (function () {
+                var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
+                s1.async = true;
+                s1.src = 'https://embed.tawk.to/6879c8a03d9d30190be79d42/1j0drfcq5';
+                s1.charset = 'UTF-8';
+                s1.setAttribute('crossorigin', '*');
+                s0.parentNode.insertBefore(s1, s0);
+            })();
         </script>
     </body>
 </html>

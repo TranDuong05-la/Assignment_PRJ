@@ -18,6 +18,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Detail</title>
         <!-- Font Awesome, CSS... -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -61,7 +62,7 @@
             }
             .search-bar {
                 flex:1;
-                max-width:320px;
+                max-width:420px;
                 margin:0 32px;
                 position:relative;
             }
@@ -502,13 +503,13 @@
 
                 <div class="header-menu">
                     <a href="<%=request.getContextPath()%>/home" class="active">Home</a>
-                    <a href="./category.jsp">Categories</a>
-                    <a href="CartController?action=viewCart" class="cart-btn"><i class="fa-solid fa-cart-shopping"></i>
-                    <span class="cart-count"><%= session.getAttribute("cartCount") != null ? session.getAttribute("cartCount") : 0 %></span>
+                    <a href="<%=request.getContextPath()%>/CategoryController?action=listCategory">Categories</a>
+                    <a href="cartList.jsp" class="cart-btn"><i class="fa-solid fa-cart-shopping"></i>
+                        <span class="cart-count"><%= session.getAttribute("cartCount") != null ? session.getAttribute("cartCount") : 0 %></span>
                     </a>
                 </div>
 
-                
+
                 <% if(AuthUtils.isLoggedIn(request)){%>
                 <%
            UserDTO user = (UserDTO) session.getAttribute("user");
@@ -531,7 +532,7 @@
                     <%
                         } else {
                     %>
-                    <a href="login.jsp" class="sign-btn">Sign in</a>
+                    <a href="<%=request.getContextPath()%>/login.jsp" class="sign-btn">Sign in</a>
                     <%
                         }
                     %>
@@ -567,7 +568,12 @@
 
                     </div>
                     <div class="btns">
-                        <button class="btn">Add To Cart</button>
+                        <form action="CartController" method="post" style="display:inline;">
+                            <input type="hidden" name="action" value="addToCart" />
+                            <input type="hidden" name="bookID" value="<%= book.getBookID() %>" />
+                            <input type="hidden" name="quantity" value="1" />
+                            <button type="submit" class="btn">Add To Cart</button>
+                        </form>
                         <button class="btn"><i class="fa fa-heart"></i></button>
                     </div>
                 </div>
@@ -581,14 +587,15 @@
                 <button class="tab-btn" type="button">Author</button>
                 <button class="tab-btn" type="button">Review</button>
             </div>
-            <div class="tab-content" id="tab-desc">
-                <%= book.getDescription() %>
-            </div>
-            <div class="tab-content d-none" id="tab-author">
-                <b>Aúthour:</b> <%= book.getAuthor() %><br>
-                <b>Publisher:</b> <%= book.getPublisher() %>
-            </div>
-            <div class="tab-content d-none" id="tab-review">
+            <!-- TAB ALL -->
+            <div class="tab-content" id="tab-all">
+                <h6><b>Description</b></h6>
+                <div style="margin-bottom:15px;"><%= book.getDescription() %></div>
+                <div style="margin-bottom:15px;">
+                    <b>Author:</b> <%= book.getAuthor() %><br>
+                    <b>Publisher:</b> <%= book.getPublisher() %>
+                </div>
+                <h6><b>Reviews</b></h6>
                 <% if (reviews != null && !reviews.isEmpty()) { %>
                 <% for (ReviewDTO r : reviews) { %>
                 <div style="border-bottom:1px solid #eee;margin-bottom:16px;padding-bottom:8px">
@@ -600,11 +607,79 @@
                 </div>
                 <% } %>
                 <% } else { %>
-                <i>Have not reviews.</i>
+                <i>No reviews yet.</i>
                 <% } %>
             </div>
+            <!-- TAB DESCRIPTION -->
+            <div class="tab-content d-none" id="tab-desc">
+                <%= book.getDescription() %>
+            </div>
+            <!-- TAB AUTHOR -->
+            <div class="tab-content d-none" id="tab-author">
+                <b>Author:</b> <%= book.getAuthor() %><br>
+                <b>Publisher:</b> <%= book.getPublisher() %>
+            </div>
+            <!-- TAB REVIEW -->
+            <div class="tab-content d-none" id="tab-review">
+                <% if (session.getAttribute("user") != null) { %>
+                <form action="<%=request.getContextPath()%>/reviewForm.jsp" method="get" style="margin-bottom:18px;">
+                    <input type="hidden" name="bookId" value="<%= book.getBookID() %>"/>
+                    <button type="submit" class="btn btn-danger">Review</button>
+                </form>
+                <% } else { %>
+                <div style="color: #a22; font-size: 1.03rem; margin-bottom:10px;">
+                    <i class="fa fa-info-circle"></i> Please <a href="<%=request.getContextPath()%>/login.jsp" style="color:#e22;text-decoration:underline;">login</a> to review!
+                </div>
+                <% } %>
+                <% if (reviews != null && !reviews.isEmpty()) { %>
+                <%UserDTO sessionUser = (UserDTO) session.getAttribute("user");%> 
+                <% for (ReviewDTO r : reviews) { 
+                
+                    
+                    boolean canEdit = false;
+                    if (sessionUser != null) {
+        
+                            canEdit = sessionUser.getRoleID().equalsIgnoreCase("admin") || 
+                            sessionUser.getUserID().equals(r.getUserID());
+                        }
+                %>
+                <div style="border-bottom:1px solid #eee;margin-bottom:16px;padding-bottom:8px"style="border-bottom:1px solid #eee;margin-bottom:16px;padding-bottom:8px;position:relative;"><%= r.getUserID() %></b>
+                    <span>(<%= r.getRating() %>/5 sao)</span>:<br/>
+                    <span><%= r.getComment() %></span>
+                    <br>
+                    <span style="color:#888;font-size:12px"><%= r.getReviewDate() %></span>
 
+                    <% if (canEdit) { %>
+                    <!-- Xóa -->
+                    <form action="ReviewController" method="post" style="display:inline;">
+                        <input type="hidden" name="action" value="deleteReview"/>
+                        <input type="hidden" name="reviewID" value="<%= r.getReviewID() %>"/>
+                        <input type="hidden" name="bookID" value="<%= book.getBookID() %>"/>
+                        <button type="submit" 
+                                style="border:none;background:#e93b3b;color:#fff; padding:4px 14px; border-radius:8px; font-size:0.99rem; margin-right:4px;"
+                                onclick="return confirm('Delete this review?');">
+                            delete
+                        </button>
+                    </form>
+                    <!-- Sửa -->
+                    <form action="ReviewController" method="post" style="display:inline;">
+                        <input type="hidden" name="action" value="editReview"/>
+                        <input type="hidden" name="bookId" value="<%= book.getBookID() %>"/>
+                        <input type="hidden" name="reviewID" value="<%= r.getReviewID() %>"/>
+                        <button type="submit" 
+                                style="border:none;background:#1e80ff;color:#fff; padding:4px 14px; border-radius:8px; font-size:0.99rem;">
+                            edit
+                        </button>
+                    </form>
+                    <% } %>
+                </div>
+                <% } %>
+                <% } else { %>
+                <i>No reviews yet.</i>
+                <% } %>
+            </div>
         </div>
+
         <div style="text-align:center; margin:36px 0 24px 0;">
             <a href="<%=request.getContextPath()%>/home" style="
                display:inline-block;
@@ -681,16 +756,19 @@
                 }
             });
         </script>
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+        <!--Start of Tawk.to Script-->
         <script type="text/javascript">
-                                            var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
-                                            (function () {
-                                                var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
-                                                s1.async = true;
-                                                s1.src = 'https://embed.tawk.to/6879c8a03d9d30190be79d42/1j0drfcq5';
-                                                s1.charset = 'UTF-8';
-                                                s1.setAttribute('crossorigin', '*');
-                                                s0.parentNode.insertBefore(s1, s0);
-                                            })();
+            var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+            (function () {
+                var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
+                s1.async = true;
+                s1.src = 'https://embed.tawk.to/6879c8a03d9d30190be79d42/1j0drfcq5';
+                s1.charset = 'UTF-8';
+                s1.setAttribute('crossorigin', '*');
+                s0.parentNode.insertBefore(s1, s0);
+            })();
         </script>
     </body>
 </html>
