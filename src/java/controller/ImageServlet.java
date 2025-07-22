@@ -31,7 +31,8 @@ public class ImageServlet extends HttpServlet {
         }
         filename = filename.substring(1); // bỏ dấu /
         // Đường dẫn tuyệt đối tới thư mục uploads
-        File file = new File("D:/HK4/PRJ301/Assignment_PRJ/web/uploads", filename);
+        String uploadsPath = getServletContext().getRealPath("/uploads");
+        File file = new File(uploadsPath, filename);
         if (file.exists()) {
             // Xác định kiểu content-type dựa vào file
             String contentType = getServletContext().getMimeType(file.getName());

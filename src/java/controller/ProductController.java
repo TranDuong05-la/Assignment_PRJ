@@ -174,7 +174,7 @@ public class ProductController extends HttpServlet {
                 jakarta.servlet.http.Part filePart = request.getPart("imageFile");
                 if (filePart != null && filePart.getSize() > 0) {
                     // Đường dẫn vật lý nơi bạn muốn lưu file (tùy chỉnh theo máy bạn)
-                    String uploadPath = "D:/HK4/PRJ301/Assignment_PRJ/web/uploads";
+                    String uploadPath = getServletContext().getRealPath("/uploads");
                     File uploadDir = new File(uploadPath);
                     if (!uploadDir.exists()) {
                         uploadDir.mkdirs();
@@ -299,7 +299,7 @@ public class ProductController extends HttpServlet {
             try {
                 jakarta.servlet.http.Part filePart = request.getPart("imageFile");
                 if (filePart != null && filePart.getSize() > 0) {
-                    String uploadPath = "D:/HK4/PRJ301/Assignment_PRJ/web/uploads";
+                    String uploadPath = getServletContext().getRealPath("/uploads");
                     File uploadDir = new File(uploadPath);
                     if (!uploadDir.exists()) {
                         uploadDir.mkdirs();

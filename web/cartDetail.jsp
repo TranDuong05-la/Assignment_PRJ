@@ -204,7 +204,7 @@
             </div>
             <div class="header-menu">
                 <a href="home.jsp">Home</a>
-                <a href="#">Categories</a>
+                <a href="category.jsp">Categories</a>
                 
                  <%
                     UserDTO user = (UserDTO) session.getAttribute("user");

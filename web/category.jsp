@@ -57,7 +57,7 @@
             }
             .search-bar {
                 flex:1;
-                max-width:420px;
+                max-width:320px;
                 margin:0 32px;
                 position:relative;
             }
@@ -577,6 +577,9 @@
                 <div class="header-menu">
                     <a href="<%=request.getContextPath()%>/home" class="active">Home</a>
                     <a href="category.jsp">Categories</a>
+                    <a href="CartController?action=viewCart" class="cart-btn"><i class="fa-solid fa-cart-shopping"></i>
+                    <span class="cart-count"><%= session.getAttribute("cartCount") != null ? session.getAttribute("cartCount") : 0 %></span>
+                </a>
                 </div>
                 <div class="header-right">
                     <a href="#" style="color:#3d3d3d;font-size:1.02rem;text-decoration:none;">FAQ</a>
@@ -599,9 +602,7 @@
                         <%}%>
                     </div>
 
-                    <a href="#" class="cart-btn"><i class="fa-solid fa-cart-shopping"></i>
-                        <span class="cart-count">1</span>
-                    </a>
+                    
                     
 
                     <a href="MainController?action=logout" class="sign-btn" style="background:#ccc;color:#222;">Logout</a>

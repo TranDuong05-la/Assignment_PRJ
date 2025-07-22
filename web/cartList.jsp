@@ -123,7 +123,7 @@
             </div>
             <div class="header-menu">
                 <a href="home.jsp">Home</a>
-                <a href="#">Categories</a>
+                <a href="category.jsp">Categories</a>
                 <a href="CartController?action=viewCart" class="cart-btn"><i class="fa-solid fa-cart-shopping"></i>
                     <span class="cart-count"><%= session.getAttribute("cartCount") != null ? session.getAttribute("cartCount") : 0 %></span>
                 </a>

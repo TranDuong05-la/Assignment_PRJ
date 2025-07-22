@@ -58,7 +58,7 @@
             }
             .search-bar {
                 flex: 1;
-                max-width: 420px;
+                max-width: 320px;
                 margin: 0 32px;
                 position: relative;
                 display: flex;
