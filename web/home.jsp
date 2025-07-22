@@ -527,33 +527,24 @@
                     <a href="<%=request.getContextPath()%>/home" class="active">Home</a>
                     <a href="category.jsp">Categories</a>
                 </div>
-                <div class="header-right">
-                    <a href="#" style="color:#3d3d3d;font-size:1.02rem;text-decoration:none;">FAQ</a>
-                    <% if(AuthUtils.isLoggedIn(request)){%>
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            See More
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item" href="viewDiscounts.jsp">View Discounts Code</a>
-                            <a class="dropdown-item" href="addressList.jsp">Your Address</a>
-                            <a class="dropdown-item" href="#">Something else here</a>
-                            <a class="dropdown-item" href="#">Something else here</a>
-                            <a class="dropdown-item" href="#">Something else here</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="reset.jsp">Reset Password</a>
-                        </div>
-                        <%}%>
+                <%
+                UserDTO user = (UserDTO) session.getAttribute("user");
+                 if (user != null) {
+                %>
+                <% if(AuthUtils.isLoggedIn(request)){%>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <%= user.getFullName() %>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a class="dropdown-item" href="viewDiscounts.jsp">View Discounts Code</a>
+                        <a class="dropdown-item" href="addressList.jsp">Your Address</a>
+                        
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="reset.jsp">Reset Password</a>
                     </div>
+                    <%}%>
 
-                    <a href="#" class="cart-btn"><i class="fa-solid fa-cart-shopping"></i>
-                        <span class="cart-count">1</span>
-                    </a>
-                    <%
-                    UserDTO user = (UserDTO) session.getAttribute("user");
-                     if (user != null) {
-                    %>
-                    <span style="font-size: 1rem;"><%= user.getFullName() %></span>
                     <a href="MainController?action=logout" class="sign-btn" style="background:#ccc;color:#222;">Logout</a>
                     <%
                         } else {
@@ -562,6 +553,7 @@
                     <%
                         }
                     %>
+
                 </div>
             </div>
             <!-- Mobile Dropdown Menu -->
@@ -572,8 +564,6 @@
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                     <a class="dropdown-item" href="home.jsp">Home</a>
                     <a class="dropdown-item" href="#">Categories</a>
-                    <a class="dropdown-item" href="#">FAQ</a>
-                    <a class="dropdown-item" href="#">Track Order</a>
                     <a class="dropdown-item" href="#"><i class="fa fa-shopping-cart"></i> Cart (1)</a>
                     <%
                         if (user != null) {
@@ -728,9 +718,9 @@
                 <div class="footer-col">
                     <div class="footer-title">Support</div>
                     <ul class="footer-list">
-                        <li><a href="#">Return policy</a></li>
-                        <li><a href="#">FAQ</a></li>
-                        <li><a href="#">Contact support</a></li>
+                        <li><a title="Use Chatbot for more info">Return policy</a></li>
+                        <li><a title="Use Chatbot for more info">FAQ</a></li>
+                        <li><a title="Use Chatbot for more info">Contact support</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
@@ -748,6 +738,17 @@
         </footer>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
-
+        <!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/6879c8a03d9d30190be79d42/1j0drfcq5';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
     </body>
 </html>

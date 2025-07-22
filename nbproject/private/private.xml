@@ -3,20 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/HK4/PRJ301/Assignment_PRJ/src/java/controller/MainController.java</file>
-            <file>file:/D:/HK4/PRJ301/Assignment_PRJ/src/java/model/InventoryDAO.java</file>
-            <file>file:/D:/HK4/PRJ301/Assignment_PRJ/src/java/controller/CategoryController.java</file>
-            <file>file:/D:/HK4/PRJ301/Assignment_PRJ/src/java/model/BookDAO.java</file>
-            <file>file:/D:/HK4/PRJ301/Assignment_PRJ/web/search.jsp</file>
-            <file>file:/D:/HK4/PRJ301/Assignment_PRJ/web/category.jsp</file>
-            <file>file:/D:/HK4/PRJ301/Assignment_PRJ/src/java/controller/ReviewController.java</file>
-            <file>file:/D:/HK4/PRJ301/Assignment_PRJ/src/java/model/CategoryDAO.java</file>
-            <file>file:/D:/HK4/PRJ301/Assignment_PRJ/web/productForm.jsp</file>
-            <file>file:/D:/HK4/PRJ301/Assignment_PRJ/web/reviewForm.jsp</file>
-            <file>file:/D:/HK4/PRJ301/Assignment_PRJ/src/java/model/ReviewDTO.java</file>
-            <file>file:/D:/HK4/PRJ301/Assignment_PRJ/web/inventory.jsp</file>
-            <file>file:/D:/HK4/PRJ301/Assignment_PRJ/src/java/controller/InventoryController.java</file>
-            <file>file:/D:/HK4/PRJ301/Assignment_PRJ/web/bookDetail.jsp</file>
+            <file>file:/D:/PRJ301/Assignment_PRJ/web/payment.jsp</file>
+            <file>file:/D:/PRJ301/Assignment_PRJ/src/java/model/OrderDTO.java</file>
+            <file>file:/D:/PRJ301/Assignment_PRJ/src/java/model/OrderDAO.java</file>
+            <file>file:/D:/PRJ301/Assignment_PRJ/src/java/model/PaymentDTO.java</file>
+            <file>file:/D:/PRJ301/Assignment_PRJ/src/java/controller/PaymentController.java</file>
+            <file>file:/D:/PRJ301/Assignment_PRJ/src/java/model/CategoryDTO.java</file>
         </group>
     </open-files>
 </project-private>
