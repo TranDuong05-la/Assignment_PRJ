@@ -504,33 +504,26 @@
                     <a href="<%=request.getContextPath()%>/home" class="active">Home</a>
                     <a href="./category.jsp">Categories</a>
                 </div>
-                <div class="header-right">
-                    <a href="#" style="color:#3d3d3d;font-size:1.02rem;text-decoration:none;">FAQ</a>
-                    <% if(AuthUtils.isLoggedIn(request)){%>
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            See More
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item" href="viewDiscounts.jsp">View Discounts Code</a>
-                            <a class="dropdown-item" href="addressList.jsp">Your Address</a>
-                            <a class="dropdown-item" href="#">Something else here</a>
-                            <a class="dropdown-item" href="#">Something else here</a>
-                            <a class="dropdown-item" href="#">Something else here</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="reset.jsp">Reset Password</a>
-                        </div>
-                        <%}%>
-                    </div>
 
-                    <a href="#" class="cart-btn"><i class="fa-solid fa-cart-shopping"></i>
-                        <span class="cart-count">1</span>
-                    </a>
-                    <%
-                    UserDTO user = (UserDTO) session.getAttribute("user");
-                     if (user != null) {
-                    %>
-                    <span style="font-size: 1rem;"><%= user.getFullName() %></span>
+                
+                <% if(AuthUtils.isLoggedIn(request)){%>
+                <%
+           UserDTO user = (UserDTO) session.getAttribute("user");
+            if (user != null) {
+                %>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <%= user.getFullName() %>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a class="dropdown-item" href="viewDiscounts.jsp">View Discounts Code</a>
+                        <a class="dropdown-item" href="addressList.jsp">Your Address</a>
+
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="reset.jsp">Reset Password</a>
+                    </div>
+                    <%}%>
+
                     <a href="MainController?action=logout" class="sign-btn" style="background:#ccc;color:#222;">Logout</a>
                     <%
                         } else {
@@ -539,6 +532,7 @@
                     <%
                         }
                     %>
+
                 </div>
             </div>
         </div>
