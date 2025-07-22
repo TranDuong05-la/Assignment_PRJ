@@ -526,6 +526,9 @@
                 <div class="header-menu">
                     <a href="<%=request.getContextPath()%>/home" class="active">Home</a>
                     <a href="category.jsp">Categories</a>
+                    <a href="cartList.jsp" class="cart-btn"><i class="fa-solid fa-cart-shopping"></i>
+                        <span class="cart-count"><%= session.getAttribute("cartCount") != null ? session.getAttribute("cartCount") : 0 %></span>
+                    </a>
                 </div>
                 <%
                 UserDTO user = (UserDTO) session.getAttribute("user");
@@ -564,7 +567,12 @@
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                     <a class="dropdown-item" href="home.jsp">Home</a>
                     <a class="dropdown-item" href="#">Categories</a>
-                    <a class="dropdown-item" href="#"><i class="fa fa-shopping-cart"></i> Cart (1)</a>
+                    <a href="cart.jsp" class="cart-btn" title="Go to cart">
+    <i class="fa fa-shopping-cart"></i>
+    <span class="cart-count">
+        <%= session.getAttribute("cartCount") != null ? session.getAttribute("cartCount") : 0 %>
+    </span>
+</a>
                     <%
                         if (user != null) {
                     %>
@@ -601,36 +609,11 @@
         <!-- Add Product Button -->
         <% if (AuthUtils.isAdmin(request)) { %>
         <div class="add-book-bar">
-            <button class="sign-btn" onclick="openAddModal()">Add best selling book</button>
             <a href="inventory.jsp" class="sign-btn" style="margin-left:12px;">Inventory</a>
         </div>
         <% } %>
 
 
-        <!-- Best Seller -->
-        <div class="best-seller-section">
-            <div class="best-title">Best Selling Books Ever</div>
-            <div class="books-list" id="books-list">
-                <!-- Các book-card giữ nguyên như code bạn gửi -->
-                <!-- ... -->
-                <div class="book-card">
-                    <img src="https://m.media-amazon.com/images/I/41zoxjP4xlL.jpg" alt="">
-                    <div class="book-title">Sin Eater</div>
-                    <div class="author">Megan Campisi</div>
-                    <div class="stars">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star-half-alt"></i>
-                    </div>
-                    <div class="review-count">(120 Review)</div>
-                    <div class="price">$50</div>
-                    <button class="del-btn" title="Xóa sản phẩm" onclick="removeBook(this)">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-                <!-- ... Các book-card còn lại ... -->
-            </div>
-        </div>
 
         <!-- Latest/New Books Section -->
         <div class="best-seller-section" style="margin-top:48px;">

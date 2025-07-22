@@ -205,16 +205,36 @@
             <div class="header-menu">
                 <a href="home.jsp">Home</a>
                 <a href="#">Categories</a>
-                <a href="#">FAQ</a>
-                <div class="dropdown" style="display:inline-block;">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">See More <span class="caret"></span></a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="#">About</a>
-                        <a class="dropdown-item" href="#">Pages</a>
-                        <a class="dropdown-item" href="#">Blog</a>
-                        <a class="dropdown-item" href="#">Contact</a>
+                
+                 <%
+                    UserDTO user = (UserDTO) session.getAttribute("user");
+                     if (user != null) {
+                        %>
+                        <% if(AuthUtils.isLoggedIn(request)){%>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <%= user.getFullName() %>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item" href="viewDiscounts.jsp">View Discounts Code</a>
+                                <a class="dropdown-item" href="addressList.jsp">Your Address</a>
+
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="reset.jsp">Reset Password</a>
+                            </div>
+                            <%}%>
+
+                            <a href="MainController?action=logout" class="sign-btn" style="background:#ccc;color:#222;">Logout</a>
+                            <%
+                                } else {
+                            %>
+                            <a href="login.jsp" class="sign-btn">Sign in</a>
+                            <%
+                                }
+                            %>
+
+                        </div>
                     </div>
-                </div>
             </div>
             <div class="header-right">
                 <a href="CartController?action=viewCart" class="cart-btn"><i class="fa-solid fa-cart-shopping"></i>

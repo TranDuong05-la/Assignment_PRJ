@@ -3,17 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/nguye/NetBeansProjects/github/Assignment_PRJ/web/categoryForm.jsp</file>
-            <file>file:/C:/Users/nguye/NetBeansProjects/github/Assignment_PRJ/src/java/model/CartItemDAO.java</file>
-            <file>file:/C:/Users/nguye/NetBeansProjects/github/Assignment_PRJ/src/java/controller/ReviewController.java</file>
-            <file>file:/C:/Users/nguye/NetBeansProjects/github/Assignment_PRJ/web/inventoryForm.jsp</file>
-            <file>file:/C:/Users/nguye/NetBeansProjects/github/Assignment_PRJ/src/java/controller/MainController.java</file>
-            <file>file:/C:/Users/nguye/NetBeansProjects/github/Assignment_PRJ/web/category.jsp</file>
-            <file>file:/C:/Users/nguye/NetBeansProjects/github/Assignment_PRJ/src/java/controller/PaymentController.java</file>
-            <file>file:/C:/Users/nguye/NetBeansProjects/github/Assignment_PRJ/web/bookDetail.jsp</file>
-            <file>file:/C:/Users/nguye/NetBeansProjects/github/Assignment_PRJ/src/java/utils/MailUtils.java</file>
-            <file>file:/C:/Users/nguye/NetBeansProjects/github/Assignment_PRJ/web/home.jsp</file>
-            <file>file:/C:/Users/nguye/NetBeansProjects/github/Assignment_PRJ/src/java/controller/OrderController.java</file>
+            <file>file:/D:/PRJ301/Assignment_PRJ/web/payment.jsp</file>
+            <file>file:/D:/PRJ301/Assignment_PRJ/src/java/controller/ImageServlet.java</file>
+            <file>file:/D:/PRJ301/Assignment_PRJ/web/home.jsp</file>
+            <file>file:/D:/PRJ301/Assignment_PRJ/src/java/model/PaymentDTO.java</file>
+            <file>file:/D:/PRJ301/Assignment_PRJ/src/java/controller/PaymentController.java</file>
+            <file>file:/D:/PRJ301/Assignment_PRJ/src/java/model/CartDAO.java</file>
         </group>
     </open-files>
 </project-private>
