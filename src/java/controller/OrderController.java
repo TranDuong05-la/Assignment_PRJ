@@ -23,6 +23,7 @@ public class OrderController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         String url = ORDER_LIST_PAGE;
+        boolean forwarded = false;
         try {
             String action = request.getParameter("action");
             if (action == null) action = "listOrder";
@@ -30,6 +31,7 @@ public class OrderController extends HttpServlet {
                 String resultUrl = handleAddOrder(request, response);
                 if (resultUrl != null) {
                     request.getRequestDispatcher(resultUrl).forward(request, response);
+                    forwarded = true;
                 }
                 return;
             } else if (action.equals("viewOrder")) {
@@ -51,7 +53,7 @@ public class OrderController extends HttpServlet {
             e.printStackTrace();
             request.setAttribute("message", "System error occurred!");
         } finally {
-            if (url != null) {
+            if (!forwarded && url != null) {
                 request.getRequestDispatcher(url).forward(request, response);
             }
         }
@@ -90,7 +92,7 @@ public class OrderController extends HttpServlet {
                     // Sang trang QR Payment
                     request.setAttribute("orderID", orderID);
                     request.setAttribute("amount", totalAmount);
-                    return "payment.jsp"; // <--- CHUYỂN SANG payment.jsp
+                    return "MainController?action=showQR&orderID=" + orderID + "&amount=" + totalAmount;
                 } else {
                     // Xử lý COD: show thông báo thành công, xóa cart, v.v.
                     request.setAttribute("message", "Order Success! Your order has been placed.");
