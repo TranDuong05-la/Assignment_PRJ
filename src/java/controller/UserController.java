@@ -18,6 +18,8 @@ import model.UserDAO;
 import model.UserDTO;
 import utils.MailUtils;
 import utils.PasswordUtils;
+import model.CartDAO;
+import model.CartDTO;
 
 
 /**
@@ -101,12 +103,17 @@ public class UserController extends HttpServlet {
         HttpSession session = request.getSession();
         String strUsername = request.getParameter("strUsername");
         String strPassword = request.getParameter("strPassword");
-        strPassword = PasswordUtils.encryptSHA256(strPassword);
         UserDAO userDAO = new UserDAO();
         if (userDAO.login(strUsername, strPassword)) {
             UserDTO user = userDAO.getUserById(strUsername);
             url = WELCOME_PAGE;
             session.setAttribute("user", user);
+            // Sau khi xác thực thành công và set user vào session:
+            CartDAO cartDAO = new CartDAO();
+            CartDTO cart = cartDAO.getCartByUserId(user.getUserID());
+            session.setAttribute("cart", cart);
+            int cartCount = (cart != null && cart.getItems() != null) ? cart.getItems().size() : 0;
+            session.setAttribute("cartCount", cartCount);
         } else {
             url = LOGIN_PAGE;
             request.setAttribute("message", "Username or Password incorrect!");

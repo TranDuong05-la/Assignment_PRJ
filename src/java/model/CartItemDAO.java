@@ -124,17 +124,33 @@ public class CartItemDAO {
     }
 
     public CartItemDTO getCartItemById(int cartItemId) {
-        String sql = "SELECT * FROM CartItem WHERE cartItemID = ?";
-        try (Connection conn = DbUtils.getConnection();
+        String sql = "SELECT ci.*, b.BookTitle, b.Price, b.Image, b.Author, b.Publisher, b.Description, b.PublishYear, b.CategoryID " +
+                     "FROM CartItem ci " +
+                     "JOIN Book b ON ci.bookID = b.BookID " +
+                     "WHERE ci.cartItemID = ?";
+        try (Connection conn = utils.DbUtils.getConnection();
              PreparedStatement pr = conn.prepareStatement(sql)) {
             pr.setInt(1, cartItemId);
             ResultSet rs = pr.executeQuery();
             if (rs.next()) {
-                CartItemDTO item = new CartItemDTO();
-                item.setCartItemID(rs.getInt("cartItemID"));
-                item.setCartID(rs.getInt("cartID"));
-                item.setBookID(rs.getInt("bookID"));
-                item.setQuantity(rs.getInt("quantity"));
+                BookDTO book = new BookDTO(
+                    rs.getInt("bookID"),
+                    rs.getInt("CategoryID"),
+                    rs.getString("BookTitle"),
+                    rs.getString("Author"),
+                    rs.getString("Publisher"),
+                    rs.getDouble("Price"),
+                    rs.getString("Image"),
+                    rs.getString("Description"),
+                    rs.getInt("PublishYear")
+                );
+                CartItemDTO item = new CartItemDTO(
+                    rs.getInt("cartItemID"),
+                    rs.getInt("cartID"),
+                    rs.getInt("bookID"),
+                    rs.getInt("quantity"),
+                    book
+                );
                 return item;
             }
         } catch (Exception e) {

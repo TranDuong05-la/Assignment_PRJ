@@ -486,6 +486,14 @@
             }
         %>
 
+        <%
+    String added = request.getParameter("added");
+    if ("1".equals(added)) {
+%>
+    <div style="color:green;font-weight:bold;text-align:center;margin:16px 0;">Added to cart successfully!</div>
+<%
+    }
+%>
 
         <div class="header">
             <div class="header-wrap">
@@ -504,7 +512,9 @@
                 <div class="header-menu">
                     <a href="<%=request.getContextPath()%>/home" class="active">Home</a>
                     <a href="<%=request.getContextPath()%>/CategoryController?action=listCategory">Categories</a>
-                    <a href="cartList.jsp" class="cart-btn"><i class="fa-solid fa-cart-shopping"></i>
+                    <!-- Cart button in header -->
+                    <a href="<%=request.getContextPath()%>/CartController?action=viewCart" class="cart-btn">
+                        <i class="fa-solid fa-cart-shopping"></i>
                         <span class="cart-count"><%= session.getAttribute("cartCount") != null ? session.getAttribute("cartCount") : 0 %></span>
                     </a>
                 </div>
@@ -522,6 +532,7 @@
                     <div class="dropdown-menu dropdown-menu-right">
                         <a class="dropdown-item" href="viewDiscounts.jsp">View Discounts Code</a>
                         <a class="dropdown-item" href="addressList.jsp">Your Address</a>
+                        <a class="dropdown-item" href="orderList.jsp">View History</a>
 
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="reset.jsp">Reset Password</a>
@@ -568,15 +579,17 @@
 
                     </div>
                     <div class="btns">
-                        <form action="CartController" method="post" style="display:inline;">
-                            <input type="hidden" name="action" value="addToCart" />
-                            <input type="hidden" name="bookID" value="<%= book.getBookID() %>" />
+                        <!-- Form Add To Cart -->
+                        <form action="<%=request.getContextPath()%>/CartController" method="post" style="display:inline;">
+                            <input type="hidden" name="action" value="addCart" />
+                            <input type="hidden" name="productId" value="<%= book.getBookID() %>" />
                             <input type="hidden" name="quantity" value="1" />
+                            <input type="hidden" name="redirectBack" value="<%=request.getRequestURI()%>" />
                             <button type="submit" class="btn">Add To Cart</button>
                         </form>
                         <button class="btn"><i class="fa fa-heart"></i></button>
                     </div>
-                </div>
+                </div>s
             </div>
         </div>
 
@@ -772,3 +785,4 @@
         </script>
     </body>
 </html>
+

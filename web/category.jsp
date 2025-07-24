@@ -593,6 +593,7 @@
                         <div class="dropdown-menu dropdown-menu-right">
                             <a class="dropdown-item" href="viewDiscounts.jsp">View Discounts Code</a>
                             <a class="dropdown-item" href="addressList.jsp">Your Address</a>
+                            <a class="dropdown-item" href="orderList.jsp">View History</a>
 
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="reset.jsp">Reset Password</a>
@@ -600,8 +601,9 @@
                         <%}%>
                     </div>
 
-                    <a href="cartList.jsp" class="cart-btn"><i class="fa-solid fa-cart-shopping"></i>
-                        <span class="cart-count"><%= session.getAttribute("cartCount") != null ? session.getAttribute("cartCount") : 0 %></span>
+                    <a href="<%=request.getContextPath()%>/CartController?action=viewCart" class="cart-btn">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <span class="cart-count" id="cartCount"><%= session.getAttribute("cartCount") != null ? session.getAttribute("cartCount") : 0 %></span>
                     </a>
 
 

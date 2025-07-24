@@ -20,13 +20,16 @@ public class OrderDAO {
     }
 
     public boolean insertOrder(OrderDTO order) {
-        String sql = "INSERT INTO [Order] (userId, orderDate, totalAmount, status) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO tblOrder (userID, orderDate, totalAmount, status, shippingAddress, phone, note) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DbUtils.getConnection();
              PreparedStatement pr = conn.prepareStatement(sql)) {
-            pr.setString(1, order.getUserId());
+            pr.setString(1, order.getUserID());
             pr.setString(2, order.getOrderDate());
             pr.setDouble(3, order.getTotalAmount());
             pr.setString(4, order.getStatus());
+            pr.setString(5, order.getShippingAddress());
+            pr.setString(6, order.getPhone());
+            pr.setString(7, order.getNote());
             return pr.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
@@ -35,21 +38,21 @@ public class OrderDAO {
     }
 
     public OrderDTO getOrderById(int orderId) {
-        String sql = "SELECT * FROM [Order] WHERE orderId=?";
+        String sql = "SELECT * FROM tblOrder WHERE orderID=?";
         try (Connection conn = DbUtils.getConnection();
              PreparedStatement pr = conn.prepareStatement(sql)) {
             pr.setInt(1, orderId);
             ResultSet rs = pr.executeQuery();
             if (rs.next()) {
                 return new OrderDTO(
-                    rs.getInt("orderId"),
-                    rs.getString("userId"),
+                    rs.getInt("orderID"),
+                    rs.getString("userID"),
                     rs.getString("orderDate"),
                     rs.getDouble("totalAmount"),
                     rs.getString("status"),
-                    rs.getInt("addressId"),
-                    rs.getInt("paymentId"),
-                    rs.getInt("discountId")
+                    rs.getString("shippingAddress"),
+                    rs.getString("phone"),
+                    rs.getString("note")
                 );
             }
         } catch (Exception e) {
@@ -60,70 +63,30 @@ public class OrderDAO {
 
     public List<OrderDTO> getAllOrders() {
         List<OrderDTO> list = new ArrayList<>();
-        String sql = "SELECT * FROM [Order]";
+        String sql = "SELECT * FROM tblOrder";
         try (Connection conn = DbUtils.getConnection();
              PreparedStatement pr = conn.prepareStatement(sql)) {
             ResultSet rs = pr.executeQuery();
             while (rs.next()) {
                 list.add(new OrderDTO(
-                    rs.getInt("orderId"),
-                    rs.getString("userId"),
+                    rs.getInt("orderID"),
+                    rs.getString("userID"),
                     rs.getString("orderDate"),
                     rs.getDouble("totalAmount"),
                     rs.getString("status"),
-                    rs.getInt("addressId"),
-                    rs.getInt("paymentId"),
-                    rs.getInt("discountId")
+                    rs.getString("shippingAddress"),
+                    rs.getString("phone"),
+                    rs.getString("note")
                 ));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return list;
-    }
-
-    public List<OrderDTO> getOrdersByUserId(String userId) {
-        List<OrderDTO> list = new ArrayList<>();
-        String sql = "SELECT * FROM [Order] WHERE userId = ?";
-        try (Connection conn = DbUtils.getConnection();
-             PreparedStatement pr = conn.prepareStatement(sql)) {
-            pr.setString(1, userId);
-            ResultSet rs = pr.executeQuery();
-            while (rs.next()) {
-                list.add(new OrderDTO(
-                    rs.getInt("orderId"),
-                    rs.getString("userId"),
-                    rs.getString("orderDate"),
-                    rs.getDouble("totalAmount"),
-                    rs.getString("status"),
-                    rs.getInt("addressId"),
-                    rs.getInt("paymentId"),
-                    rs.getInt("discountId")
-                ));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return list;
-    }
-
-    public Integer getLatestOrderIdByUser(String userId) {
-        String sql = "SELECT TOP 1 orderId FROM [Order] WHERE userId = ? ORDER BY orderId DESC";
-        try (Connection conn = DbUtils.getConnection();
-             PreparedStatement pr = conn.prepareStatement(sql)) {
-            pr.setString(1, userId);
-            ResultSet rs = pr.executeQuery();
-            if (rs.next()) {
-                return rs.getInt("orderId");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     public boolean updateOrderStatus(int orderId, String status) {
-        String sql = "UPDATE [Order] SET status=? WHERE orderId=?";
+        String sql = "UPDATE tblOrder SET status=? WHERE orderID=?";
         try (Connection conn = DbUtils.getConnection();
              PreparedStatement pr = conn.prepareStatement(sql)) {
             pr.setString(1, status);
@@ -136,7 +99,7 @@ public class OrderDAO {
     }
 
     public boolean deleteOrder(int orderId) {
-        String sql = "DELETE FROM [Order] WHERE orderId=?";
+        String sql = "DELETE FROM tblOrder WHERE orderID=?";
         try (Connection conn = DbUtils.getConnection();
              PreparedStatement pr = conn.prepareStatement(sql)) {
             pr.setInt(1, orderId);
@@ -146,4 +109,44 @@ public class OrderDAO {
         }
         return false;
     }
+    public List<OrderDTO> getOrdersByUserId(String userId) {
+        List<OrderDTO> list = new ArrayList<>();
+        String sql = "SELECT * FROM tblOrder WHERE userID = ?";
+        try (Connection conn = DbUtils.getConnection();
+             PreparedStatement pr = conn.prepareStatement(sql)) {
+            pr.setString(1, userId);
+            ResultSet rs = pr.executeQuery();
+            while (rs.next()) {
+                list.add(new OrderDTO(
+                    rs.getInt("orderID"),
+                    rs.getString("userID"),
+                    rs.getString("orderDate"),
+                    rs.getDouble("totalAmount"),
+                    rs.getString("status"),
+                    rs.getString("shippingAddress"),
+                    rs.getString("phone"),
+                    rs.getString("note")
+                ));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public Integer getLatestOrderIdByUser(String userId) {
+        String sql = "SELECT TOP 1 orderID FROM tblOrder WHERE userID = ? ORDER BY orderID DESC";
+        try (Connection conn = DbUtils.getConnection();
+             PreparedStatement pr = conn.prepareStatement(sql)) {
+            pr.setString(1, userId);
+            ResultSet rs = pr.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("orderID");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

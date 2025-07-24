@@ -83,6 +83,27 @@ public class MainController extends HttpServlet {
                 || "updateReview".equals(action)
                 || "deleteReview".equals(action);
     }
+    private boolean isOrderAction(String action) {
+        return "addOrder".equals(action)
+                || "viewOrder".equals(action)
+                || "listOrder".equals(action)
+                || "updateOrderStatus".equals(action)
+                || "deleteOrder".equals(action)
+                || "createOrderFromCart".equals(action);
+    }
+    
+    private boolean isCartAction(String action) {
+        return "addCart".equals(action)
+                || "viewCart".equals(action)
+                || "listCart".equals(action)
+                || "updateQuantity".equals(action)
+                || "removeItem".equals(action)
+                || "viewDeleted".equals(action)
+                || "deleteCart".equals(action);
+        
+    }
+    
+    
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>

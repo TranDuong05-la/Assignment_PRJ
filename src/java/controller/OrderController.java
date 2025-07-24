@@ -11,7 +11,6 @@ import model.OrderDTO;
 import model.OrderItemDAO;
 import model.OrderItemDTO;
 import java.util.List;
-import jakarta.servlet.http.HttpSession;
 import model.CartItemDAO;
 
 @WebServlet(name = "OrderController", urlPatterns = {"/OrderController"})
@@ -28,7 +27,11 @@ public class OrderController extends HttpServlet {
             String action = request.getParameter("action");
             if (action == null) action = "listOrder";
             if (action.equals("addOrder")) {
-                url = handleAddOrder(request, response);
+                String resultUrl = handleAddOrder(request, response);
+                if (resultUrl != null) {
+                    request.getRequestDispatcher(resultUrl).forward(request, response);
+                }
+                return;
             } else if (action.equals("viewOrder")) {
                 url = handleViewOrder(request, response);
             } else if (action.equals("listOrder")) {
@@ -48,7 +51,9 @@ public class OrderController extends HttpServlet {
             e.printStackTrace();
             request.setAttribute("message", "System error occurred!");
         } finally {
-            request.getRequestDispatcher(url).forward(request, response);
+            if (url != null) {
+                request.getRequestDispatcher(url).forward(request, response);
+            }
         }
     }
 
@@ -66,49 +71,30 @@ public class OrderController extends HttpServlet {
 
     private String handleAddOrder(HttpServletRequest request, HttpServletResponse response) {
         try {
-            String userId = request.getParameter("userId");
-            String orderDate = request.getParameter("orderDate");
+            String userID = request.getParameter("userId");
             double totalAmount = Double.parseDouble(request.getParameter("totalAmount"));
-            String status = request.getParameter("status");
             String paymentMethod = request.getParameter("paymentMethod");
-            OrderDTO order = new OrderDTO(0, userId, orderDate, totalAmount, status, 0, 0, 0);
+            // Lấy các trường khác nếu có (shippingAddress, phone, note)
+            String status = "Pending";
+            String orderDate = new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date());
+            String shippingAddress = request.getParameter("shippingAddress");
+            String phone = request.getParameter("phone");
+            String note = request.getParameter("note");
+    
+            OrderDTO order = new OrderDTO(0, userID, orderDate, totalAmount, status, shippingAddress, phone, note);
             OrderDAO dao = new OrderDAO();
             boolean success = dao.insertOrder(order);
             if (success) {
-                int orderId = 0;
-                List<OrderDTO> allOrders = dao.getAllOrders();
-                for (OrderDTO o : allOrders) {
-                    if (o.getUserId().equals(userId) && o.getTotalAmount() == totalAmount) {
-                        orderId = o.getOrderId();
-                    }
-                }
-                String[] selectedCartItemIDs = request.getParameterValues("selectedItems");
-                if (selectedCartItemIDs != null && selectedCartItemIDs.length > 0) {
-                    java.util.List<Integer> idList = new java.util.ArrayList<>();
-                    for (String id : selectedCartItemIDs) idList.add(Integer.parseInt(id));
-                    model.CartItemDAO itemDAO = new model.CartItemDAO();
-                    itemDAO.deleteByCartItemIts(idList);
-                } else {
-                    model.CartDAO cartDAO = new model.CartDAO();
-                    model.CartDTO cart = cartDAO.getCartByUserId(userId);
-                    if (cart != null) {
-                        CartItemDAO itemDAO = new CartItemDAO();
-                        itemDAO.deleteAllByCartId(cart.getCartId());
-                    }
-                }
+                Integer orderID = dao.getLatestOrderIdByUser(userID);
                 if ("online".equals(paymentMethod)) {
-                    // Redirect sang PaymentController với orderID và amount
-                    String url = String.format("PaymentController?orderID=%d&amount=%.0f&action=showQR", orderId, totalAmount);
-                    try {
-                        response.sendRedirect(url);
-                        return null; // Đã redirect, không forward nữa
-                    } catch (Exception e) {
-                        request.setAttribute("message", "Redirect to payment failed: " + e.getMessage());
-                    }
+                    // Sang trang QR Payment
+                    request.setAttribute("orderID", orderID);
+                    request.setAttribute("amount", totalAmount);
+                    return "payment.jsp"; // <--- CHUYỂN SANG payment.jsp
                 } else {
-                    request.setAttribute("message", "Order placed successfully! Please wait for delivery.");
-                    request.setAttribute("newOrderId", orderId);
-                    return handleShowOrderList(request, response);
+                    // Xử lý COD: show thông báo thành công, xóa cart, v.v.
+                    request.setAttribute("message", "Order Success! Your order has been placed.");
+                    return "checkout.jsp";
                 }
             } else {
                 request.setAttribute("message", "Failed to add order!");
@@ -116,9 +102,10 @@ public class OrderController extends HttpServlet {
         } catch (Exception e) {
             request.setAttribute("message", "Error: " + e.getMessage());
         }
-        return handleListOrder(request, response);
+        return "checkout.jsp";
     }
-
+                
+    
     private String handleViewOrder(HttpServletRequest request, HttpServletResponse response) {
         try {
             int orderId = Integer.parseInt(request.getParameter("orderId"));
@@ -192,32 +179,9 @@ public class OrderController extends HttpServlet {
     }
 
     private String handleShowOrderList(HttpServletRequest request, HttpServletResponse response) {
-        try {
-            HttpSession session = request.getSession(false);
-            model.UserDTO currentUser = (session != null) ? (model.UserDTO) session.getAttribute("user") : null;
-            if (currentUser == null) {
-                request.setAttribute("message", "Please login to view your orders.");
-                return "login.jsp";
-            }
-            model.OrderDAO orderDAO = new model.OrderDAO();
-            model.OrderItemDAO orderItemDAO = new model.OrderItemDAO();
-            java.util.List<model.OrderDTO> allOrders = orderDAO.getAllOrders();
-            java.util.List<model.OrderDTO> userOrders = new java.util.ArrayList<>();
-            java.util.Map<Integer, java.util.List<model.OrderItemDTO>> orderItemsMap = new java.util.HashMap<>();
-            for (model.OrderDTO order : allOrders) {
-                // Sửa lỗi: getUserId() là int, không so sánh với null và không dùng equals với String
-                if (String.valueOf(order.getUserId()).equals(currentUser.getUserID())) {
-                    userOrders.add(order);
-                    java.util.List<model.OrderItemDTO> items = orderItemDAO.getOrderItemsByOrderId(order.getOrderId());
-                    orderItemsMap.put(order.getOrderId(), items);
-                }
-            }
-            request.setAttribute("orderList", userOrders);
-            request.setAttribute("orderItemsMap", orderItemsMap);
-            return "orderList.jsp";
-        } catch (Exception e) {
-            request.setAttribute("message", "Error loading orders: " + e.getMessage());
-            return "orderList.jsp";
-        }
+        OrderDAO dao = new OrderDAO();
+        List<OrderDTO> list = dao.getAllOrders();
+        request.setAttribute("orderList", list);
+        return ORDER_LIST_PAGE;
     }
 } 

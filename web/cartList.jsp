@@ -11,6 +11,20 @@
 <%@ page import="model.BookDTO" %>
 <%@ page import="model.UserDTO" %>
 <%@ page import="utils.AuthUtils" %>
+<%@ page import="model.CartDAO" %>
+<%
+    CartDTO cart = (CartDTO) session.getAttribute("cart");
+    if (cart == null) {
+        UserDTO user = (UserDTO) session.getAttribute("user");
+        if (user != null) {
+            CartDAO cartDAO = new CartDAO();
+            cart = cartDAO.getCartByUserId(user.getUserID());
+            session.setAttribute("cart", cart);
+            session.setAttribute("cartCount", (cart != null && cart.getItems() != null) ? cart.getItems().size() : 0);
+        }
+    }
+    List<CartItemDTO> items = (cart != null) ? cart.getItems() : null;
+%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -80,13 +94,13 @@
     </style>
     <script>
         function updateTotal() {
-            let checkboxes = document.querySelectorAll('.item-check');
-            let total = 0;
+            var checkboxes = document.querySelectorAll('.item-check');
+            var total = 0;
             checkboxes.forEach(function(cb) {
                 if (cb.checked) {
-                    let row = cb.closest('tr');
-                    let rowTotal = parseFloat(row.querySelector('.row-total').getAttribute('data-value'));
-                    total += rowTotal;
+                    var row = cb.closest('tr');
+                    var rowTotal = parseFloat(row.querySelector('.row-total').getAttribute('data-value'));
+                    if (!isNaN(rowTotal)) total += rowTotal;
                 }
             });
             document.getElementById('grandTotal').innerText = total.toLocaleString('en-US', {style:'currency', currency:'USD'});
@@ -102,11 +116,11 @@
                 form.submit();
             }
         }
-        window.addEventListener('DOMContentLoaded', function() {
-            updateTotal();
+        document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.item-check').forEach(function(cb) {
                 cb.addEventListener('change', updateTotal);
             });
+            updateTotal();
             var msg = document.getElementById('cartMsg');
             if(msg) setTimeout(function(){ msg.style.display='none'; }, 2000);
         });
@@ -115,19 +129,30 @@
     <body>
     <!-- Header -->
     <div class="header">
-        <div class="header-wrap">
-            <a class="logo" href="home.jsp"><i class="fa-solid fa-book-open"></i> ABC <span style="color:#111;font-weight:400">Book</span></a>
-            <div class="search-bar">
-                <input type="text" class="form-control rounded-pill" placeholder="Search book by author or publisher">
-                <button class="btn btn-link text-danger ml-n4"><i class="fa fa-search"></i></button>
+            <div class="header-wrap">
+                <a class="logo" href="<%=request.getContextPath()%>/home"><i class="fa-solid fa-book-open"></i> ABC <span style="color:#111;font-weight:400">Book</span></a>
+                <div class="search-bar">
+                    <form action="ProductController" method="post" style="display:flex;align-items:center;">
+                        <input type="hidden" name="action" value="searchBook">
+                        <input type="text" name="strKeyword" placeholder="Search book by author or publisher"
+                               style="flex:1; padding:11px 44px 11px 20px; border:1px solid #ececec; border-radius:22px; font-size:1.02rem; background:#fafafa;">
+                        <button type="submit" style="position:absolute;top:8px;right:12px;border:none;background:transparent;color:#ea2222;font-size:1.15rem;cursor:pointer;">
+                            <i class="fa-solid fa-search"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <div class="header-menu">
+                    <a href="<%=request.getContextPath()%>/home" class="active">Home</a>
+                    <a href="category.jsp">Categories</a>
+                    
+                
             </div>
-            <div class="header-menu">
-                <a href="home.jsp">Home</a>
-                <a href="category.jsp">Categories</a>
+            <div class="header-right">
                 <a href="CartController?action=viewCart" class="cart-btn"><i class="fa-solid fa-cart-shopping"></i>
                     <span class="cart-count"><%= session.getAttribute("cartCount") != null ? session.getAttribute("cartCount") : 0 %></span>
                 </a>
-                <%
+                <<%
                 UserDTO user = (UserDTO) session.getAttribute("user");
                  if (user != null) {
                 %>
@@ -139,6 +164,7 @@
                     <div class="dropdown-menu dropdown-menu-right">
                         <a class="dropdown-item" href="viewDiscounts.jsp">View Discounts Code</a>
                         <a class="dropdown-item" href="addressList.jsp">Your Address</a>
+                        <a class="dropdown-item" href="orderList.jsp">View History</a>
 
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="reset.jsp">Reset Password</a>
@@ -153,8 +179,8 @@
                     <%
                         }
                     %>
-                </div>
-                </div>
+            </div>
+        </div>
     </div>
     <!-- Banner Background với chữ Cart căn giữa -->
     <div class="cart-banner-bg">
@@ -168,55 +194,49 @@
         <div class="msg" id="cartMsg"><%=msg%></div>
         <% } %>
 
-        <% CartDTO cart = (CartDTO) request.getAttribute("cart");
-           if (cart != null && cart.getItems() != null && !cart.getItems().isEmpty()) {
-        %>
-        <form id="cartForm" action="CartController" method="post">
-        <table>
-            <tr>
-                <th></th>
-                <th>Product</th>
-                <th></th>
-                <th>Price</th>
-                <th>Quantity</th>
-                <th>Total</th>
-                <th></th>
-            </tr>
-            <% for (CartItemDTO item : cart.getItems()) {
-                   BookDTO book = item.getBook();
-                   double total = book.getPrice() * item.getQuantity();
-                   String qtyBtnClass = item.getQuantity() <= 1 ? "qty-btn qty-btn-disabled" : "qty-btn";
-            %>
-            <tr>
-                <td><input type="checkbox" class="item-check" name="selectedItems" value="<%=item.getCartItemID()%>" checked /></td>
-                <td><img src="<%=request.getContextPath()%>/images/<%=book.getImage()%>" class="product-img" /></td>
-                <td>
-                    <div class="product-title"><%=book.getBookTitle()%></div>
-                    <div class="product-desc"><%=book.getAuthor()%></div>
-                </td>
-                <td>$<%=String.format("%.2f", book.getPrice())%></td>
-                <td>
-                    <div class="qty-box">
-                        <button type="button" class="<%=qtyBtnClass%>" onclick="updateQuantity(<%=item.getCartItemID()%>, <%=item.getQuantity()%>, -1)" <%=item.getQuantity() <= 1 ? "disabled" : ""%>>-</button>
-                        <input type="text" class="qty-input" value="<%=item.getQuantity()%>" readonly />
-                        <button type="button" class="qty-btn" onclick="updateQuantity(<%=item.getCartItemID()%>, <%=item.getQuantity()%>, 1)">+</button>
-                    </div>
-                </td>
-                <td class="row-total" data-value="<%=total%>">$<%=String.format("%.2f", total)%></td>
-                <td><button type="button" class="delete-btn" onclick="deleteItem(<%=item.getCartItemID()%>)">Delete</button></td>
-            </tr>
-            <% } %>
-        </table>
-        <input type="hidden" id="actionInput" name="action" value="" />
-        <input type="hidden" id="cartItemIDInput" name="cartItemID" value="" />
-        <input type="hidden" id="changeInput" name="change" value="" />
-        <input type="hidden" id="currentQuantityInput" name="currentQuantity" value="" />
-        <div class="cart-total">Total: <span id="grandTotal"></span></div>
-        <div class="cart-actions">
-            <button type="button" onclick="submitRestore()" class="payment-btn" style="margin-right:16px;">Restore Items</button>
-            <button type="button" onclick="window.location.href='checkout.jsp'" class="payment-btn">Payment</button>
-        </div>
-        </form>
+        <h2>Your Cart</h2>
+        <% if (items != null && !items.isEmpty()) { %>
+<form id="cartForm" action="checkout.jsp" method="get">
+<table border="1" cellpadding="8" style="width:100%;text-align:center;">
+    <tr>
+        <th>Select</th>
+        <th>Image</th>
+        <th>Book Title</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Total</th>
+        <th>Action</th>
+    </tr>
+    <% for (CartItemDTO item : items) { %>
+    <tr>
+        <td><input type="checkbox" class="item-check" name="selectedItems" value="<%=item.getCartItemID()%>" checked /></td>
+        <td><img src="<%=item.getBook() != null ? item.getBook().getImage() : ""%>" width="50"/></td>
+        <td><%=item.getBook() != null ? item.getBook().getBookTitle() : ""%></td>
+        <td>
+            <div class="qty-box">
+                <button type="button" class="qty-btn" onclick="updateQuantity(<%=item.getCartItemID()%>, <%=item.getQuantity()%>, -1)" <%= (item.getQuantity() <= 1) ? "disabled style='opacity:0.5;cursor:not-allowed;'" : "" %>>-</button>
+                <input type="text" class="qty-input" value="<%=item.getQuantity()%>" readonly style="width:38px;text-align:center;" />
+                <button type="button" class="qty-btn" onclick="updateQuantity(<%=item.getCartItemID()%>, <%=item.getQuantity()%>, 1)" <%= (item.getQuantity() >= 10) ? "disabled style='opacity:0.5;cursor:not-allowed;'" : "" %>>+</button>
+            </div>
+        </td>
+        <td><%=item.getBook() != null ? item.getBook().getPrice() : 0%></td>
+        <td class="row-total" data-value="<%= (item.getBook() != null) ? (item.getBook().getPrice() * item.getQuantity()) : 0 %>"><%= (item.getBook() != null) ? (item.getBook().getPrice() * item.getQuantity()) : 0 %></td>
+        <td>
+            <button type="submit" name="action" value="deleteItem" formaction="CartController" formmethod="post" style="background:#e74c3c;color:#fff;border:none;padding:4px 12px;border-radius:6px;cursor:pointer;" onclick="document.getElementById('cartItemIDInput').value='<%=item.getCartItemID()%>';">Delete</button>
+        </td>
+    </tr>
+    <% } %>
+</table>
+<input type="hidden" id="actionInput" name="action" value="" />
+<input type="hidden" id="cartItemIDInput" name="cartItemID" value="" />
+<input type="hidden" id="changeInput" name="change" value="" />
+<input type="hidden" id="currentQuantityInput" name="currentQuantity" value="" />
+<div class="cart-total">Total: <span id="grandTotal"></span></div>
+<div class="cart-actions">
+    <a href="cartDetail.jsp" class="payment-btn" style="margin-right:16px;">Restore Items</a>
+    <button type="submit" class="payment-btn">Payment</button>
+</div>
+</form>
         <script>
         function updateQuantity(cartItemID, currentQuantity, change) {
             document.getElementById('actionInput').value = 'updateQuantity';
@@ -235,7 +255,7 @@
         }
         </script>
         <% } else { %>
-        <div style="text-align:center; color:#888; font-size:1.2em; margin: 60px 0;">Your cart is empty. Go shopping now!</div>
+        <div style="color:#888;font-size:1.2em;margin:40px 0;">There are no items in your cart.</div>
         <% } %>
     </div>
     <style>

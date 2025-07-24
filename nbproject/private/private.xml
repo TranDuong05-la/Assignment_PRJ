@@ -3,18 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/HK4/PRJ301/Assignment_PRJ/src/java/controller/MainController.java</file>
-            <file>file:/D:/HK4/PRJ301/Assignment_PRJ/src/java/controller/ProductController.java</file>
-            <file>file:/D:/HK4/PRJ301/Assignment_PRJ/src/java/model/InventoryDAO.java</file>
-            <file>file:/D:/HK4/PRJ301/Assignment_PRJ/src/java/model/ReviewDAO.java</file>
-            <file>file:/D:/HK4/PRJ301/Assignment_PRJ/web/reviewForm.jsp</file>
-            <file>file:/D:/HK4/PRJ301/Assignment_PRJ/web/welcome.jsp</file>
-            <file>file:/D:/HK4/PRJ301/Assignment_PRJ/web/inventory.jsp</file>
-            <file>file:/D:/HK4/PRJ301/Assignment_PRJ/src/java/controller/InventoryController.java</file>
-            <file>file:/D:/HK4/PRJ301/Assignment_PRJ/web/home.jsp</file>
-            <file>file:/D:/HK4/PRJ301/Assignment_PRJ/web/inventoryForm.jsp</file>
-            <file>file:/D:/HK4/PRJ301/Assignment_PRJ/web/bookDetail.jsp</file>
-            <file>file:/D:/HK4/PRJ301/Assignment_PRJ/src/java/controller/ReviewController.java</file>
+            <file>file:/C:/Users/nguye/NetBeansProjects/github/Assignment_PRJ/web/cartList.jsp</file>
+            <file>file:/C:/Users/nguye/NetBeansProjects/github/Assignment_PRJ/web/cartDetail.jsp</file>
+            <file>file:/C:/Users/nguye/NetBeansProjects/github/Assignment_PRJ/src/java/controller/MainController.java</file>
+            <file>file:/C:/Users/nguye/NetBeansProjects/github/Assignment_PRJ/web/checkout.jsp</file>
+            <file>file:/C:/Users/nguye/NetBeansProjects/github/Assignment_PRJ/src/java/controller/CartController.java</file>
+            <file>file:/C:/Users/nguye/NetBeansProjects/github/Assignment_PRJ/web/WEB-INF/web.xml</file>
+            <file>file:/C:/Users/nguye/NetBeansProjects/github/Assignment_PRJ/web/bookDetail.jsp</file>
+            <file>file:/C:/Users/nguye/NetBeansProjects/github/Assignment_PRJ/src/java/controller/UserController.java</file>
+            <file>file:/C:/Users/nguye/NetBeansProjects/github/Assignment_PRJ/src/java/controller/OrderController.java</file>
         </group>
     </open-files>
 </project-private>

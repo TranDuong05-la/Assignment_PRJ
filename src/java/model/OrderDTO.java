@@ -2,45 +2,43 @@
 package model;
 
 public class OrderDTO {
-    private int orderId;
-    private String userId;
+    private int orderID;
+    private String userID;
     private String orderDate;
     private double totalAmount;
     private String status;
-    private int addressId;
-    private int paymentId;
-    private int discountId;
-    private String paymentMethod;
-    private String comment;
+    private String shippingAddress;
+    private String phone;
+    private String note;
 
     public OrderDTO() {
     }
 
-    public OrderDTO(int orderId, String userId, String orderDate, double totalAmount, String status, int addressId, int paymentId, int discountId) {
-        this.orderId = orderId;
-        this.userId = userId;
+    public OrderDTO(int orderID, String userID, String orderDate, double totalAmount, String status, String shippingAddress, String phone, String note) {
+        this.orderID = orderID;
+        this.userID = userID;
         this.orderDate = orderDate;
         this.totalAmount = totalAmount;
         this.status = status;
-        this.addressId = addressId;
-        this.paymentId = paymentId;
-        this.discountId = discountId;
+        this.shippingAddress = shippingAddress;
+        this.phone = phone;
+        this.note = note;
     }
 
-    public int getOrderId() {
-        return orderId;
+    public int getOrderID() {
+        return orderID;
     }
 
-    public void setOrderId(int orderId) {
-        this.orderId = orderId;
+    public void setOrderID(int orderID) {
+        this.orderID = orderID;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getUserID() {
+        return userID;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 
     public String getOrderDate() {
@@ -55,54 +53,39 @@ public class OrderDTO {
         return totalAmount;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public int getAddressId() {
-        return addressId;
-    }
-
-    public int getPaymentId() {
-        return paymentId;
-    }
-
-    public int getDiscountId() {
-        return discountId;
-    }
-
-    public String getPaymentMethod() {
-        return paymentMethod;
-    }
-    public void setPaymentMethod(String paymentMethod) {
-        this.paymentMethod = paymentMethod;
-    }
-    public String getComment() {
-        return comment;
-    }
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-
     public void setTotalAmount(double totalAmount) {
         this.totalAmount = totalAmount;
+    }
+
+    public String getStatus() {
+        return status;
     }
 
     public void setStatus(String status) {
         this.status = status;
     }
 
-    public void setAddressId(int addressId) {
-        this.addressId = addressId;
+    public String getShippingAddress() {
+        return shippingAddress;
     }
 
-    public void setPaymentId(int paymentId) {
-        this.paymentId = paymentId;
+    public void setShippingAddress(String shippingAddress) {
+        this.shippingAddress = shippingAddress;
     }
 
-    public void setDiscountId(int discountId) {
-        this.discountId = discountId;
+    public String getPhone() {
+        return phone;
     }
-    
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
 }
