@@ -90,4 +90,8 @@ public class UserDTO {
     public void setTokenExpiry(Timestamp tokenExpiry) {
         this.tokenExpiry = tokenExpiry;
     }
+
+    public String getRole() {
+        return roleID;
+    }
 }

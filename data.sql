@@ -149,6 +149,28 @@ INSERT INTO tblDiscounts (code, type, value, minOrderAmount, expiryDate) VALUES
 ('FREESHIP', 'fixed', 30000.00, 0, '2025-09-15');         
 GO
 
+-- Bang order (OrderDTO)
+CREATE TABLE tblOrders (
+    orderID INT PRIMARY KEY IDENTITY(1,1),
+    userID NVARCHAR(50) NOT NULL,
+    orderDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    totalAmount DECIMAL(12,2) NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    shippingAddress VARCHAR(255),
+    phone VARCHAR(20),
+    note VARCHAR(255),
+    FOREIGN KEY (userID) REFERENCES tblUsers(userID)
+);
+
+GO
+-- Insert sample orders for 2 users, each with 2 orders
+INSERT INTO tblOrders (userID, orderDate, totalAmount, status, shippingAddress, phone, note) VALUES
+('ant', '2024-06-01 10:00:00', 250000,'Success', '123 ABC, HCM', '0909123456',	'Giao nhanh'),
+('rosie', '2024-06-05 15:30:00', 180000, 'On going', '123 ABC, HCM', '0909123456', NULL),
+('rosie', '2024-06-02 09:20:00', 320000, 'Success', '456 XYZ, HN', '0912345678', NULL),
+('ant', '2024-06-06 17:45:00', 120000, 'On going', '456 XYZ, HN', '0912345678', 'Giao giờ hành chính');
+GO
+
 CREATE TABLE tblPayments (
     paymentID INT IDENTITY(1,1) PRIMARY KEY,
     orderID INT NOT NULL FOREIGN KEY REFERENCES tblOrders(orderID),
@@ -213,20 +235,7 @@ INSERT INTO CartItem (cartID, bookID, quantity) VALUES
 (3, 2, 1); -- user01's cart: 1 Cha Giau Cha Ngheo
 GO
 
--- Bang order (OrderDTO)
-CREATE TABLE tblOrders (
-    orderID INT PRIMARY KEY IDENTITY(1,1),
-    userID NVARCHAR(50) NOT NULL,
-    orderDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    totalAmount DECIMAL(12,2) NOT NULL,
-    status VARCHAR(50) NOT NULL,
-    shippingAddress VARCHAR(255),
-    phone VARCHAR(20),
-    note VARCHAR(255),
-    FOREIGN KEY (userID) REFERENCES tblUsers(userID)
-);
 
-GO
 
 -- Bang orderItem (OrderItemDTO)
 CREATE TABLE orderItem (
@@ -235,18 +244,12 @@ CREATE TABLE orderItem (
     bookID INT NOT NULL,
     quantity INT NOT NULL,
     price DECIMAL(12,2) NOT NULL,
-    FOREIGN KEY (orderID) REFERENCES tblOrder(orderID),
+    FOREIGN KEY (orderID) REFERENCES tblOrders(orderID),
     FOREIGN KEY (bookID) REFERENCES Book(BookID)
 );
 GO
 
--- Insert sample orders for 2 users, each with 2 orders
-INSERT INTO tblOrders (userID, orderDate, totalAmount, status, shippingAddress, phone, note) VALUES
-('ant', '2024-06-01 10:00:00', 250000, 'Đã giao', '123 ABC, HCM', '0909123456', 'Giao nhanh'),
-('rosie', '2024-06-05 15:30:00', 180000, 'Đang xử lý', '123 ABC, HCM', '0909123456', NULL),
-('rosie', '2024-06-02 09:20:00', 320000, 'Đã giao', '456 XYZ, HN', '0912345678', NULL),
-('ant', '2024-06-06 17:45:00', 120000, 'Đang xử lý', '456 XYZ, HN', '0912345678', 'Giao giờ hành chính');
-GO
+
 -- Insert order items for each order (giả sử orderID tự tăng từ 1 đến 4, bookID có sẵn là 1,2,3,4)
 INSERT INTO orderItem (orderID, bookID, quantity, price) VALUES
 (1, 1, 2, 85000), -- user 1, order 1

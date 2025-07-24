@@ -85,7 +85,7 @@
        for (AddressDTO addr : addressList) { if (addr.isDefault()) { selectedAddr = addr; break; } }
        if (selectedAddr == null && addressList.size() > 0) selectedAddr = addressList.get(0);
     %>
-    <form id="checkoutForm" method="post" action="OrderController">
+    image.png    <form id="placeOrderForm" method="post" action="OrderController">
     <input type="hidden" name="action" value="addOrder"/>
     <div class="section-title">Shipping Address</div>
     <label for="addressSelect">Choose your shipping address:</label>
@@ -193,6 +193,9 @@
         <% for (Integer id : selectedSet) { %>
             <input type="hidden" name="selectedItems" value="<%=id%>" />
         <% } %>
+        <input type="hidden" name="shippingAddress" id="shippingAddressInput" value="<%=selectedAddr != null ? selectedAddr.getAddressDetail() : ""%>" />
+        <input type="hidden" name="phone" id="phoneInput" value="<%=selectedAddr != null ? selectedAddr.getPhone() : ""%>" />
+        <input type="hidden" name="note" id="noteInput" value="" />
         
         <button id="placeOrderBtn" type="submit" class="checkout-btn">Place Order</button>
       </div>
@@ -225,6 +228,14 @@ function updateTotalWithDiscount() {
 }
 discountSelect && discountSelect.addEventListener('change', updateTotalWithDiscount);
 window.addEventListener('DOMContentLoaded', updateTotalWithDiscount);
+
+// Lấy note từ textarea và gán vào input hidden trước khi submit
+const placeOrderForm = document.getElementById('placeOrderForm');
+const noteInput = document.getElementById('noteInput');
+placeOrderForm.addEventListener('submit', function(e) {
+    const noteTextarea = document.querySelector('textarea');
+    if (noteTextarea) noteInput.value = noteTextarea.value;
+});
 </script>
 </body>
 </html>

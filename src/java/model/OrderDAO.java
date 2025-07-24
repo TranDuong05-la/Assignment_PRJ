@@ -111,7 +111,7 @@ public class OrderDAO {
     }
     public List<OrderDTO> getOrdersByUserId(String userId) {
         List<OrderDTO> list = new ArrayList<>();
-        String sql = "SELECT * FROM tblOrders WHERE userID = ?";
+        String sql = "SELECT * FROM tblOrders WHERE userID = ? ORDER BY orderID DESC";
         try (Connection conn = DbUtils.getConnection();
              PreparedStatement pr = conn.prepareStatement(sql)) {
             pr.setString(1, userId);

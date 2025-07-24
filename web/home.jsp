@@ -542,7 +542,7 @@
                     <div class="dropdown-menu dropdown-menu-right">
                         <a class="dropdown-item" href="viewDiscounts.jsp">View Discounts Code</a>
                         <a class="dropdown-item" href="addressList.jsp">Your Address</a>
-                        <a class="dropdown-item" href="orderList.jsp">View History</a>
+                        <a class="dropdown-item" href="OrderController?action=listOrder">View History</a>
 
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="reset.jsp">Reset Password</a>

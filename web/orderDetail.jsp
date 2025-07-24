@@ -2,14 +2,12 @@
 <%@ page import="model.OrderDTO" %>
 <%@ page import="model.OrderItemDTO" %>
 <%@ page import="model.BookDTO" %>
-<%@ page import="model.AddressDTO" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%
+    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     OrderDTO order = (OrderDTO) request.getAttribute("order");
     List<OrderItemDTO> orderItems = (List<OrderItemDTO>) request.getAttribute("orderItems");
-    AddressDTO address = (AddressDTO) request.getAttribute("address");
-    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 %>
 <!DOCTYPE html>
 <html>
@@ -31,27 +29,29 @@
 </head>
 <body>
 <div class="container">
+    <a href="OrderController?action=listOrder" style="position:absolute;left:30px;top:30px;color:#ea2222;font-weight:bold;text-decoration:none;font-size:1.1em;">&larr; Back to Order List</a>
     <div class="section-title">Order Detail</div>
     <% if (order != null) { %>
     <div class="order-info">
-        <div><span class="order-label">Order ID:</span> <span class="order-value"><%= order.getOrderId() %></span></div>
-        <div><span class="order-label">Order Date:</span> <span class="order-value"><%= order.getOrderDate() != null ? order.getOrderDate() : "-" %></span></div>
-        <div><span class="order-label">Payment Method:</span> <span class="order-value"><%= order.getPaymentMethod() != null ? order.getPaymentMethod() : "-" %></span></div>
+        <div><span class="order-label">Order ID:</span> <span class="order-value"><%= order.getOrderID() %></span></div>
+        <div><span class="order-label">Order Date:</span> <span class="order-value">
+        <% try { %>
+            <%= order.getOrderDate() != null && !order.getOrderDate().isEmpty() ? sdf.format(java.sql.Timestamp.valueOf(order.getOrderDate())) : "" %>
+        <% } catch(Exception e) { %>
+            <%= order.getOrderDate() %>
+        <% } %>
+    </span></div>
+        <div><span class="order-label">Status:</span> <span class="order-value"><%= order.getStatus() != null ? order.getStatus() : "-" %></span></div>
         <div><span class="order-label">Total Amount:</span> <span class="order-value">₫<%= String.format("%,.0f", order.getTotalAmount()) %></span></div>
+        <div><span class="order-label">Shipping Address:</span> <span class="order-value"><%= order.getShippingAddress() != null ? order.getShippingAddress() : "-" %></span></div>
+        <div><span class="order-label">Phone:</span> <span class="order-value"><%= order.getPhone() != null ? order.getPhone() : "-" %></span></div>
+        <div><span class="order-label">Note:</span> <span class="order-value"><%= order.getNote() != null ? order.getNote() : "-" %></span></div>
     </div>
-    <div class="section-title">Shipping Address</div>
-    <% if (address != null) { %>
-        <div style="margin-bottom:18px;">
-            <b><%= address.getRecipientName() %> (<%= address.getPhone() %>)</b><br>
-            <span><%= address.getAddressDetail() %>, <%= address.getDistrict() %>, <%= address.getCity() %></span>
-        </div>
-    <% } else { %>
-        <div style="color:#888;">No shipping address found.</div>
-    <% } %>
     <div class="section-title">Product List</div>
     <table>
         <tr>
             <th>Product</th>
+            <th>Title</th>
             <th>Author</th>
             <th>Price</th>
             <th>Quantity</th>
@@ -60,20 +60,20 @@
         <% if (orderItems != null && !orderItems.isEmpty()) {
             for (OrderItemDTO item : orderItems) {
                 BookDTO book = item.getBook();
+                double total = book.getPrice() * item.getQuantity();
         %>
         <tr>
-            <td><%= book != null ? book.getBookTitle() : "-" %></td>
-            <td><%= book != null ? book.getAuthor() : "-" %></td>
-            <td>₫<%= String.format("%,.0f", item.getPrice()) %></td>
-            <td><%= item.getQuantity() %></td>
-            <td>₫<%= String.format("%,.0f", item.getPrice() * item.getQuantity()) %></td>
+            <td><img src="<%=book.getImage()%>" alt="img" style="width:48px;height:64px;object-fit:cover;border-radius:6px;box-shadow:0 2px 8px #0001;" /></td>
+            <td><%=book.getBookTitle()%></td>
+            <td><%=book.getAuthor()%></td>
+            <td>₫<%=String.format("%,.0f", book.getPrice())%></td>
+            <td><%=item.getQuantity()%></td>
+            <td>₫<%=String.format("%,.0f", total)%></td>
         </tr>
         <% } } else { %>
-        <tr><td colspan="5" style="text-align:center;color:#888;">No products found.</td></tr>
+        <tr><td colspan="6" style="text-align:center;color:#888;">No products found.</td></tr>
         <% } %>
     </table>
-    <div class="section-title">Comment</div>
-    <div style="color:#444;"><%= order.getComment() != null && !order.getComment().isEmpty() ? order.getComment() : "<i>No comment</i>" %></div>
     <% } else { %>
     <div class="empty-msg">Order not found.</div>
     <% } %>

@@ -76,7 +76,6 @@ public class OrderController extends HttpServlet {
             String userID = request.getParameter("userId");
             double totalAmount = Double.parseDouble(request.getParameter("totalAmount"));
             String paymentMethod = request.getParameter("paymentMethod");
-            // Lấy các trường khác nếu có (shippingAddress, phone, note)
             String status = "Pending";
             String orderDate = new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date());
             String shippingAddress = request.getParameter("shippingAddress");
@@ -88,15 +87,33 @@ public class OrderController extends HttpServlet {
             boolean success = dao.insertOrder(order);
             if (success) {
                 Integer orderID = dao.getLatestOrderIdByUser(userID);
+                // Bổ sung: Lưu các sản phẩm từ cart vào orderItem
+                model.CartDAO cartDAO = new model.CartDAO();
+                model.CartDTO cart = cartDAO.getCartByUserId(userID);
+                if (cart != null && cart.getItems() != null && !cart.getItems().isEmpty()) {
+                    model.OrderItemDAO orderItemDAO = new model.OrderItemDAO();
+                    for (model.CartItemDTO cartItem : cart.getItems()) {
+                        model.OrderItemDTO orderItem = new model.OrderItemDTO();
+                        orderItem.setOrderId(orderID);
+                        orderItem.setProductId(cartItem.getBookID());
+                        orderItem.setQuantity(cartItem.getQuantity());
+                        orderItem.setPrice(cartItem.getBook().getPrice());
+                        orderItemDAO.insertOrderItem(orderItem);
+                    }
+                    // Xóa cart sau khi đặt hàng
+                    model.CartItemDAO cartItemDAO = new model.CartItemDAO();
+                    cartItemDAO.deleteCartItemsByCartId(cart.getCartId());
+                }
                 if ("online".equals(paymentMethod)) {
-                    // Sang trang QR Payment
                     request.setAttribute("orderID", orderID);
                     request.setAttribute("amount", totalAmount);
+                    // Sau khi thanh toán online thành công, chuyển về listOrder
                     return "MainController?action=showQR&orderID=" + orderID + "&amount=" + totalAmount;
                 } else {
-                    // Xử lý COD: show thông báo thành công, xóa cart, v.v.
+                    // COD: show thông báo thành công, sau đó chuyển về listOrder
                     request.setAttribute("message", "Order Success! Your order has been placed.");
-                    return "checkout.jsp";
+                    // Chuyển về danh sách đơn hàng cá nhân
+                    return "OrderController?action=listOrder";
                 }
             } else {
                 request.setAttribute("message", "Failed to add order!");
@@ -125,8 +142,14 @@ public class OrderController extends HttpServlet {
     }
 
     private String handleListOrder(HttpServletRequest request, HttpServletResponse response) {
+        model.UserDTO user = (model.UserDTO) request.getSession().getAttribute("user");
         OrderDAO dao = new OrderDAO();
-        List<OrderDTO> list = dao.getAllOrders();
+        java.util.List<OrderDTO> list;
+        if (user != null && !"admin".equalsIgnoreCase(user.getRole())) {
+            list = dao.getOrdersByUserId(user.getUserID());
+        } else {
+            list = dao.getAllOrders();
+        }
         request.setAttribute("orderList", list);
         return ORDER_LIST_PAGE;
     }
@@ -151,6 +174,9 @@ public class OrderController extends HttpServlet {
     private String handleDeleteOrder(HttpServletRequest request, HttpServletResponse response) {
         try {
             int orderId = Integer.parseInt(request.getParameter("orderId"));
+            // Xóa orderItem trước để tránh lỗi khoá ngoại
+            OrderItemDAO itemDAO = new OrderItemDAO();
+            itemDAO.deleteOrderItemsByOrderId(orderId);
             OrderDAO dao = new OrderDAO();
             boolean success = dao.deleteOrder(orderId);
             if (success) {
