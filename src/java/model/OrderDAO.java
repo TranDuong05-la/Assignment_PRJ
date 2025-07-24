@@ -20,7 +20,7 @@ public class OrderDAO {
     }
 
     public boolean insertOrder(OrderDTO order) {
-        String sql = "INSERT INTO tblOrder (userID, orderDate, totalAmount, status, shippingAddress, phone, note) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO tblOrders (userID, orderDate, totalAmount, status, shippingAddress, phone, note) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DbUtils.getConnection();
              PreparedStatement pr = conn.prepareStatement(sql)) {
             pr.setString(1, order.getUserID());
@@ -38,7 +38,7 @@ public class OrderDAO {
     }
 
     public OrderDTO getOrderById(int orderId) {
-        String sql = "SELECT * FROM tblOrder WHERE orderID=?";
+        String sql = "SELECT * FROM tblOrders WHERE orderID=?";
         try (Connection conn = DbUtils.getConnection();
              PreparedStatement pr = conn.prepareStatement(sql)) {
             pr.setInt(1, orderId);
@@ -63,7 +63,7 @@ public class OrderDAO {
 
     public List<OrderDTO> getAllOrders() {
         List<OrderDTO> list = new ArrayList<>();
-        String sql = "SELECT * FROM tblOrder";
+        String sql = "SELECT * FROM tblOrders";
         try (Connection conn = DbUtils.getConnection();
              PreparedStatement pr = conn.prepareStatement(sql)) {
             ResultSet rs = pr.executeQuery();
@@ -86,7 +86,7 @@ public class OrderDAO {
     }
 
     public boolean updateOrderStatus(int orderId, String status) {
-        String sql = "UPDATE tblOrder SET status=? WHERE orderID=?";
+        String sql = "UPDATE tblOrders SET status=? WHERE orderID=?";
         try (Connection conn = DbUtils.getConnection();
              PreparedStatement pr = conn.prepareStatement(sql)) {
             pr.setString(1, status);
@@ -99,7 +99,7 @@ public class OrderDAO {
     }
 
     public boolean deleteOrder(int orderId) {
-        String sql = "DELETE FROM tblOrder WHERE orderID=?";
+        String sql = "DELETE FROM tblOrders WHERE orderID=?";
         try (Connection conn = DbUtils.getConnection();
              PreparedStatement pr = conn.prepareStatement(sql)) {
             pr.setInt(1, orderId);
@@ -111,7 +111,7 @@ public class OrderDAO {
     }
     public List<OrderDTO> getOrdersByUserId(String userId) {
         List<OrderDTO> list = new ArrayList<>();
-        String sql = "SELECT * FROM tblOrder WHERE userID = ?";
+        String sql = "SELECT * FROM tblOrders WHERE userID = ?";
         try (Connection conn = DbUtils.getConnection();
              PreparedStatement pr = conn.prepareStatement(sql)) {
             pr.setString(1, userId);
@@ -135,7 +135,7 @@ public class OrderDAO {
     }
 
     public Integer getLatestOrderIdByUser(String userId) {
-        String sql = "SELECT TOP 1 orderID FROM tblOrder WHERE userID = ? ORDER BY orderID DESC";
+        String sql = "SELECT TOP 1 orderID FROM tblOrders WHERE userID = ? ORDER BY orderID DESC";
         try (Connection conn = DbUtils.getConnection();
              PreparedStatement pr = conn.prepareStatement(sql)) {
             pr.setString(1, userId);

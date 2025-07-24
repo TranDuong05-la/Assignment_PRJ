@@ -149,18 +149,6 @@ INSERT INTO tblDiscounts (code, type, value, minOrderAmount, expiryDate) VALUES
 ('FREESHIP', 'fixed', 30000.00, 0, '2025-09-15');         
 GO
 
-CREATE TABLE tblOrders (
-    orderID INT PRIMARY KEY IDENTITY(1,1),
-    userID NVARCHAR(50),
-    totalAmount INT,
-    status VARCHAR(50),
-    FOREIGN KEY (userID) REFERENCES tblUsers(userID)
-);
-
-INSERT INTO tblOrders (userID, totalAmount, status) VALUES
-('ant', 420000, 'Da giao'),
-('rosie', 150000, 'Dang xu ly');
-
 CREATE TABLE tblPayments (
     paymentID INT IDENTITY(1,1) PRIMARY KEY,
     orderID INT NOT NULL FOREIGN KEY REFERENCES tblOrders(orderID),
@@ -226,7 +214,7 @@ INSERT INTO CartItem (cartID, bookID, quantity) VALUES
 GO
 
 -- Bang order (OrderDTO)
-CREATE TABLE tblOrder (
+CREATE TABLE tblOrders (
     orderID INT PRIMARY KEY IDENTITY(1,1),
     userID NVARCHAR(50) NOT NULL,
     orderDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -253,7 +241,7 @@ CREATE TABLE orderItem (
 GO
 
 -- Insert sample orders for 2 users, each with 2 orders
-INSERT INTO tblOrder (userID, orderDate, totalAmount, status, shippingAddress, phone, note) VALUES
+INSERT INTO tblOrders (userID, orderDate, totalAmount, status, shippingAddress, phone, note) VALUES
 ('ant', '2024-06-01 10:00:00', 250000, 'Đã giao', '123 ABC, HCM', '0909123456', 'Giao nhanh'),
 ('rosie', '2024-06-05 15:30:00', 180000, 'Đang xử lý', '123 ABC, HCM', '0909123456', NULL),
 ('rosie', '2024-06-02 09:20:00', 320000, 'Đã giao', '456 XYZ, HN', '0912345678', NULL),
