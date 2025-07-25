@@ -506,7 +506,10 @@
         <%
            
             List<BookDTO> books = (List<BookDTO>) request.getAttribute("books");
-            
+            if (books == null) {
+                response.sendRedirect("MainController?action=listBook");
+                return;
+            }
         %>
         <!-- Header -->
         <div class="header">
