@@ -3,15 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/nguye/NetBeansProjects/github/Assignment_PRJ/web/cartList.jsp</file>
-            <file>file:/C:/Users/nguye/NetBeansProjects/github/Assignment_PRJ/web/cartDetail.jsp</file>
-            <file>file:/C:/Users/nguye/NetBeansProjects/github/Assignment_PRJ/src/java/controller/MainController.java</file>
-            <file>file:/C:/Users/nguye/NetBeansProjects/github/Assignment_PRJ/web/checkout.jsp</file>
-            <file>file:/C:/Users/nguye/NetBeansProjects/github/Assignment_PRJ/src/java/controller/CartController.java</file>
-            <file>file:/C:/Users/nguye/NetBeansProjects/github/Assignment_PRJ/web/WEB-INF/web.xml</file>
-            <file>file:/C:/Users/nguye/NetBeansProjects/github/Assignment_PRJ/web/bookDetail.jsp</file>
-            <file>file:/C:/Users/nguye/NetBeansProjects/github/Assignment_PRJ/src/java/controller/UserController.java</file>
-            <file>file:/C:/Users/nguye/NetBeansProjects/github/Assignment_PRJ/src/java/controller/OrderController.java</file>
+            <file>file:/D:/PRJ301/Assignment_PRJ/web/home.jsp</file>
+            <file>file:/D:/PRJ301/Assignment_PRJ/web/bookDetail.jsp</file>
+            <file>file:/D:/PRJ301/Assignment_PRJ/src/java/controller/UserController.java</file>
         </group>
     </open-files>
 </project-private>

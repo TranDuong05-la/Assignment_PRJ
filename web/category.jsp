@@ -633,6 +633,8 @@
             String selectedPub = (String) request.getAttribute("selectedPub");
             String selectedAuthor = (String) request.getAttribute("selectedAuthor");
             String selectedRating = (String) request.getAttribute("selectedRating");
+            
+           
         %>
         <!-- Banner -->
         <div class="category-banner">
